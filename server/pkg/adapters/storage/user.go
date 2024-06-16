@@ -2,8 +2,8 @@ package storage
 
 import (
 	"gorm.io/gorm"
-	"rabbit-food/internal/models/user"
-	"rabbit-food/pkg/adapters/storage/entities"
+	"rabbit-food/server/internal/models/user"
+	"rabbit-food/server/pkg/adapters/storage/entities"
 )
 
 type userRepo struct {

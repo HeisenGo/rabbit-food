@@ -3,9 +3,9 @@ package handlers
 import (
 	"fmt"
 	"net"
-	"rabbit-food/internal/models/user"
-	"rabbit-food/internal/protocol"
-	"rabbit-food/services"
+	"rabbit-food/server/internal/models/user"
+	protocol2 "rabbit-food/server/internal/protocol"
+	"rabbit-food/server/services"
 )
 
 type UserHandler struct {
@@ -17,7 +17,7 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 }
 
 func (h *UserHandler) HandleRegister(conn net.Conn, data []byte) {
-	reqData, err := protocol.DecodeRegisterRequest(data)
+	reqData, err := protocol2.DecodeRegisterRequest(data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
 		fmt.Println("Error decoding register request:", err)
@@ -25,7 +25,7 @@ func (h *UserHandler) HandleRegister(conn net.Conn, data []byte) {
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
 	createdUser, err := h.userService.CreateUser(newUser)
-	response := protocol.RegisterResponse{
+	response := protocol2.RegisterResponse{
 		Success: err == nil,
 		Message: fmt.Sprintf("User with id: %d, phone:%s, email: %s", createdUser.ID, createdUser.Phone, createdUser.Email),
 		UserID:  createdUser.ID,
@@ -34,7 +34,7 @@ func (h *UserHandler) HandleRegister(conn net.Conn, data []byte) {
 		response.Message = err.Error()
 	}
 
-	resData, err := protocol.EncodeRegisterResponse(response)
+	resData, err := protocol2.EncodeRegisterResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding register response:", err)

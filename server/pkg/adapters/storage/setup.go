@@ -2,21 +2,25 @@ package storage
 
 import (
 	"fmt"
-	"rabbit-food/config"
-	"rabbit-food/pkg/adapters/storage/entities"
+	"rabbit-food/server/config"
+	"rabbit-food/server/pkg/adapters/storage/entities"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 func NewPostgresGormConnection(dbConfig config.DB) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Tehran",
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=UTC",
 		dbConfig.Host, dbConfig.User, dbConfig.Pass, dbConfig.DBName, dbConfig.Port)
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
 
-func Migrate(db *gorm.DB) {
+func Migrate(db *gorm.DB) error {
 	migrator := db.Migrator()
 
-	migrator.AutoMigrate(&entities.User{})
+	err := migrator.AutoMigrate(&entities.User{})
+	if err != nil {
+		return err
+	}
+	return nil
 }

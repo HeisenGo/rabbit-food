@@ -3,10 +3,10 @@ package tcp
 import (
 	"fmt"
 	"net"
-	"rabbit-food/config"
-	"rabbit-food/internal/server"
-	"rabbit-food/internal/server/handlers"
-	"rabbit-food/services"
+	"rabbit-food/server/config"
+	"rabbit-food/server/internal/server"
+	"rabbit-food/server/internal/server/handlers"
+	"rabbit-food/server/services"
 )
 
 func Run(cfg config.Server, app *services.AppContainer) {

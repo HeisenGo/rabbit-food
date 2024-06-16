@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 	"net"
-	"rabbit-food/internal/server/handlers"
+	"rabbit-food/server/internal/server/handlers"
 )
 
 type Server struct {
