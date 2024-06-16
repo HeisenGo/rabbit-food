@@ -16,8 +16,10 @@ Communication between the server and clients is facilitated through TCP connecti
 
 ## Getting Started
 To get started with **Rabbit Food**, follow the instructions in the following. The guide will walk you through the process of setting up the project, configuring the necessary dependencies, and running the server and client components.
-The project's database schema is represented by an Entity Relationship Diagram (ERD). You can view the ERD by following this link: https://drive.google.com/file/d/1gNUd9nl6XqafS7znTZN26XCL0raL7jAb/view?usp=sharing
 
-**Note:** For better resolution, open the ERD with draw.io by selecting "Open with" and choosing "draw.io" from the options. You may need to authorize the site to view the diagram.
+
+The project's database schema is represented by an *Entity Relationship Diagram (ERD)*. You can view the **ERD** **[HERE](https://drive.google.com/file/d/1gNUd9nl6XqafS7znTZN26XCL0raL7jAb/view?usp=sharing)**.
+
+**Note:** For better resolution of the ERD, open it with [draw.io](https://app.diagrams.net/#G176KUF2eQaoieLKbGChO8VnN-5od6StkW) by selecting "Open with" and choosing "draw.io" from the options. You may need to authorize the site to view the diagram.
 ### Contributing
 We welcome contributions from the community! If you'd like to contribute to Rabbit Food, please read our Contributing Guidelines for information on how to get involved.
