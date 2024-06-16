@@ -1,7 +1,7 @@
 package user
 
 import (
-	"rabbit-food/server/pkg/adapters/storage/entities"
+	"server/pkg/adapters/storage/entities"
 	"time"
 )
 

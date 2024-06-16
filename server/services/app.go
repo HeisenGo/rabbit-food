@@ -3,9 +3,9 @@ package services
 import (
 	"gorm.io/gorm"
 	"log"
-	"rabbit-food/server/config"
-	"rabbit-food/server/internal/models/user"
-	storage2 "rabbit-food/server/pkg/adapters/storage"
+	"server/config"
+	"server/internal/models/user"
+	"server/pkg/adapters/storage"
 )
 
 type AppContainer struct {
@@ -20,7 +20,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 	}
 
 	app.mustInitDB()
-	err := storage2.Migrate(app.dbConn)
+	err := storage.Migrate(app.dbConn)
 	if err != nil {
 		log.Fatal("Migration failed: ", err)
 	}
@@ -35,7 +35,7 @@ func (a *AppContainer) mustInitDB() {
 		return
 	}
 
-	db, err := storage2.NewPostgresGormConnection(a.cfg.DB)
+	db, err := storage.NewPostgresGormConnection(a.cfg.DB)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,5 +47,5 @@ func (a *AppContainer) setUserService() {
 	if a.UserService != nil {
 		return
 	}
-	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage2.NewUserRepo(a.dbConn)))
+	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
 }

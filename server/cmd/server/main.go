@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"log"
-	"rabbit-food/server/api/tcp"
-	"rabbit-food/server/config"
-	"rabbit-food/server/services"
+	"server/api/tcp"
+	"server/config"
+	"server/services"
 )
 
 var envFilePath = flag.String("envpath", "", "configuration path")

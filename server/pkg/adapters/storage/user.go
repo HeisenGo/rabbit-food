@@ -2,8 +2,8 @@ package storage
 
 import (
 	"gorm.io/gorm"
-	"rabbit-food/server/internal/models/user"
-	"rabbit-food/server/pkg/adapters/storage/entities"
+	"server/internal/models/user"
+	"server/pkg/adapters/storage/entities"
 )
 
 type userRepo struct {
@@ -11,7 +11,7 @@ type userRepo struct {
 }
 
 func (r *userRepo) Create(user *user.User) (*entities.User, error) {
-	var newUser *entities.User
+	newUser := &entities.User{}
 	newUser.Phone = user.Phone
 	newUser.Email = user.Email
 	newUser.Password = user.Password

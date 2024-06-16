@@ -1,9 +1,9 @@
 package protocol
 
 type RegisterRequest struct {
-	Phone    string
-	Email    string
-	Password string
+	Phone    string `json:"phone"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
 
 type RegisterResponse struct {

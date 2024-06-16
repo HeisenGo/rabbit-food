@@ -2,7 +2,7 @@ package user
 
 import (
 	"gorm.io/gorm"
-	"rabbit-food/server/pkg/adapters/storage/entities"
+	"server/pkg/adapters/storage/entities"
 )
 
 type Ops struct {

@@ -1,4 +1,4 @@
-module rabbit-food
+module server
 
 go 1.22.4
 

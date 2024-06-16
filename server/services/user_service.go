@@ -1,21 +1,21 @@
 package services
 
 import (
-	user2 "rabbit-food/server/internal/models/user"
-	"rabbit-food/server/pkg/adapters/storage/entities"
+	"server/internal/models/user"
+	"server/pkg/adapters/storage/entities"
 )
 
 type UserService struct {
-	userOps *user2.Ops
+	userOps *user.Ops
 }
 
-func NewUserService(userOps *user2.Ops) *UserService {
+func NewUserService(userOps *user.Ops) *UserService {
 	return &UserService{
 		userOps: userOps,
 	}
 }
 
 // func (s *UserService) CreateUser(ctx context.Context, user *user.User) error {
-func (s *UserService) CreateUser(user *user2.User) (*entities.User, error) {
+func (s *UserService) CreateUser(user *user.User) (*entities.User, error) {
 	return s.userOps.Create(user)
 }

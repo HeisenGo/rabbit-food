@@ -2,8 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"rabbit-food/server/config"
-	"rabbit-food/server/pkg/adapters/storage/entities"
+	"server/config"
+	"server/pkg/adapters/storage/entities"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
