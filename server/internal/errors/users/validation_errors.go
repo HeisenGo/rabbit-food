@@ -17,5 +17,6 @@ func (e *ValidationError) Error() string {
 }
 
 var (
-	ErrInvalidEmail = newValidationError("email", "invalid email.")
+	ErrInvalidEmail    = newValidationError("email", "invalid email.")
+	ErrInvalidPassword = newValidationError("password", "Password validation failed ")
 )
