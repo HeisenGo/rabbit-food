@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 	"server/internal/models/user"
 	"server/pkg/adapters/storage/entities"
+	"server/pkg/adapters/storage/mappers"
 )
 
 type userRepo struct {
@@ -11,10 +12,7 @@ type userRepo struct {
 }
 
 func (r *userRepo) Create(user *user.User) (*entities.User, error) {
-	newUser := &entities.User{}
-	newUser.Phone = user.Phone
-	newUser.Email = user.Email
-	newUser.Password = user.Password
+	newUser := mappers.UserDomainToEntity(user)
 	err := r.db.Create(&newUser).Error
 	if err != nil {
 		return nil, err
