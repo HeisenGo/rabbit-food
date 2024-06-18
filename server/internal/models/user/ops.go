@@ -2,9 +2,10 @@ package user
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"server/pkg/adapters/storage/entities"
 	"server/pkg/utils/validations"
+
+	"gorm.io/gorm"
 )
 
 type Ops struct {
@@ -21,11 +22,20 @@ func NewUserOps(db *gorm.DB, repo Repo) *Ops {
 
 func (o *Ops) Create(ctx context.Context, user *User) (*entities.User, error) {
 	// validation
-// func (o *Ops) Create(ctx context.Context, user *User) error {
-func (o *Ops) Create(user *User) (*entities.User, error) {
-	err := validations.ValidateUserRegistration(user)
-	if err != nil {
-		return nil, err
-	}
+	validateUserRegistration(user)
 	return o.repo.Create(user)
+}
+
+func validateUserRegistration(user *User) error {
+	err := validations.ValidateEmail(user.Email)
+	if err != nil {
+		return err
+	}
+	if err = validations.ValidatePasswordWithFeedback(user.Password); err != nil {
+		return err
+	}
+	if err = validations.ValidatePoneNumber(user.Phone); err != nil {
+		return err
+	}
+	return nil
 }
