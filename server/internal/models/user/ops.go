@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"server/pkg/adapters/storage/entities"
+	"server/pkg/utils/hash"
 	"server/pkg/utils/validations"
 
 	"gorm.io/gorm"
@@ -21,20 +22,31 @@ func NewUserOps(db *gorm.DB, repo Repo) *Ops {
 }
 
 func (o *Ops) Create(ctx context.Context, user *User) (*entities.User, error) {
-	// validation
-	validateUserRegistration(user)
+	err := validateUserRegistration(user)
+	if err != nil {
+		return nil, err
+	}
+	hashedPass, err := hash.HashPassword(user.Password)
+	if err != nil {
+		return nil, err
+	}
+	user.SetPassword(hashedPass)
 	return o.repo.Create(user)
 }
 
 func validateUserRegistration(user *User) error {
-	err := validations.ValidateEmail(user.Email)
-	if err != nil {
+	if err := validations.ValidatePhoneNumber(user.Phone); err != nil {
 		return err
 	}
-	if err = validations.ValidatePasswordWithFeedback(user.Password); err != nil {
-		return err
+
+	if user.Email != "" {
+		err := validations.ValidateEmail(user.Email)
+		if err != nil {
+			return err
+		}
 	}
-	if err = validations.ValidatePoneNumber(user.Phone); err != nil {
+
+	if err := validations.ValidatePasswordWithFeedback(user.Password); err != nil {
 		return err
 	}
 	return nil
