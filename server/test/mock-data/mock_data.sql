@@ -1,0 +1,256 @@
+-- Mock data for table: users
+INSERT INTO users (id, phone, email, created_at, updated_at, password, birth_date, firstname, lastname, deleted_at)
+VALUES
+(1, '1234567890', 'user1@example.com', '2024-01-01', '2024-01-01', 'password1', '1990-01-01', 'John', 'Doe', NULL),
+(2, '0987654321', 'user2@example.com', '2024-01-01', '2024-01-01', 'password2', '1992-02-02', 'Jane', 'Smith', NULL);
+
+-- -- Mock data for table: restaurants
+-- INSERT INTO restaurants (id, name, user_id)
+-- VALUES
+-- (1, 'Pizza Place', 1),
+-- (2, 'Burger Joint', 2);
+--
+-- -- Mock data for table: menu
+-- INSERT INTO menu (id, restaurant_id, name)
+-- VALUES
+-- (1, 1, 'Main Menu'),
+-- (2, 2, 'Lunch Menu');
+--
+-- -- Mock data for table: restaurant_category
+-- INSERT INTO restaurant_category (id, c_r_id, name)
+-- VALUES
+-- (1, 1, 'Italian'),
+-- (2, 2, 'Fast Food');
+--
+-- -- Mock data for table: items
+-- INSERT INTO items (id, menu_id, name, price, preparation_time, cancellation_penalty)
+-- VALUES
+-- (1, 1, 'Margherita Pizza', 10, '00:15:00', 5),
+-- (2, 1, 'Pepperoni Pizza', 12, '00:15:00', 5),
+-- (3, 2, 'Cheeseburger', 8, '00:10:00', 3),
+-- (4, 2, 'Veggie Burger', 7, '00:10:00', 3);
+--
+-- -- Mock data for table: category_items
+-- INSERT INTO category_items (id, item_id, category_id)
+-- VALUES
+-- (1, 1, 1),
+-- (2, 2, 1),
+-- (3, 3, 2),
+-- (4, 4, 2);
+--
+-- -- Mock data for table: purchase
+-- INSERT INTO purchase (id, restaurant_id)
+-- VALUES
+-- (1, 1),
+-- (2, 2);
+--
+-- -- Mock data for table: user_activity_log
+-- INSERT INTO user_activity_log (id, restaurant_id, user_id, date, description, activity_type)
+-- VALUES
+-- (1, 1, 1, 20240617, 'Logged in', 1),
+-- (2, 2, 2, 20240617, 'Logged out', 2);
+--
+-- -- Mock data for table: user_restaurant
+-- INSERT INTO user_restaurant (id, user_id, restaurant_id, role_type)
+-- VALUES
+-- (1, 1, 1, 'owner'),
+-- (2, 2, 2, 'manager');
+--
+-- -- Mock data for table: wallet
+-- INSERT INTO wallet (id, balance, user_id)
+-- VALUES
+-- (1, 100, 1),
+-- (2, 200, 2);
+--
+-- -- Mock data for table: user_block_restaurant
+-- INSERT INTO user_block_restaurant (id, user_id, restaurant_id)
+-- VALUES
+-- (1, 1, 2),
+-- (2, 2, 1);
+--
+-- -- Mock data for table: wallet_card
+-- INSERT INTO wallet_card (id, credit_card_id, wallet_id)
+-- VALUES
+-- (1, 1, 1),
+-- (2, 2, 2);
+--
+-- -- Mock data for table: credit_cards
+-- INSERT INTO credit_cards (id, card_number, uuid_external_id)
+-- VALUES
+-- (1, '1234567890123456', 1),
+-- (2, '6543210987654321', 2);
+--
+-- -- Mock data for table: category_restaurants
+-- INSERT INTO category_restaurants (id, category_id)
+-- VALUES
+-- (1, 1),
+-- (2, 2);
+--
+-- -- Mock data for table: transactions
+-- INSERT INTO transactions (id, wallet_card_id, amount, user_id, status, created_at)
+-- VALUES
+-- (1, 1, 50, 1, 'completed', 20240617),
+-- (2, 2, 75, 2, 'pending', 20240617);
+--
+-- -- Mock data for table: order_item
+-- INSERT INTO order_item (id, item_id, shopping_cart_id, quantity)
+-- VALUES
+-- (1, 1, 1, 2),
+-- (2, 3, 2, 1);
+--
+-- -- Mock data for table: notification
+-- INSERT INTO notification (id, order_id, user_id, status)
+-- VALUES
+-- (1, 1, 1, 'sent'),
+-- (2, 2, 2, 'pending');
+--
+-- -- Mock data for table: order
+-- INSERT INTO "order" (id, restaurant_id, user_id, order_status, preparation_status, total, date, delivery_status)
+-- VALUES
+-- (1, 1, 1, 1, 1, 22, 20240617, 1),
+-- (2, 2, 2, 1, 1, 15, 20240617, 1);
+--
+-- -- Mock data for table: review
+-- INSERT INTO review (id, restaurant_id, rate, order_id, comment)
+-- VALUES
+-- (1, 1, 5, 1, 'Excellent food!'),
+-- (2, 2, 4, 2, 'Good, but could be better');
+--
+-- -- Mock data for table: addresses
+-- INSERT INTO addresses (id, user_id, address_line, coordinates, type, city)
+-- VALUES
+-- (1, 1, '123 Main St', 'POINT(40.7128 -74.0060)', 1, 'New York'),
+-- (2, 2, '456 Elm St', 'POINT(34.0522 -118.2437)', 1, 'Los Angeles');
+--
+-- -- Mock data for table: restaurant_addresses
+-- INSERT INTO restaurant_addresses (id, restaurant_idHere is the completion of the mock data SQL script:
+--
+-- -- Mock data for table: users
+-- INSERT INTO users (id, phone, email, created_at, updated_at, password, birth_date, firstname, lastname, deleted_at)
+-- VALUES
+-- (1, '1234567890', 'user1@example.com', '2024-01-01', '2024-01-01', 'password1', '1990-01-01', 'John', 'Doe', NULL),
+-- (2, '0987654321', 'user2@example.com', '2024-01-01', '2024-01-01', 'password2', '1992-02-02', 'Jane', 'Smith', NULL);
+--
+-- -- Mock data for table: restaurants
+-- INSERT INTO restaurants (id, name, user_id)
+-- VALUES
+-- (1, 'Pizza Place', 1),
+-- (2, 'Burger Joint', 2);
+--
+-- -- Mock data for table: menu
+-- INSERT INTO menu (id, restaurant_id, name)
+-- VALUES
+-- (1, 1, 'Main Menu'),
+-- (2, 2, 'Lunch Menu');
+--
+-- -- Mock data for table: restaurant_category
+-- INSERT INTO restaurant_category (id, c_r_id, name)
+-- VALUES
+-- (1, 1, 'Italian'),
+-- (2, 2, 'Fast Food');
+--
+-- -- Mock data for table: items
+-- INSERT INTO items (id, menu_id, name, price, preparation_time, cancellation_penalty)
+-- VALUES
+-- (1, 1, 'Margherita Pizza', 10, '00:15:00', 5),
+-- (2, 1, 'Pepperoni Pizza', 12, '00:15:00', 5),
+-- (3, 2, 'Cheeseburger', 8, '00:10:00', 3),
+-- (4, 2, 'Veggie Burger', 7, '00:10:00', 3);
+--
+-- -- Mock data for table: category_items
+-- INSERT INTO category_items (id, item_id, category_id)
+-- VALUES
+-- (1, 1, 1),
+-- (2, 2, 1),
+-- (3, 3, 2),
+-- (4, 4, 2);
+--
+-- -- Mock data for table: purchase
+-- INSERT INTO purchase (id, restaurant_id)
+-- VALUES
+-- (1, 1),
+-- (2, 2);
+--
+-- -- Mock data for table: user_activity_log
+-- INSERT INTO user_activity_log (id, restaurant_id, user_id, date, description, activity_type)
+-- VALUES
+-- (1, 1, 1, 20240617, 'Logged in', 1),
+-- (2, 2, 2, 20240617, 'Logged out', 2);
+--
+-- -- Mock data for table: user_restaurant
+-- INSERT INTO user_restaurant (id, user_id, restaurant_id, role_type)
+-- VALUES
+-- (1, 1, 1, 'owner'),
+-- (2, 2, 2, 'manager');
+--
+-- -- Mock data for table: wallet
+-- INSERT INTO wallet (id, balance, user_id)
+-- VALUES
+-- (1, 100, 1),
+-- (2, 200, 2);
+--
+-- -- Mock data for table: user_block_restaurant
+-- INSERT INTO user_block_restaurant (id, user_id, restaurant_id)
+-- VALUES
+-- (1, 1, 2),
+-- (2, 2, 1);
+--
+-- -- Mock data for table: wallet_card
+-- INSERT INTO wallet_card (id, credit_card_id, wallet_id)
+-- VALUES
+-- (1, 1, 1),
+-- (2, 2, 2);
+--
+-- -- Mock data for table: credit_cards
+-- INSERT INTO credit_cards (id, card_number, uuid_external_id)
+-- VALUES
+-- (1, '1234567890123456', 1),
+-- (2, '6543210987654321', 2);
+--
+-- -- Mock data for table: category_restaurants
+-- INSERT INTO category_restaurants (id, category_id)
+-- VALUES
+-- (1, 1),
+-- (2, 2);
+--
+-- -- Mock data for table: transactions
+-- INSERT INTO transactions (id, wallet_card_id, amount, user_id, status, created_at)
+-- VALUES
+-- (1, 1, 50, 1, 'completed', 20240617),
+-- (2, 2, 75, 2, 'pending', 20240617);
+--
+-- -- Mock data for table: order_item
+-- INSERT INTO order_item (id, item_id, shopping_cart_id, quantity)
+-- VALUES
+-- (1, 1, 1, 2),
+-- (2, 3, 2, 1);
+--
+-- -- Mock data for table: notification
+-- INSERT INTO notification (id, order_id, user_id, status)
+-- VALUES
+-- (1, 1, 1, 'sent'),
+-- (2, 2, 2, 'pending');
+--
+-- -- Mock data for table: order
+-- INSERT INTO "order" (id, restaurant_id, user_id, order_status, preparation_status, total, date, delivery_status)
+-- VALUES
+-- (1, 1, 1, 1, 1, 22, 20240617, 1),
+-- (2, 2, 2, 1, 1, 15, 20240617, 1);
+--
+-- -- Mock data for table: review
+-- INSERT INTO review (id, restaurant_id, rate, order_id, comment)
+-- VALUES
+-- (1, 1, 5, 1, 'Excellent food!'),
+-- (2, 2, 4, 2, 'Good, but could be better');
+--
+-- -- Mock data for table: addresses
+-- INSERT INTO addresses (id, user_id, address_line, coordinates, type, city)
+-- VALUES
+-- (1, 1, '123 Main St', 'POINT(40.7128 -74.0060)', 1, 'New York'),
+-- (2, 2, '456 Elm St', 'POINT(34.0522 -118.2437)', 1, 'Los Angeles');
+--
+-- -- Mock data for table: restaurant_addresses
+-- INSERT INTO restaurant_addresses (id, restaurant_id, coordinates, address_line)
+-- VALUES
+-- (1, 1, 'POINT(40.7128 -74.0060)', '123 Main St'),
+-- (2, 2, 'POINT(34.0522 -118.2437)', '456 Elm St');
