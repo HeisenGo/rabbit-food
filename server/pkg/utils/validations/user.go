@@ -1,11 +1,10 @@
 package validations
 
 import (
-	"errors"
-	"fmt"
 	"regexp"
 	"server/internal/errors/users"
 	"server/internal/models/user"
+
 	"strings"
 )
 
@@ -52,9 +51,26 @@ func validatePasswordWithFeedback(password string) error {
 
 	if len(errMessages) > 0 {
 		feedback := strings.Join(errMessages, "\n")
-		err := errors.Join(users.ErrInvalidPassword, fmt.Errorf(feedback))
-		return err
+		// err := errors.Join(users.ErrInvalidPassword, fmt.Errorf(feedback))
+		users.ErrInvalidPassword.Message = users.ErrInvalidPassword.Message + feedback
+		return users.ErrInvalidPassword
 	}
 
+	return nil
+}
+
+func validatePoneNumber(phone string) error {
+	tests := []string{"^(?:\\+989|09)\\d{9}$"}
+	// "^09\\d{9}$",  // just 099...
+	possible := false
+	for _, test := range tests {
+		match, _ := regexp.MatchString(test, phone)
+		if match {
+			possible = true
+		}
+	}
+	if !possible {
+		return users.ErrInvalidPhoneNumber
+	}
 	return nil
 }
