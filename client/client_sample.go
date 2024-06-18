@@ -15,6 +15,8 @@ func main() {
 	}
 	defer conn.Close()
 
+	fmt.Println("Running...")
+
 	// Read a message from the console
 	//fmt.Print("Enter message: ")
 	//reader := bufio.NewReader(os.Stdin)
@@ -22,13 +24,14 @@ func main() {
 
 	// Send the message to the server
 	_, err = conn.Write([]byte(`1{"phone": "38383", "email": "fuhu", "password": "ddhh"}`))
+	fmt.Println("Data has been sent!")
 	if err != nil {
 		fmt.Println("Error writing to server:", err)
 		return
 	}
 
 	// Read the response from the server
-	response, err := bufio.NewReader(conn).ReadString('\n')
+	response, err := bufio.NewReader(conn).ReadString(' ')
 	if err != nil {
 		fmt.Println("Error reading from server:", err)
 		return
