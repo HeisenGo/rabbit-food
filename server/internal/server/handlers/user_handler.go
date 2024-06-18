@@ -26,15 +26,17 @@ func (h *UserHandler) HandleRegister(ctx context.Context, conn net.Conn, data []
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
 	createdUser, err := h.userService.CreateUser(ctx, newUser)
-	response := protocol.RegisterResponse{
-		Success: err == nil,
-		Message: fmt.Sprintf("User with id: %d, phone:%s, email: %s", createdUser.ID, createdUser.Phone, createdUser.Email),
-		UserID:  createdUser.ID,
-	}
+	response := protocol.RegisterResponse{}
 	if err != nil {
 		response.Message = err.Error()
+		// TODO: write a func like http.Error() to return here (else must be removed)
+	} else {
+		response = protocol.RegisterResponse{
+			Success: err == nil,
+			Message: fmt.Sprintf("User with id: %d, phone:%s, email: %s", createdUser.ID, createdUser.Phone, createdUser.Email),
+			UserID:  createdUser.ID,
+		}
 	}
-
 	resData, err := protocol.EncodeRegisterResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
