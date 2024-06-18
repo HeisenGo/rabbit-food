@@ -3,26 +3,10 @@ package validations
 import (
 	"regexp"
 	"server/internal/errors/users"
-	"server/internal/models/user"
-
 	"strings"
 )
 
-func ValidateUserRegistration(user *user.User) error {
-	err := validateEmail(user.Email)
-	if err != nil {
-		return err
-	}
-	if err = validatePasswordWithFeedback(user.Password); err != nil {
-		return err
-	}
-	if err = validatePoneNumber(user.Phone); err != nil {
-		return err
-	}
-	return nil
-}
-
-func validateEmail(email string) error {
+func ValidateEmail(email string) error {
 	emailRegex := regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
 	isMatched := emailRegex.MatchString(email)
 	if !isMatched {
@@ -31,7 +15,7 @@ func validateEmail(email string) error {
 	return nil
 }
 
-func validatePasswordWithFeedback(password string) error {
+func ValidatePasswordWithFeedback(password string) error {
 	tests := []struct {
 		pattern string
 		message string
@@ -62,7 +46,7 @@ func validatePasswordWithFeedback(password string) error {
 	return nil
 }
 
-func validatePoneNumber(phone string) error {
+func ValidatePoneNumber(phone string) error {
 	tests := []string{"^(?:\\+989|09)\\d{9}$"}
 	// "^09\\d{9}$",  // just 099...
 	possible := false
