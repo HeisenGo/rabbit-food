@@ -1,4 +1,4 @@
-package hash
+package users
 
 import (
 	"server/internal/errors/users"
@@ -10,7 +10,7 @@ import (
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return "", users.ErrHashPassword
+		return "", err
 	}
 	return string(bytes), err
 }
