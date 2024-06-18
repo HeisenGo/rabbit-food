@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"server/config"
@@ -21,8 +22,9 @@ func Run(cfg config.Server, app *services.AppContainer) {
 	}
 	defer listener.Close()
 	//logger.Info("Server started on port 8080")
-	fmt.Println("Server started on port 8080")
+	fmt.Printf("Server started on port %v\n", cfg.Port)
 
+	ctx := context.Background()
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -30,6 +32,6 @@ func Run(cfg config.Server, app *services.AppContainer) {
 			fmt.Println("Error accepting connection:", err)
 			continue
 		}
-		go newServer.HandleConnection(conn)
+		go newServer.HandleConnection(ctx, conn)
 	}
 }

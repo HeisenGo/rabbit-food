@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"server/internal/models/user"
@@ -16,7 +17,7 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 	return &UserHandler{userService}
 }
 
-func (h *UserHandler) HandleRegister(conn net.Conn, data []byte) {
+func (h *UserHandler) HandleRegister(ctx context.Context, conn net.Conn, data []byte) {
 	reqData, err := protocol.DecodeRegisterRequest(data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
@@ -24,7 +25,7 @@ func (h *UserHandler) HandleRegister(conn net.Conn, data []byte) {
 		return
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
-	createdUser, err := h.userService.CreateUser(newUser)
+	createdUser, err := h.userService.CreateUser(ctx, newUser)
 	response := protocol.RegisterResponse{
 		Success: err == nil,
 		Message: fmt.Sprintf("User with id: %d, phone:%s, email: %s", createdUser.ID, createdUser.Phone, createdUser.Email),

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net"
 	"server/internal/server/handlers"
@@ -14,7 +15,9 @@ func NewServer(userHandler *handlers.UserHandler) *Server {
 	return &Server{userHandler}
 }
 
-func (s *Server) HandleConnection(conn net.Conn) {
+func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
+	ctx, cancelCtx := context.WithCancel(ctx)
+	defer cancelCtx()
 	defer conn.Close()
 
 	buffer := make([]byte, 4096)
@@ -26,8 +29,8 @@ func (s *Server) HandleConnection(conn net.Conn) {
 
 		// Assume the first byte indicates the type of request
 		switch buffer[0] {
-		case 49: // Register request
-			s.userHandler.HandleRegister(conn, buffer[1:n])
+		case '1': // Register request
+			s.userHandler.HandleRegister(ctx, conn, buffer[1:n])
 		// Add other cases for different requests
 		default:
 			fmt.Println("default option!")

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"gorm.io/gorm"
 	"server/pkg/adapters/storage/entities"
 )
@@ -17,8 +18,7 @@ func NewUserOps(db *gorm.DB, repo Repo) *Ops {
 	}
 }
 
-// func (o *Ops) Create(ctx context.Context, user *User) error {
-func (o *Ops) Create(user *User) (*entities.User, error) {
+func (o *Ops) Create(ctx context.Context, user *User) (*entities.User, error) {
 	// validation
 	return o.repo.Create(user)
 }

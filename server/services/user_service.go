@@ -1,6 +1,7 @@
 package services
 
 import (
+	"context"
 	"server/internal/models/user"
 	"server/pkg/adapters/storage/entities"
 )
@@ -15,7 +16,6 @@ func NewUserService(userOps *user.Ops) *UserService {
 	}
 }
 
-// func (s *UserService) CreateUser(ctx context.Context, user *user.User) error {
-func (s *UserService) CreateUser(user *user.User) (*entities.User, error) {
-	return s.userOps.Create(user)
+func (s *UserService) CreateUser(ctx context.Context, user *user.User) (*entities.User, error) {
+	return s.userOps.Create(ctx, user)
 }
