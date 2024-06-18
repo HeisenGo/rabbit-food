@@ -16,6 +16,9 @@ func ValidateUserRegistration(user *user.User) error {
 	if err = validatePasswordWithFeedback(user.Password); err != nil {
 		return err
 	}
+	if err = validatePoneNumber(user.Phone); err != nil {
+		return err
+	}
 	return nil
 }
 
