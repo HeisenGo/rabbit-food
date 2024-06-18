@@ -1,4 +1,4 @@
-package validations
+package users
 
 import (
 	"regexp"
@@ -46,7 +46,7 @@ func ValidatePasswordWithFeedback(password string) error {
 	return nil
 }
 
-func ValidatePoneNumber(phone string) error {
+func ValidatePhoneNumber(phone string) error {
 	tests := []string{"^(?:\\+989|09)\\d{9}$"}
 	// "^09\\d{9}$",  // just 099...
 	possible := false
