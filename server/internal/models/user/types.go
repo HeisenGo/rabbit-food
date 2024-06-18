@@ -29,3 +29,7 @@ func NewUser(phone, email, password string) *User {
 		Password: password,
 	}
 }
+
+func (u *User) SetPassword(password string) {
+	u.Password = password
+}
