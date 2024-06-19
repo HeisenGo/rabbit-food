@@ -1,9 +1,9 @@
 -- Mock data for table: users
--- Oringinal Password: mySecretPassword
+-- Oringinal Password: @mySecretPassword12
 INSERT INTO users (id, phone, email, created_at, updated_at, password, birth_date, firstname, lastname, deleted_at)
 VALUES
-(1, '1234567890', 'user1@example.com', '2024-01-01', '2024-01-01', '$2a$10$fIbTzZ/hHz08uU9nPybmNOqSvDk5PPZfDagnUs0izwoSBEzQWRvTK', '1990-01-01', 'John', 'Doe', NULL),
-(2, '0987654321', 'user2@example.com', '2024-01-01', '2024-01-01', '$2a$10$fIbTzZ/hHz08uU9nPybmNOqSvDk5PPZfDagnUs0izwoSBEzQWRvTK', '1992-02-02', 'Jane', 'Smith', NULL);
+(1, '1234567890', 'user1@example.com', '2024-01-01', '2024-01-01', '$2a$10$7rkHXO2Jt.7WtnJm9MkvkOn5QniY1q8N4ovPgntvpaxrEi9YBUe2a', '1990-01-01', 'John', 'Doe', NULL),
+(2, '0987654321', 'user2@example.com', '2024-01-01', '2024-01-01', '$2a$10$7rkHXO2Jt.7WtnJm9MkvkOn5QniY1q8N4ovPgntvpaxrEi9YBUe2a', '1992-02-02', 'Jane', 'Smith', NULL);
 
 -- -- Mock data for table: restaurants
 -- INSERT INTO restaurants (id, name, user_id)
