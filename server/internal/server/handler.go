@@ -4,15 +4,16 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"server/internal/server/handlers"
+	"server/api/tcp/handlers"
 )
 
 type Server struct {
 	userHandler *handlers.UserHandler
+	authHandler *handlers.AuthHandler
 }
 
-func NewServer(userHandler *handlers.UserHandler) *Server {
-	return &Server{userHandler}
+func NewServer(userHandler *handlers.UserHandler,authHandler *handlers.AuthHandler) *Server {
+	return &Server{userHandler,authHandler}
 }
 
 func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
@@ -32,6 +33,8 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		case '1': // Register request
 			s.userHandler.HandleRegister(ctx, conn, buffer[1:n])
 		// Add other cases for different requests
+		case '2':
+			s.authHandler.HandleLogin(ctx,conn,buffer[1:n])
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))

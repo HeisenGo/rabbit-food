@@ -1,17 +1,19 @@
 package services
 
 import (
-	"gorm.io/gorm"
 	"log"
 	"server/config"
 	"server/internal/models/user"
 	"server/pkg/adapters/storage"
+
+	"gorm.io/gorm"
 )
 
 type AppContainer struct {
 	cfg         config.Config
 	dbConn      *gorm.DB
 	UserService *UserService
+	AuthService *AuthService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -26,6 +28,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 	}
 
 	app.setUserService()
+	app.setAuthService([]byte(cfg.Server.TokenSecret),uint(cfg.Server.TokenExpMinutes),uint(cfg.Server.RefreshTokenExpMinutes))
 
 	return app, nil
 }
@@ -48,4 +51,11 @@ func (a *AppContainer) setUserService() {
 		return
 	}
 	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
+}
+func (a *AppContainer) setAuthService(secret []byte,
+	tokenExpiration uint, refreshTokenExpiration uint) {
+	if a.AuthService != nil {
+		return
+	}
+	a.AuthService = NewAuthService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)),secret,tokenExpiration,refreshTokenExpiration)
 }

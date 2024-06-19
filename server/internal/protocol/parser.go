@@ -23,3 +23,16 @@ func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
 	err := json.Unmarshal(data, &res)
 	return res, err
 }
+func DecodeLoginRequest(data []byte) (LoginRequest, error) {
+	var req LoginRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+func EncodeLoginReponse(res LoginResponse)([]byte, error) {
+	return json.Marshal(res)
+}
+func DecodeLoginResponse(data []byte) (LoginResponse, error) {
+	var req LoginResponse
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
