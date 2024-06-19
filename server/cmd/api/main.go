@@ -8,8 +8,6 @@ import (
 	"server/services"
 )
 
-var envFilePath = flag.String("envpath", "", "configuration path")
-
 func main() {
 	cfg := readConfig()
 
@@ -20,6 +18,8 @@ func main() {
 	tcp.Run(cfg.Server, app)
 
 }
+
+var envFilePath = flag.String("envpath", "", ".env file path")
 
 func readConfig() config.Config {
 	flag.Parse()
