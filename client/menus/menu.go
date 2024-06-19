@@ -2,6 +2,7 @@ package menus
 
 import (
 	"bufio"
+	"client/constants"
 	"client/utils"
 	"fmt"
 	"strconv"
@@ -10,22 +11,25 @@ import (
 type Menu struct {
 	Name      string
 	MenuItems []MenuComponent
+	// TODO: nextState  menuState
+	// TODO: state  menuState
 }
 
 func (m *Menu) Display() {
-	fmt.Println("\n---", m.Name, "---")
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", m.Name))
 	for i, menuItem := range m.MenuItems {
-		fmt.Printf("%d. ", i+1)
+		fmt.Printf("\t%d. ", i+1)
 		menuItem.Display()
 	}
-	fmt.Printf("%d. Return to previous menu\n", len(m.MenuItems)+1)
+	fmt.Printf("\t%d. Return to previous menu\n", len(m.MenuItems)+1)
 }
 
 func (m *Menu) Execute(scanner *bufio.Scanner) {
-	utils.ClearScreen()
+	// TODO: setState -> m.setState(m.state.next)
 	for {
+		utils.ClearScreen()
 		m.Display()
-		fmt.Print("Enter choice: ")
+		utils.ColoredPrint(constants.Green, "\t Enter Choice: ")
 		scanner.Scan()
 		input := scanner.Text()
 
@@ -39,10 +43,12 @@ func (m *Menu) Execute(scanner *bufio.Scanner) {
 			utils.ClearScreen()
 			return // Return to previous menu
 		}
+		// TODO: mi.state.execute
 		m.MenuItems[choice-1].Execute(scanner)
 	}
 }
 
+// TODO: Should be use and export
 func (m *Menu) add(mc MenuComponent) {
 	m.MenuItems = append(m.MenuItems, mc)
 }
