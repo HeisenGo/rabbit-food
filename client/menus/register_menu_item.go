@@ -40,10 +40,17 @@ func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
 	if err != nil {
 		fmt.Println(err)
 		return
+	} else {
+		utils.ColoredPrint(constants.Green, "\n\tSuccessful Registration!\n")
+		utils.ReadInput(scanner, "Press any key to continue... ")
 	}
 	// TODO: mi.state = ProfileMngmnt state
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)
 		return
 	}
+}
+
+func (mi *RegisterMenuItem) GetName() string {
+	return mi.Name
 }
