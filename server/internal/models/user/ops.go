@@ -58,8 +58,8 @@ func validateUserRegistration(user *User) error {
 	if err := users.ValidatePhone(user.Phone); err != nil {
 		return err
 	}
-	if user.Email != "" {
-		err := users.ValidateEmail(user.Email)
+	if user.Email != nil {
+		err := users.ValidateEmail(*user.Email)
 		if err != nil {
 			return err
 		}
