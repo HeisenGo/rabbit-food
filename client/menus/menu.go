@@ -15,11 +15,19 @@ type Menu struct {
 	// TODO: state  menuState
 }
 
+func NewMenu(name string) *Menu {
+	return &Menu{
+		Name:      name,
+		MenuItems: nil,
+	}
+}
+
 func (m *Menu) Display() {
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", m.Name))
 	for i, menuItem := range m.MenuItems {
 		fmt.Printf("\t%d. ", i+1)
-		menuItem.Display()
+		fmt.Println(menuItem.GetName())
+
 	}
 	fmt.Printf("\t%d. Return to previous menu\n", len(m.MenuItems)+1)
 }
@@ -48,7 +56,10 @@ func (m *Menu) Execute(scanner *bufio.Scanner) {
 	}
 }
 
-// TODO: Should be use and export
-func (m *Menu) add(mc MenuComponent) {
+func (m *Menu) Add(mc MenuComponent) {
 	m.MenuItems = append(m.MenuItems, mc)
+}
+
+func (m *Menu) GetName() string {
+	return m.Name
 }
