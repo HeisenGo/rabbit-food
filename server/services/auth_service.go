@@ -26,14 +26,18 @@ func NewAuthService(userOps *user.Ops, secret []byte,
 	}
 }
 
-type UserToken struct {
+type AuthToken struct {
 	AuthorizationToken string
 	RefreshToken       string
 	ExpiresAt          int64
 }
 
-func (s *AuthService) Login(ctx context.Context, email, pass string) (*UserToken, error) {
-	user, err := s.userOps.GetUserByEmailAndPassword(ctx, email, pass)
+func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.User, error) {
+	return s.userOps.Create(ctx, user)
+}
+
+func (s *AuthService) LoginUser(ctx context.Context, email, pass string) (*AuthToken, error) {
+	user, err := s.userOps.GetUser(ctx, email, pass)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +58,7 @@ func (s *AuthService) Login(ctx context.Context, email, pass string) (*UserToken
 		return nil, err // todo
 	}
 
-	return &UserToken{
+	return &AuthToken{
 		AuthorizationToken: authToken,
 		RefreshToken:       refreshToken,
 		ExpiresAt:          authExp.Unix(),
@@ -68,7 +72,7 @@ func (s *AuthService) userClaims(user *user.User, exp time.Time) *jwt.UserClaims
 				Time: exp,
 			},
 		},
-		UserID: user.ID,
-		Role:   user.Role.String(),
+		UserID:  user.ID,
+		IsAdmin: user.IsAdmin,
 	}
 }

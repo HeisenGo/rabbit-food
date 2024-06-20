@@ -1,17 +1,18 @@
 package services
 
 import (
-	"gorm.io/gorm"
 	"log"
 	"server/config"
 	"server/internal/models/user"
 	"server/pkg/adapters/storage"
+
+	"gorm.io/gorm"
 )
 
 type AppContainer struct {
 	cfg         config.Config
 	dbConn      *gorm.DB
-	UserService *UserService
+	AuthService *AuthService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -25,7 +26,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 		log.Fatal("Migration failed: ", err)
 	}
 
-	app.setUserService()
+	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
 
 	return app, nil
 }
@@ -43,9 +44,10 @@ func (a *AppContainer) mustInitDB() {
 	a.dbConn = db
 }
 
-func (a *AppContainer) setUserService() {
-	if a.UserService != nil {
+func (a *AppContainer) setAuthService(secret []byte,
+	tokenExpiration uint, refreshTokenExpiration uint) {
+	if a.AuthService != nil {
 		return
 	}
-	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
+	a.AuthService = NewAuthService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)), secret, tokenExpiration, refreshTokenExpiration)
 }

@@ -12,6 +12,8 @@ func UserEntityToDomain(entity *entities.User) *user.User {
 		LastName:  entity.LastName,
 		Email:     entity.Email,
 		Password:  entity.Password,
+		Phone:     entity.Phone,
+		IsAdmin:  entity.IsAdmin,
 	}
 }
 

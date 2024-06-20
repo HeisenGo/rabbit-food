@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"gorm.io/gorm"
-	"server/pkg/adapters/storage/entities"
+	userErrors "server/internal/errors/users"
 	"server/pkg/utils/users"
 )
 
@@ -19,7 +19,7 @@ func NewUserOps(db *gorm.DB, repo Repo) *Ops {
 	}
 }
 
-func (o *Ops) Create(ctx context.Context, user *User) (*entities.User, error) {
+func (o *Ops) Create(ctx context.Context, user *User) (*User, error) {
 	err := validateUserRegistration(user)
 	if err != nil {
 		return nil, err
@@ -29,14 +29,35 @@ func (o *Ops) Create(ctx context.Context, user *User) (*entities.User, error) {
 		return nil, err
 	}
 	user.SetPassword(hashedPass)
-	return o.repo.Create(user)
+	return o.repo.Create(ctx, user)
+}
+func (o *Ops) GetUser(ctx context.Context, phoneOrEmail, password string) (*User, error) {
+	var user *User
+	if users.ValidatePhone(phoneOrEmail) != nil {
+		if users.ValidateEmail(phoneOrEmail) != nil {
+			return nil, userErrors.ErrUserPassDoesNotMatch
+		}
+		email := phoneOrEmail
+		user, _ = o.repo.GetByEmail(ctx, email)
+	} else {
+		phone := phoneOrEmail
+		user, _ = o.repo.GetByPhone(ctx, phone)
+	}
+
+	if user == nil {
+		return user, userErrors.ErrUserPassDoesNotMatch
+	}
+
+	if err := users.CheckPasswordHash(password, user.Password); err != nil {
+		return nil, userErrors.ErrUserPassDoesNotMatch
+	}
+	return user, nil
 }
 
 func validateUserRegistration(user *User) error {
-	if err := users.ValidatePhoneNumber(user.Phone); err != nil {
+	if err := users.ValidatePhone(user.Phone); err != nil {
 		return err
 	}
-
 	if user.Email != "" {
 		err := users.ValidateEmail(user.Email)
 		if err != nil {
