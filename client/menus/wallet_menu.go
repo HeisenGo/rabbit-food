@@ -46,3 +46,7 @@ func (mi *WalletMenuItem) Execute(scanner *bufio.Scanner) {
 		mi.PostMenu.Execute(scanner)
 	}
 }
+
+func (mi *WalletMenuItem) GetName() string {
+	return mi.Name
+}
