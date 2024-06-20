@@ -35,7 +35,7 @@ func (o *Ops) GetUser(ctx context.Context, phoneOrEmail, password string) (*User
 	var user *User
 	if users.ValidatePhone(phoneOrEmail) != nil {
 		if users.ValidateEmail(phoneOrEmail) != nil {
-			return nil, userErrors.ErrInvalidPhoneOrEmail
+			return nil, userErrors.ErrUserPassDoesNotMatch
 		}
 		email := phoneOrEmail
 		user, _ = o.repo.GetByEmail(ctx, email)
