@@ -20,6 +20,5 @@ var (
 	ErrInvalidEmail         = newValidationError("email", "invalid email.")
 	ErrInvalidPassword      = newValidationError("password", "invalid password ")
 	ErrInvalidPhone         = newValidationError("phone", "invalid phone")
-	ErrInvalidPhoneOrEmail  = newValidationError("phone_or_email", "invalid phone or email")
-	ErrUserPassDoesNotMatch = newValidationError("phone_or_email", "invalid phone or email")
+	ErrUserPassDoesNotMatch = newValidationError("phone_or_email", "username and password doesn't match.")
 )
