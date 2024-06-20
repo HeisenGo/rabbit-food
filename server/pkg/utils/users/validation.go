@@ -46,7 +46,7 @@ func ValidatePasswordWithFeedback(password string) error {
 	return nil
 }
 
-func ValidatePhoneNumber(phone string) error {
+func ValidatePhone(phone string) error {
 	tests := []string{"^(?:\\+989|09)\\d{9}$"}
 	// "^09\\d{9}$",  // just 099...
 	possible := false
@@ -57,7 +57,7 @@ func ValidatePhoneNumber(phone string) error {
 		}
 	}
 	if !possible {
-		return users.ErrInvalidPhoneNumber
+		return users.ErrInvalidPhone
 	}
 	return nil
 }
