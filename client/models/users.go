@@ -5,3 +5,12 @@ type User struct {
 	Email    string
 	Password string
 }
+
+type LoginUserReq struct {
+	PhoneOrEmail string
+	Password     string
+}
+
+type LogoutUserReq struct {
+	// TODO
+}
