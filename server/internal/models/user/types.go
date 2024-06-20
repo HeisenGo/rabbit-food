@@ -16,7 +16,7 @@ type Repo interface {
 type User struct {
 	ID        uint
 	Phone     string
-	Email     string
+	Email     *string
 	FirstName string
 	LastName  string
 	Password  string
@@ -24,7 +24,7 @@ type User struct {
 	IsAdmin   bool
 }
 
-func NewUser(phone, email, password string) *User {
+func NewUser(phone string, email *string, password string) *User {
 	return &User{
 		Phone:    phone,
 		Email:    email,
@@ -33,7 +33,7 @@ func NewUser(phone, email, password string) *User {
 }
 
 func (u *User) SetEmail(email string) {
-	u.Email = email
+	u.Email = &email
 }
 func (u *User) SetPhone(phone string) {
 	u.Phone = phone
@@ -41,11 +41,6 @@ func (u *User) SetPhone(phone string) {
 func (u *User) SetPassword(password string) {
 	u.Password = password
 }
-
-// implmented in dara's structure
-//func (u *User) ValidatePassword() error {
-//	return nil
-//}
 
 func (u *User) PasswordIsValid(pass string) bool {
 	h := sha256.New()
