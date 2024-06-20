@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"server/internal/models/auth"
 	"server/internal/models/user"
 	"server/pkg/jwt"
 	"time"
@@ -26,18 +27,27 @@ func NewAuthService(userOps *user.Ops, secret []byte,
 	}
 }
 
-type AuthToken struct {
-	AuthorizationToken string
-	RefreshToken       string
-	ExpiresAt          int64
+func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*auth.Token, error) {
+	createdUser, err := s.userOps.Create(ctx, user)
+	if err != nil {
+		return nil, err
+	}
+	var (
+		authExp    = time.Now().Add(time.Minute * time.Duration(s.tokenExpiration))
+		refreshExp = time.Now().Add(time.Minute * time.Duration(s.refreshTokenExpiration))
+	)
+	authToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, authExp))
+
+	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, refreshExp))
+	if err != nil {
+		return nil, err
+	}
+
+	return auth.NewToken(authToken, refreshToken, authExp.Unix()), nil
 }
 
-func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.User, error) {
-	return s.userOps.Create(ctx, user)
-}
-
-func (s *AuthService) LoginUser(ctx context.Context, email, pass string) (*AuthToken, error) {
-	user, err := s.userOps.GetUser(ctx, email, pass)
+func (s *AuthService) LoginUser(ctx context.Context, email, pass string) (*auth.Token, error) {
+	loggedInUser, err := s.userOps.GetUser(ctx, email, pass)
 	if err != nil {
 		return nil, err
 	}
@@ -48,21 +58,17 @@ func (s *AuthService) LoginUser(ctx context.Context, email, pass string) (*AuthT
 		refreshExp = time.Now().Add(time.Minute * time.Duration(s.refreshTokenExpiration))
 	)
 
-	authToken, err := jwt.CreateToken(s.secret, s.userClaims(user, authExp))
+	authToken, err := jwt.CreateToken(s.secret, s.userClaims(loggedInUser, authExp))
 	if err != nil {
 		return nil, err // todo
 	}
 
-	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(user, refreshExp))
+	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(loggedInUser, refreshExp))
 	if err != nil {
 		return nil, err // todo
 	}
 
-	return &AuthToken{
-		AuthorizationToken: authToken,
-		RefreshToken:       refreshToken,
-		ExpiresAt:          authExp.Unix(),
-	}, nil
+	return auth.NewToken(authToken, refreshToken, authExp.Unix()), nil
 }
 
 func (s *AuthService) userClaims(user *user.User, exp time.Time) *jwt.UserClaims {
