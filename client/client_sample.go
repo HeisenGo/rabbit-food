@@ -23,7 +23,7 @@ func main() {
 	//message, _ := reader.ReadString('\n')
 
 	// Send the message to the server
-	_, err = conn.Write([]byte(`2{"phone": "09127827281", "email": "fuhu@hfhf.fh", "password": "Kiarash@123"}`))
+	_, err = conn.Write([]byte(`2{"phone_or_email": "09127817281", "email": "kiarash@gmail.com", "password": "Kiarash@123"}`))
 	fmt.Println("Data has been sent!")
 	if err != nil {
 		fmt.Println("Error writing to server:", err)

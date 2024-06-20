@@ -4,16 +4,15 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"server/api/tcp/handlers"
 	"server/config"
 	"server/internal/server"
-	"server/api/tcp/handlers"
 	"server/services"
 )
 
 func Run(cfg config.Server, app *services.AppContainer) {
-	userHandler := handlers.NewUserHandler(*app.UserService)
 	authHandler := handlers.NewAuthHandler(*app.AuthService)
-	newServer := server.NewServer(userHandler,authHandler)
+	newServer := server.NewServer(authHandler)
 	listener, err := net.Listen("tcp", ":"+cfg.Port)
 	fmt.Println("listening!")
 	if err != nil {

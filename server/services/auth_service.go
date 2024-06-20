@@ -26,43 +26,18 @@ func NewAuthService(userOps *user.Ops, secret []byte,
 	}
 }
 
-type UserToken struct {
+type AuthToken struct {
 	AuthorizationToken string
 	RefreshToken       string
 	ExpiresAt          int64
 }
 
-func (s *AuthService) LoginByEmail(ctx context.Context, email, pass string) (*UserToken, error) {
-	user, err := s.userOps.GetUserByEmailAndPassword(ctx, email, pass)
-	if err != nil {
-		return nil, err
-	}
-
-	// calc expiration time values
-	var (
-		authExp    = time.Now().Add(time.Minute * time.Duration(s.tokenExpiration))
-		refreshExp = time.Now().Add(time.Minute * time.Duration(s.refreshTokenExpiration))
-	)
-
-	authToken, err := jwt.CreateToken(s.secret, s.userClaims(user, authExp))
-	if err != nil {
-		return nil, err // todo
-	}
-
-	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(user, refreshExp))
-	if err != nil {
-		return nil, err // todo
-	}
-
-	return &UserToken{
-		AuthorizationToken: authToken,
-		RefreshToken:       refreshToken,
-		ExpiresAt:          authExp.Unix(),
-	}, nil
+func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.User, error) {
+	return s.userOps.Create(ctx, user)
 }
 
-func (s *AuthService) LoginByPhone(ctx context.Context, phone, pass string) (*UserToken, error) {
-	user, err := s.userOps.GetUserByPhoneAndPassword(ctx, phone, pass)
+func (s *AuthService) LoginUser(ctx context.Context, email, pass string) (*AuthToken, error) {
+	user, err := s.userOps.GetUser(ctx, email, pass)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +58,7 @@ func (s *AuthService) LoginByPhone(ctx context.Context, phone, pass string) (*Us
 		return nil, err // todo
 	}
 
-	return &UserToken{
+	return &AuthToken{
 		AuthorizationToken: authToken,
 		RefreshToken:       refreshToken,
 		ExpiresAt:          authExp.Unix(),
@@ -97,7 +72,7 @@ func (s *AuthService) userClaims(user *user.User, exp time.Time) *jwt.UserClaims
 				Time: exp,
 			},
 		},
-		UserID: user.ID,
-		IsAdmin:   user.IsAdmin,
+		UserID:  user.ID,
+		IsAdmin: user.IsAdmin,
 	}
 }
