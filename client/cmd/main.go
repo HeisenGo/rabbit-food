@@ -15,7 +15,7 @@ func main() {
 	cfg := readConfig()
 	scanner := bufio.NewScanner(os.Stdin)
 
-	mainMenu := menus.CreateMainMenu(cfg.GetService())
+	mainMenu := menus.GetMainMenu(cfg.GetService())
 	mainMenu.Execute(scanner)
 }
 
