@@ -11,7 +11,7 @@ import (
 )
 
 func ReadInput(scanner *bufio.Scanner, prompt string) string {
-	ColoredPrint(constants.Yellow, fmt.Sprintf("\t%s", prompt))
+	ColoredPrint(constants.Purple, fmt.Sprintf("\t%s", prompt))
 	scanner.Scan()
 	return scanner.Text()
 }
