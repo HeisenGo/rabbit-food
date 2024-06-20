@@ -4,10 +4,6 @@ import (
 	"encoding/json"
 )
 
-//func EncodeRegisterRequest(req RegisterRequest) ([]byte, error) {
-//	return json.Marshal(req)
-//}
-
 func DecodeRegisterRequest(data []byte) (RegisterRequest, error) {
 	var req RegisterRequest
 	err := json.Unmarshal(data, &req)
@@ -28,7 +24,7 @@ func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
-func EncodeLoginReponse(res LoginResponse)([]byte, error) {
+func EncodeLoginResponse(res LoginResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 func DecodeLoginResponse(data []byte) (LoginResponse, error) {
