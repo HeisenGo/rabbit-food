@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 	"server/internal/models/user"
-	"server/internal/protocol"
+	"server/internal/protocol/tcp"
 	"server/services"
 )
 
@@ -16,64 +16,65 @@ type AuthHandler struct {
 func NewAuthHandler(authService services.AuthService) *AuthHandler {
 	return &AuthHandler{authService}
 }
-func (h *AuthHandler) HandleRegister(ctx context.Context, conn net.Conn, req *protocol.TCPRequest) {
-	reqData, err := protocol.DecodeRegisterRequest(req.Data)
+func (h *AuthHandler) HandleRegister(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeRegisterRequest(req.Data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
 		fmt.Println("Error decoding register request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
 	createdUserToken, err := h.authService.CreateUser(ctx, newUser)
-	response := protocol.RegisterResponse{}
+	response := tcp.RegisterResponse{}
 	if err != nil {
-		response.Message = err.Error()
-		// TODO: write a func like http.Error() to return here (else must be removed)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
 	} else {
-		response = protocol.RegisterResponse{
-			Success: err == nil,
+		response = tcp.RegisterResponse{
 			Message: fmt.Sprintf("user created"),
 			Token:   createdUserToken,
 		}
 	}
-	resData, err := protocol.EncodeRegisterResponse(response)
+	resData, err := tcp.EncodeRegisterResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding register response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-
-	conn.Write(resData)
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
-func (h *AuthHandler) HandleLogin(ctx context.Context, conn net.Conn, req *protocol.TCPRequest) {
-	reqData, err := protocol.DecodeLoginRequest(req.Data)
+func (h *AuthHandler) HandleLogin(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeLoginRequest(req.Data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
 		fmt.Println("Error decoding login request:", err)
 		return
 	}
 	authenticatedUserToken, err := h.authService.LoginUser(ctx, reqData.PhoneOrEmail, reqData.Password)
-	response := protocol.LoginResponse{}
+	response := tcp.LoginResponse{}
 	if err != nil {
-		response.Message = err.Error()
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
 	} else {
-		response = protocol.LoginResponse{
-			Success:   err == nil,
+		response = tcp.LoginResponse{
 			Message:   fmt.Sprintf("User-Logged-in."),
 			AuthToken: authenticatedUserToken,
 		}
 	}
-	resData, err := protocol.EncodeLoginResponse(response)
+	resData, err := tcp.EncodeLoginResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding Login response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	conn.Write(resData)
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
 
-func (h *AuthHandler) AuthRouter(ctx context.Context, conn net.Conn, req *protocol.TCPRequest) {
+func (h *AuthHandler) AuthRouter(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	switch req.Location {
 	case "register":
 		h.HandleRegister(ctx, conn, req)
