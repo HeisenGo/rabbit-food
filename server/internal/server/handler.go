@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net"
 	"server/api/tcp/handlers"
+	"server/internal/protocol"
+	"strings"
 )
 
 type Server struct {
@@ -26,14 +28,20 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		if err != nil {
 			return
 		}
+		buffer = buffer[:n]
 
-		// Assume the first byte indicates the type of request
-		switch buffer[0] {
-		case '1': // Register request
-			s.authHandler.HandleRegister(ctx, conn, buffer[1:n])
-		// Add other cases for different requests
-		case '2':
-			s.authHandler.HandleLogin(ctx, conn, buffer[1:n])
+		requestData, err := protocol.DecodeTCPRequest(buffer)
+		if err != nil {
+			//logger.Error("Error decoding register request:", err)
+			fmt.Println("request format is not correct.", err)
+			return
+		}
+		allRoutes := strings.Split(requestData.Location, "/")
+		route := allRoutes[0]
+		requestData.Location = strings.Join(allRoutes[1:], "/")
+		switch route {
+		case "auth":
+			s.authHandler.AuthRouter(ctx, conn, requestData)
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))
