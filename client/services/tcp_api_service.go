@@ -40,19 +40,19 @@ func (s *APIService) Register(userData *models.User) error {
 	// Send the message to the server
 	data := fmt.Sprintf("1{\"phone\": \"%s\", \"email\": \"%s\", \"password\": \"%s\"}", userData.Phone, userData.Email, userData.Password)
 	_, err = conn.Write([]byte(data))
-	fmt.Println("Data has been sent!")
+	//fmt.Println("Data has been sent!")
 	if err != nil {
 		fmt.Println("Error writing to server:", err)
 		return err
 	}
 
 	// Read the response from the server
-	response, err := bufio.NewReader(conn).ReadString(' ')
+	_, err = bufio.NewReader(conn).ReadString(' ')
 	if err != nil {
 		fmt.Println("Error reading from server:", err)
 		return err
 	}
-	fmt.Printf("Server response: %s", response)
+	//fmt.Printf("Server response: %s", response)
 	return nil
 }
 
@@ -62,4 +62,14 @@ func (s *APIService) GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
 		ID:      req.ID,
 		Balance: 50000,
 	}, nil
+}
+
+func (s *APIService) Login(req *models.LoginUserReq) (*models.User, error) {
+	//TODO implement me
+	return nil, nil
+}
+
+func (s *APIService) Logout(req *models.LogoutUserReq) error {
+	//TODO implement me
+	return nil
 }
