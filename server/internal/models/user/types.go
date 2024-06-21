@@ -2,8 +2,6 @@ package user
 
 import (
 	"context"
-	"crypto/sha256"
-	"fmt"
 	"time"
 )
 
@@ -40,11 +38,4 @@ func (u *User) SetPhone(phone string) {
 }
 func (u *User) SetPassword(password string) {
 	u.Password = password
-}
-
-func (u *User) PasswordIsValid(pass string) bool {
-	h := sha256.New()
-	h.Write([]byte(pass))
-	passSha256 := h.Sum(nil)
-	return fmt.Sprintf("%x", passSha256) == u.Password
 }
