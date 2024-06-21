@@ -13,5 +13,5 @@ type User struct {
 	LastName  string
 	Password  string
 	BirthDate time.Time
-	IsAdmin   bool
+	IsAdmin   bool `gorm:"default:false"`
 }
