@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 	"server/api/tcp/handlers"
-	"server/internal/protocol"
+	"server/internal/protocol/tcp"
 	"strings"
 )
 
@@ -30,7 +30,7 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		}
 		buffer = buffer[:n]
 
-		requestData, err := protocol.DecodeTCPRequest(buffer)
+		requestData, err := tcp.DecodeTCPRequest(buffer)
 		if err != nil {
 			//logger.Error("Error decoding register request:", err)
 			fmt.Println("request format is not correct.", err)

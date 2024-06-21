@@ -1,4 +1,4 @@
-package protocol
+package tcp
 
 import "server/internal/models/auth"
 
@@ -8,7 +8,6 @@ type RegisterRequest struct {
 	Password string  `json:"password"`
 }
 type RegisterResponse struct {
-	Success bool
 	Message string
 	Token   *auth.Token
 }
@@ -17,7 +16,6 @@ type LoginRequest struct {
 	Password     string `json:"password"`
 }
 type LoginResponse struct {
-	Success   bool
 	Message   string
 	AuthToken *auth.Token
 }
