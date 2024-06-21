@@ -1,4 +1,4 @@
-package protocol
+package tcp
 
 import (
 	"encoding/json"
