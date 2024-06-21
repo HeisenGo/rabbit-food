@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"net"
 )
@@ -23,7 +22,8 @@ func main() {
 	//message, _ := reader.ReadString('\n')
 
 	// Send the message to the server
-	_, err = conn.Write([]byte(`1{"phone": "38383", "email": "fuhu", "password": "ddhh"}`))
+	_, err = conn.Write([]byte(`{"location":"auth/register","header":{"authorization":"Bearer ehihiieirfiig.rfuhugr.ruhuhfhh"},"data":{"phone":"09187867201","email":"kiarash@gk.co","password":"Kiarash@123"}}
+`))
 	fmt.Println("Data has been sent!")
 	if err != nil {
 		fmt.Println("Error writing to server:", err)
@@ -31,10 +31,17 @@ func main() {
 	}
 
 	// Read the response from the server
-	response, err := bufio.NewReader(conn).ReadString(' ')
+	// Read data from the connection
+	buffer := make([]byte, 4096)
+	bytesRead, err := conn.Read(buffer)
+	if err != nil {
+		fmt.Println("Error reading:", err)
+		return
+	}
+
+	fmt.Println("Received:", string(buffer[:bytesRead]))
 	if err != nil {
 		fmt.Println("Error reading from server:", err)
 		return
 	}
-	fmt.Printf("Server response: %s", response)
 }
