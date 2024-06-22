@@ -13,5 +13,6 @@ type User struct {
 	LastName  string
 	Password  string
 	BirthDate time.Time
-	IsAdmin   bool `gorm:"default:false"`
+	IsAdmin   bool    `gorm:"default:false"`
+	Wallet    *Wallet `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
