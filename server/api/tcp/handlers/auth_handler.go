@@ -74,11 +74,16 @@ func (h *AuthHandler) HandleLogin(ctx context.Context, conn net.Conn, req *tcp.R
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
 
-func (h *AuthHandler) AuthRouter(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	switch req.Location {
-	case "register":
-		h.HandleRegister(ctx, conn, req)
-	case "login":
-		h.HandleLogin(ctx, conn, req)
+func (h *AuthHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
+	if TCPReq.Header["method"] == tcp.MethodPost {
+		switch TCPReq.Location {
+		case "register":
+			h.HandleRegister(ctx, conn, TCPReq)
+		case "login":
+			h.HandleLogin(ctx, conn, TCPReq)
+		}
+	} else {
+		tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
+		return
 	}
 }
