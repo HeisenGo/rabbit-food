@@ -10,8 +10,8 @@ func DecodeRegisterRequest(data []byte) (RegisterRequest, error) {
 	return req, err
 }
 
-func EncodeRegisterRequest(res RegisterRequest) ([]byte, error) {
-	return json.Marshal(res)
+func EncodeRegisterRequest(req RegisterRequest) ([]byte, error) {
+	return json.Marshal(req)
 }
 
 func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
@@ -31,4 +31,8 @@ func DecodeLoginResponse(data []byte) (LoginResponse, error) {
 	var req LoginResponse
 	err := json.Unmarshal(data, &req)
 	return req, err
+}
+
+func EncodeLoginRequest(req LoginRequest) ([]byte, error) {
+	return json.Marshal(req)
 }

@@ -4,7 +4,6 @@ import (
 	"client/models"
 	"client/protocol/tcp"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net"
 	"sync"
@@ -35,7 +34,7 @@ func (s *APIService) Register(userData *models.User) (tcp.Token, error) {
 	// API call here
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
 	if err != nil {
-		return tcp.Token{}, errors.New(fmt.Sprintf("Error connecting to server: %v", err))
+		return tcp.Token{}, fmt.Errorf("error connecting to server: %v", err)
 	}
 	defer conn.Close()
 
@@ -78,7 +77,7 @@ func (s *APIService) Register(userData *models.User) (tcp.Token, error) {
 	response, err := tcp.DecodeTCPResponse(buffer)
 	if err != nil {
 		fmt.Println("Error decoding response", response)
-		time.Sleep(time.Second * 2)
+		//time.Sleep(time.Second * 2)
 
 		return tcp.Token{}, err
 	}
@@ -88,12 +87,12 @@ func (s *APIService) Register(userData *models.User) (tcp.Token, error) {
 		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
 		if err != nil {
 			fmt.Println("error in decoding server error")
-			time.Sleep(time.Minute * 2)
+			//time.Sleep(time.Minute * 2)
 
 			return tcp.Token{}, err
 		}
 		fmt.Println("Error creating", responseErr.Message)
-		time.Sleep(time.Second * 2)
+		//time.Sleep(time.Second * 2)
 
 		return tcp.Token{}, fmt.Errorf(responseErr.Message)
 	}
@@ -103,8 +102,8 @@ func (s *APIService) Register(userData *models.User) (tcp.Token, error) {
 	err = json.Unmarshal(response.Data, &responseData)
 	if err != nil {
 		fmt.Println("Error in decoding a successful response", err)
-		time.Sleep(time.Second * 2)
-		time.Sleep(time.Minute * 1)
+		// time.Sleep(time.Second * 2)
+		// time.Sleep(time.Minute * 1)
 
 		return tcp.Token{}, err
 	}
@@ -127,9 +126,103 @@ func (s *APIService) GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
 	}, nil
 }
 
-func (s *APIService) Login(req *models.LoginUserReq) (*models.User, error) {
-	//TODO implement me
-	return nil, nil
+func (s *APIService) Login(req *models.LoginUserReq) (*tcp.Token, error) {
+	// API call here
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+	if err != nil {
+		//return tcp.Token{}, fmt.Errorf("error connecting to server: %v", err)
+		return nil, fmt.Errorf("error connecting to server: %v", err)
+	}
+	defer conn.Close()
+
+	// Send the message to the server
+	LoginReq := tcp.LoginRequest{
+		PhoneOrEmail: req.PhoneOrEmail,
+		Password:     req.Password,
+	}
+	encodedLoginRequest, err := tcp.EncodeLoginRequest(LoginReq)
+	if err != nil {
+		fmt.Println("Encoding Problem") //:To Do
+		time.Sleep(time.Second * 2)
+		//return tcp.Token{}, err
+		return nil, err
+	}
+
+	//data :=
+	// fmt.Sprintf("1{\"phone\": \"%s\", \"email\": \"%s\", \"password\": \"%s\"}", userData.Phone, userData.Email, userData.Password)
+	//_, err = conn.Write([]byte(data))
+	err = tcp.SendRequest(conn, "auth/login", map[string]string{}, encodedLoginRequest)
+	//fmt.Println("Data has been sent!")
+	if err != nil {
+		fmt.Println("Error writing to server:", err)
+		time.Sleep(time.Second * 2)
+
+		//return tcp.Token{}, err
+		return nil, err
+	}
+
+	// Read the response from the server
+	buffer := make([]byte, 4096)
+	n, err := conn.Read(buffer)
+	// _, err = bufio.NewReader(conn).ReadString(' ')
+	if err != nil {
+		fmt.Println("Error reading from server:", err)
+		time.Sleep(time.Second * 2)
+
+		//return tcp.Token{}, err
+		return nil, err
+	}
+	buffer = buffer[:n]
+	fmt.Println(string(buffer))
+	response, err := tcp.DecodeTCPResponse(buffer)
+	fmt.Println(response)
+	if err != nil {
+		fmt.Println("Error decoding response", response)
+		//time.Sleep(time.Second * 2)
+
+		//return tcp.Token{}, err
+		return nil, err
+	}
+	if response.StatusCode != uint(200) {
+		//var responseData tcp.ResponseError
+		fmt.Println(string(response.Data))
+		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
+		if err != nil {
+			fmt.Println("error in decoding server error")
+			//time.Sleep(time.Minute * 2)
+
+			//return tcp.Token{}, err
+			return nil, err
+		}
+		fmt.Println("Error creating", responseErr.Message)
+		//time.Sleep(time.Second * 2)
+
+		//return tcp.Token{}, fmt.Errorf(responseErr.Message)
+		return nil, fmt.Errorf(responseErr.Message)
+	}
+	var responseData tcp.LoginResponse
+	fmt.Println(string(response.Data))
+
+	err = json.Unmarshal(response.Data, &responseData)
+	if err != nil {
+		fmt.Println("Error in decoding a successful response", err)
+		// time.Sleep(time.Second * 2)
+		// time.Sleep(time.Minute * 1)
+
+		//return tcp.Token{}, err
+		return nil, err
+	}
+	var token tcp.Token
+	err = json.Unmarshal(responseData.AuthToken, &token)
+	if err != nil {
+		fmt.Println("Error in decoding the token part of data")
+		//return tcp.Token{}, err
+		return nil, err
+	}
+	fmt.Println("Login:", token)
+	//fmt.Printf("Server response: %s", response)
+	return &token, nil
+
 }
 
 func (s *APIService) Logout(req *models.LogoutUserReq) error {

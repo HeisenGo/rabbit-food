@@ -5,7 +5,6 @@ import (
 	"client/services"
 	"errors"
 	"fmt"
-	"time"
 )
 
 type RegisterCommand struct {
@@ -22,7 +21,7 @@ func (c *RegisterCommand) Execute(userData any) error {
 	fmt.Println("token: ", token.AuthorizationToken,
 		"\nReferesh:", token.RefreshToken,
 		"\nexpire: ", token.ExpiresAt)
-	time.Sleep(time.Minute * 2)
+	//time.Sleep(time.Minute * 2)
 	return err
 }
 

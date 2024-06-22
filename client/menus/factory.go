@@ -67,7 +67,7 @@ func getLogoutMenuItem(service services.Service) MenuComponent {
 
 func getLoginMenuItem(service services.Service) MenuComponent {
 	if loginMenuItem == nil {
-		loginMenuItem = NewLoginMenuItem("Login Menu", commands.NewLoginCommand(service), getProfileManagementMenu(service))
+		loginMenuItem = NewLoginMenuItem("Login Menu", commands.NewLoginCommand(service), getHomeMenu(service))
 	}
 	return loginMenuItem
 }
