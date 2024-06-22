@@ -1,6 +1,6 @@
 package tcp
 
-import "server/internal/models/auth"
+import "encoding/json"
 
 type RegisterRequest struct {
 	Phone    string  `json:"phone"`
@@ -8,8 +8,8 @@ type RegisterRequest struct {
 	Password string  `json:"password"`
 }
 type RegisterResponse struct {
-	Message string      `json:"message"`
-	Token   *auth.Token `json:"token"`
+	Message string          `json:"message"`
+	Token   json.RawMessage `json:"token"`
 }
 type LoginRequest struct {
 	PhoneOrEmail string `json:"phone_or_email"`
@@ -17,5 +17,5 @@ type LoginRequest struct {
 }
 type LoginResponse struct {
 	Message   string
-	AuthToken *auth.Token
+	AuthToken json.RawMessage
 }

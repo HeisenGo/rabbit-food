@@ -40,13 +40,13 @@ func ColoredPrint(color constants.Color, a ...any) {
 }
 
 func ByePrinter() {
-	ClearScreen()
+	// ClearScreen()
 	ColoredPrint(constants.Red, constants.AppLogo)
 }
 
 func WelcomeSayer() {
-	ClearScreen()
+	// ClearScreen()
 	ColoredPrint(constants.Red, constants.AppLogo)
 	time.Sleep(2 * time.Second)
-	ClearScreen()
+	// ClearScreen()
 }

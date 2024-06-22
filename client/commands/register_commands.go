@@ -4,6 +4,8 @@ import (
 	"client/models"
 	"client/services"
 	"errors"
+	"fmt"
+	"time"
 )
 
 type RegisterCommand struct {
@@ -15,7 +17,12 @@ func (c *RegisterCommand) Execute(userData any) error {
 	if !ok {
 		return errors.New("data type isn't user")
 	}
-	err := c.service.Register(user)
+	token, err := c.service.Register(user)
+	fmt.Println("New: ", token)
+	fmt.Println("token: ", token.AuthorizationToken,
+		"\nReferesh:", token.RefreshToken,
+		"\nexpire: ", token.ExpiresAt)
+	time.Sleep(time.Minute * 2)
 	return err
 }
 
