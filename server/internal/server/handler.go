@@ -41,7 +41,7 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		requestData.Location = strings.Join(allRoutes[1:], "/")
 		switch route {
 		case "auth":
-			s.authHandler.AuthRouter(ctx, conn, requestData)
+			s.authHandler.ServeTCP(ctx, conn, requestData)
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))
