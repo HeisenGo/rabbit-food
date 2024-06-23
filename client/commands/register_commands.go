@@ -22,6 +22,7 @@ func (c *RegisterCommand) Execute(userData any) error {
 		"\nReferesh:", token.RefreshToken,
 		"\nexpire: ", token.ExpiresAt)
 	//time.Sleep(time.Minute * 2)
+
 	return err
 }
 

@@ -6,15 +6,23 @@ import (
 )
 
 var (
-	mainMenu                 *Menu
-	registerMenuItem         MenuComponent
-	loginMenuItem            MenuComponent
+	mainMenu         *Menu
+	registerMenuItem MenuComponent
+	loginMenuItem    MenuComponent
+	//////       Home Menu ///////////////
 	homeMenu                 *Menu // TODO: bayad be interface vabaste bashe ye fekri bokon
-	profileManagementMenu    MenuComponent
+	profileManagementMenu    *Menu
 	walletManagementMenu     MenuComponent
 	foodOrderMenu            MenuComponent
 	restaurantManagementMenu MenuComponent
 	logoutMenuItem           MenuComponent
+	//////       Profile ManagementMeu /////
+	///// Info to display and last updated address to display
+	editInfoMenu    *Menu
+	manageAddresses *Menu
+	editAddress     MenuComponent
+	deleteAddress   MenuComponent
+	addNewAddress   MenuComponent
 )
 
 func getWalletManagementMenu(service services.Service) MenuComponent {
@@ -24,9 +32,25 @@ func getWalletManagementMenu(service services.Service) MenuComponent {
 	return walletManagementMenu
 }
 
+func getManageAddressesMenu(service services.Service) MenuComponent {
+	// if manageAddresses == nil {
+
+	// }
+	return manageAddresses
+}
+
+func getEditInfoMenue(service services.Service) MenuComponent {
+	// if editInfoMenu == nil {
+	// 	//editInfoMenu = New
+	// }
+	return editInfoMenu
+}
+
 func getProfileManagementMenu(service services.Service) MenuComponent {
 	if profileManagementMenu == nil {
 		profileManagementMenu = NewMenu("Profile Management Menu")
+		profileManagementMenu.Add(getEditInfoMenue(service))
+		profileManagementMenu.Add(getManageAddressesMenu(service))
 	}
 	return profileManagementMenu
 }
