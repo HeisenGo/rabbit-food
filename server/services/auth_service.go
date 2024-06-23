@@ -27,10 +27,10 @@ func NewAuthService(userOps *user.Ops, secret []byte,
 	}
 }
 
-func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*auth.Token, error) {
+func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.User, *auth.Token, error) {
 	createdUser, err := s.userOps.Create(ctx, user)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	var (
 		authExp    = time.Now().Add(time.Minute * time.Duration(s.tokenExpiration))
@@ -40,10 +40,13 @@ func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*auth.To
 
 	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, refreshExp))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
-	return auth.NewToken(authToken, refreshToken, authExp.Unix()), nil
+	token := auth.NewToken(authToken, refreshToken, authExp.Unix())
+	if err != nil {
+		return nil, nil, err
+	}
+	return createdUser, token, nil
 }
 
 func (s *AuthService) LoginUser(ctx context.Context, email, pass string) (*auth.Token, error) {
