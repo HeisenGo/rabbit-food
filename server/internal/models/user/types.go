@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"server/internal/models/wallet/wallet"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type User struct {
 	Password  string
 	BirthDate time.Time
 	IsAdmin   bool
+	Wallet    *wallet.Wallet
 }
 
 func NewUser(phone string, email *string, password string) *User {

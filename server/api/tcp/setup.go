@@ -11,7 +11,7 @@ import (
 )
 
 func Run(cfg config.Server, app *services.AppContainer) {
-	authHandler := handlers.NewAuthHandler(*app.AuthService)
+	authHandler := handlers.NewAuthHandler(*app.AuthService, *app.WalletService)
 	newServer := server.NewServer(authHandler)
 	listener, err := net.Listen("tcp", ":"+cfg.Port)
 	fmt.Println("listening!")

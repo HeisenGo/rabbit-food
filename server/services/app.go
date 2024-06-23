@@ -4,15 +4,17 @@ import (
 	"log"
 	"server/config"
 	"server/internal/models/user"
+	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
 
 	"gorm.io/gorm"
 )
 
 type AppContainer struct {
-	cfg         config.Config
-	dbConn      *gorm.DB
-	AuthService *AuthService
+	cfg           config.Config
+	dbConn        *gorm.DB
+	AuthService   *AuthService
+	WalletService *WalletService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -27,6 +29,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 	}
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
+	app.setWalletService()
 
 	return app, nil
 }
@@ -50,4 +53,11 @@ func (a *AppContainer) setAuthService(secret []byte,
 		return
 	}
 	a.AuthService = NewAuthService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)), secret, tokenExpiration, refreshTokenExpiration)
+}
+
+func (a *AppContainer) setWalletService() {
+	if a.WalletService != nil {
+		return
+	}
+	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)))
 }

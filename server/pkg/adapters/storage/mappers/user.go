@@ -13,7 +13,7 @@ func UserEntityToDomain(entity *entities.User) *user.User {
 		Email:     entity.Email,
 		Password:  entity.Password,
 		Phone:     entity.Phone,
-		IsAdmin:  entity.IsAdmin,
+		IsAdmin:   entity.IsAdmin,
 	}
 }
 
