@@ -2,27 +2,29 @@ package services
 
 import (
 	"gorm.io/gorm"
-	"log"
 	"server/config"
 	"server/internal/models/user"
 	"server/pkg/adapters/storage"
+	"server/pkg/logger"
 )
 
 type AppContainer struct {
 	cfg         config.Config
 	dbConn      *gorm.DB
+	logger      *logger.CustomLogger
 	UserService *UserService
 }
 
-func NewAppContainer(cfg config.Config) (*AppContainer, error) {
+func NewAppContainer(cfg config.Config, logger *logger.CustomLogger) (*AppContainer, error) {
 	app := &AppContainer{
-		cfg: cfg,
+		cfg:    cfg,
+		logger: logger,
 	}
 
 	app.mustInitDB()
 	err := storage.Migrate(app.dbConn)
 	if err != nil {
-		log.Fatal("Migration failed: ", err)
+		logger.Fatal("Migration failed: ", err)
 	}
 
 	app.setUserService()
@@ -37,7 +39,7 @@ func (a *AppContainer) mustInitDB() {
 
 	db, err := storage.NewPostgresGormConnection(a.cfg.DB)
 	if err != nil {
-		log.Fatal(err)
+		a.logger.Fatal(err)
 	}
 
 	a.dbConn = db
@@ -45,6 +47,7 @@ func (a *AppContainer) mustInitDB() {
 
 func (a *AppContainer) setUserService() {
 	if a.UserService != nil {
+		a.logger.Error("Error In Running Service")
 		return
 	}
 	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))

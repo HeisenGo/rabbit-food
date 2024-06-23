@@ -7,21 +7,23 @@ import (
 	"server/internal/models/user"
 	"server/internal/protocol"
 	"server/services"
+	"server/pkg/logger"
 )
 
 type UserHandler struct {
 	userService services.UserService
+	logger *logger.CustomLogger
 }
 
-func NewUserHandler(userService services.UserService) *UserHandler {
-	return &UserHandler{userService}
+func NewUserHandler(userService services.UserService,logger *logger.CustomLogger) *UserHandler {
+	return &UserHandler{userService: userService ,
+		logger: logger}
 }
 
 func (h *UserHandler) HandleRegister(ctx context.Context, conn net.Conn, data []byte) {
 	reqData, err := protocol.DecodeRegisterRequest(data)
 	if err != nil {
-		//logger.Error("Error decoding register request:", err)
-		fmt.Println("Error decoding register request:", err)
+		h.logger.Error("Error decoding register request:", err)
 		return
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
@@ -33,12 +35,11 @@ func (h *UserHandler) HandleRegister(ctx context.Context, conn net.Conn, data []
 	}
 	if err != nil {
 		response.Message = err.Error()
+		h.logger.Error("In Respones :",response.Message)
 	}
-
 	resData, err := protocol.EncodeRegisterResponse(response)
 	if err != nil {
-		//logger.Error("Error encoding register response:", err)
-		fmt.Println("Error encoding register response:", err)
+		h.logger.Error("In Respones :",response.Message)
 		return
 	}
 
