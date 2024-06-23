@@ -1,31 +1,31 @@
 package services
 
 import (
-	"log"
+	"gorm.io/gorm"
 	"server/config"
 	"server/internal/models/user"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
-
-	"gorm.io/gorm"
+	"server/pkg/logger"
 )
 
 type AppContainer struct {
-	cfg           config.Config
-	dbConn        *gorm.DB
-	AuthService   *AuthService
-	WalletService *WalletService
+	cfg         config.Config
+	dbConn      *gorm.DB
+	logger      *logger.CustomLogger
+	UserService *UserService
 }
 
-func NewAppContainer(cfg config.Config) (*AppContainer, error) {
+func NewAppContainer(cfg config.Config, logger *logger.CustomLogger) (*AppContainer, error) {
 	app := &AppContainer{
-		cfg: cfg,
+		cfg:    cfg,
+		logger: logger,
 	}
 
 	app.mustInitDB()
 	err := storage.Migrate(app.dbConn)
 	if err != nil {
-		log.Fatal("Migration failed: ", err)
+		logger.Fatal("Migration failed: ", err)
 	}
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
@@ -41,22 +41,15 @@ func (a *AppContainer) mustInitDB() {
 
 	db, err := storage.NewPostgresGormConnection(a.cfg.DB)
 	if err != nil {
-		log.Fatal(err)
+		a.logger.Fatal(err)
 	}
 
 	a.dbConn = db
 }
 
-func (a *AppContainer) setAuthService(secret []byte,
-	tokenExpiration uint, refreshTokenExpiration uint) {
-	if a.AuthService != nil {
-		return
-	}
-	a.AuthService = NewAuthService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)), secret, tokenExpiration, refreshTokenExpiration)
-}
-
-func (a *AppContainer) setWalletService() {
-	if a.WalletService != nil {
+func (a *AppContainer) setUserService() {
+	if a.UserService != nil {
+		a.logger.Error("Error In Running Service")
 		return
 	}
 	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)))

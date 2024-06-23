@@ -6,18 +6,28 @@ import (
 	"server/api/tcp"
 	"server/config"
 	"server/services"
+	"server/pkg/logger"
+		
 )
 
 var envFilePath = flag.String("envpath", "", "configuration path")
 
 func main() {
-	cfg := readConfig()
-
-	app, err := services.NewAppContainer(cfg)
-	if err != nil {
-		log.Fatal(err)
+	config := &logger.LoggerConfig{
+		WriteToConsole: true,
+		WriteToFile:    true,
+		FilePath:       "server.log",
 	}
-	tcp.Run(cfg.Server, app)
+	customlog, err := logger.NewCustomLogger(config)
+	if err != nil {
+		log.Fatalf("Could not initialize logger: %v", err)
+	}
+	cfg := readConfig()
+	app, err := services.NewAppContainer(cfg,customlog)
+	if err!=nil{
+		customlog.Error("Error In Running App Container.")
+	}
+	tcp.Run(cfg.Server, app,customlog)
 
 }
 

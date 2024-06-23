@@ -2,19 +2,20 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net"
-	"server/api/tcp/handlers"
-	"server/internal/protocol/tcp"
-	"strings"
+	"server/internal/server/handlers"
+	"server/pkg/logger"
 )
 
 type Server struct {
-	authHandler *handlers.AuthHandler
+	userHandler *handlers.UserHandler
+	logger *logger.CustomLogger
 }
 
-func NewServer(authHandler *handlers.AuthHandler) *Server {
-	return &Server{authHandler}
+func NewServer(userHandler *handlers.UserHandler,logger *logger.CustomLogger) *Server {
+	return &Server{userHandler:userHandler,
+					logger: logger,
+				}
 }
 
 func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
@@ -26,24 +27,18 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 	for {
 		n, err := conn.Read(buffer)
 		if err != nil {
+			s.logger.Debug("Nothing To Read ",err)
 			return
 		}
-		buffer = buffer[:n]
 
-		requestData, err := tcp.DecodeTCPRequest(buffer)
-		if err != nil {
-			//logger.Error("Error decoding register request:", err)
-			fmt.Println("request format is not correct.", err)
-			return
-		}
-		allRoutes := strings.Split(requestData.Location, "/")
-		route := allRoutes[0]
-		requestData.Location = strings.Join(allRoutes[1:], "/")
-		switch route {
-		case "auth":
-			s.authHandler.ServeTCP(ctx, conn, requestData)
+		// Assume the first byte indicates the type of request
+		switch buffer[0] {
+		case '1': // Register request
+			s.userHandler.HandleRegister(ctx, conn, buffer[1:n])
+			s.logger.Info("Register Handled !")
+		// Add other cases for different requests
 		default:
-			fmt.Println("default option!")
+			s.logger.Warn(" Wrong Request")
 			conn.Write([]byte("incorrect option!"))
 		}
 	}

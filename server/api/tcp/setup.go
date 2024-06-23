@@ -2,34 +2,31 @@ package tcp
 
 import (
 	"context"
-	"fmt"
 	"net"
 	"server/api/tcp/handlers"
 	"server/config"
 	"server/internal/server"
 	"server/services"
+	"server/pkg/logger"
 )
 
-func Run(cfg config.Server, app *services.AppContainer) {
-	authHandler := handlers.NewAuthHandler(*app.AuthService, *app.WalletService)
-	newServer := server.NewServer(authHandler)
+func Run(cfg config.Server, app *services.AppContainer,log *logger.CustomLogger) {
+	
+	userHandler := handlers.NewUserHandler(*app.UserService,log)
+	newServer := server.NewServer(userHandler,log) 
 	listener, err := net.Listen("tcp", ":"+cfg.Port)
-	fmt.Println("listening!")
+	log.Info("listening!")
 	if err != nil {
-		//logger.Error("Error starting server:", err)
-		fmt.Println("Error starting server:", err)
+		log.Error("Error starting Server")
 		return
 	}
 	defer listener.Close()
-	//logger.Info("Server started on port 8080")
-	fmt.Printf("Server started on port %v\n", cfg.Port)
-
+	log.Info("Server started on port 8080")
 	ctx := context.Background()
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			//logger.Error("Error accepting connection:", err)
-			fmt.Println("Error accepting connection:", err)
+			log.Warn("Error accepting connection:", err)
 			continue
 		}
 		go newServer.HandleConnection(ctx, conn)
