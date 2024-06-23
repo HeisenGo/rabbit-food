@@ -3,9 +3,9 @@ package tcp
 import (
 	"context"
 	"net"
+	"server/api/tcp/handlers"
 	"server/config"
 	"server/internal/server"
-	"server/internal/server/handlers"
 	"server/services"
 	"server/pkg/logger"
 )

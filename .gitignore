@@ -94,3 +94,6 @@ testresult/
 # Docker
 Dockerfile
 docker-compose.yml
+
+# personal files
+nedi.go

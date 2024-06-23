@@ -4,6 +4,7 @@ import (
 	"gorm.io/gorm"
 	"server/config"
 	"server/internal/models/user"
+	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
 	"server/pkg/logger"
 )
@@ -27,7 +28,8 @@ func NewAppContainer(cfg config.Config, logger *logger.CustomLogger) (*AppContai
 		logger.Fatal("Migration failed: ", err)
 	}
 
-	app.setUserService()
+	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
+	app.setWalletService()
 
 	return app, nil
 }
@@ -50,5 +52,5 @@ func (a *AppContainer) setUserService() {
 		a.logger.Error("Error In Running Service")
 		return
 	}
-	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
+	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)))
 }

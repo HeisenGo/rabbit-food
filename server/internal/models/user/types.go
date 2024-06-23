@@ -1,31 +1,43 @@
 package user
 
 import (
-	"server/pkg/adapters/storage/entities"
+	"context"
+	"server/internal/models/wallet/wallet"
 	"time"
 )
 
 type Repo interface {
-	Create(user *User) (*entities.User, error)
-	//Create(ctx context.Context, user *User) error
-	//GetByID(ctx context.Context, id uint) (*User, error)
-	//GetByEmail(ctx context.Context, email string) (*User, error)
+	Create(ctx context.Context, user *User) (*User, error)
+	GetByPhone(ctx context.Context, phone string) (*User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
 }
 
 type User struct {
 	ID        uint
 	Phone     string
-	Email     string
+	Email     *string
 	FirstName string
 	LastName  string
 	Password  string
 	BirthDate time.Time
+	IsAdmin   bool
+	Wallet    *wallet.Wallet
 }
 
-func NewUser(phone, email, password string) *User {
+func NewUser(phone string, email *string, password string) *User {
 	return &User{
 		Phone:    phone,
 		Email:    email,
 		Password: password,
 	}
+}
+
+func (u *User) SetEmail(email string) {
+	u.Email = &email
+}
+func (u *User) SetPhone(phone string) {
+	u.Phone = phone
+}
+func (u *User) SetPassword(password string) {
+	u.Password = password
 }
