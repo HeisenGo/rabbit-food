@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 	"server/config"
+	"server/internal/models/restaurant"
 	"server/internal/models/user"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
@@ -31,6 +32,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
 	app.setWalletService()
+	app.setRestaurantService()
 
 	return app, nil
 }
@@ -61,4 +63,11 @@ func (a *AppContainer) setWalletService() {
 		return
 	}
 	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)))
+}
+
+func (a *AppContainer) setRestaurantService() {
+	if a.RestuarantService != nil {
+		return
+	}
+	a.RestuarantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)))
 }

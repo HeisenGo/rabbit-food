@@ -6,8 +6,8 @@ import (
 
 type Restaurant struct {
 	gorm.Model
-	Name  string
-	Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
+	Name string
+	//Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
 }
 
 type UserRestaurant struct {
