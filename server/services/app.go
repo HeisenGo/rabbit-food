@@ -11,10 +11,11 @@ import (
 )
 
 type AppContainer struct {
-	cfg           config.Config
-	dbConn        *gorm.DB
-	AuthService   *AuthService
-	WalletService *WalletService
+	cfg               config.Config
+	dbConn            *gorm.DB
+	AuthService       *AuthService
+	WalletService     *WalletService
+	RestuarantService *RestaurantService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {

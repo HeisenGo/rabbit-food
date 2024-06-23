@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"server/internal/models/restaurant"
 	"server/internal/models/wallet/wallet"
 	"time"
 )
@@ -13,15 +14,16 @@ type Repo interface {
 }
 
 type User struct {
-	ID        uint
-	Phone     string
-	Email     *string
-	FirstName string
-	LastName  string
-	Password  string
-	BirthDate time.Time
-	IsAdmin   bool
-	Wallet    *wallet.Wallet
+	ID         uint
+	Phone      string
+	Email      *string
+	FirstName  string
+	LastName   string
+	Password   string
+	BirthDate  time.Time
+	IsAdmin    bool
+	Wallet     *wallet.Wallet
+	Restaurant *restaurant.Restaurant
 }
 
 func NewUser(phone string, email *string, password string) *User {
