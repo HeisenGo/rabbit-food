@@ -10,11 +10,12 @@ import (
 )
 
 type Server struct {
-	authHandler *handlers.AuthHandler
+	authHandler   *handlers.AuthHandler
+	walletHandler *handlers.WalletHandler
 }
 
-func NewServer(authHandler *handlers.AuthHandler) *Server {
-	return &Server{authHandler}
+func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler) *Server {
+	return &Server{authHandler, walletHandler}
 }
 
 func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
@@ -42,6 +43,8 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		switch route {
 		case "auth":
 			s.authHandler.ServeTCP(ctx, conn, requestData)
+		case "wallets":
+			s.walletHandler.ServeTCP(ctx, conn, requestData)
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))

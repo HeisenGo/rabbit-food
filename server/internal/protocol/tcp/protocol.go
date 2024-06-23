@@ -9,7 +9,7 @@ func SendResponse(conn net.Conn, statusCode uint, header map[string]string, data
 	tcpResponse := NewTCPResponse(statusCode, header, data)
 	encodeResponse, err := encodeTCPResponse(tcpResponse)
 	if err != nil {
-		tcpResponse = NewTCPResponse(500, nil, nil)
+		tcpResponse = NewTCPResponse(StatusInternalServerError, nil, nil)
 		encodeResponse, _ = encodeTCPResponse(tcpResponse)
 	}
 	conn.Write(encodeResponse)

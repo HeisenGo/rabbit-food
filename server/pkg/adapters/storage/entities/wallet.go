@@ -11,6 +11,10 @@ type Wallet struct {
 	CreditCards []CreditCard `gorm:"many2many:wallet_credit_cards;"`
 }
 
+func NewEntityWallet() *Wallet {
+	return &Wallet{}
+}
+
 type CreditCard struct {
 	gorm.Model
 	Number string
@@ -27,6 +31,8 @@ type WalletTransaction struct {
 
 type WalletCreditCard struct {
 	gorm.Model
-	WalletID     uint `gorm:"index"`
-	CreditCardID uint `gorm:"index"`
+	WalletID     uint        `gorm:"index"`
+	Wallet       *Wallet     `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	CreditCardID uint        `gorm:"index"`
+	CreditCard   *CreditCard `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

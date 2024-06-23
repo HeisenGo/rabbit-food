@@ -5,18 +5,18 @@ import (
 	"gorm.io/gorm"
 )
 
-type Ops struct {
+type WalletOps struct {
 	db   *gorm.DB
 	repo Repo
 }
 
-func NewWalletOps(db *gorm.DB, repo Repo) *Ops {
-	return &Ops{
+func NewWalletOps(db *gorm.DB, repo Repo) *WalletOps {
+	return &WalletOps{
 		db:   db,
 		repo: repo,
 	}
 }
 
-func (o *Ops) Create(ctx context.Context, wallet *Wallet) (*Wallet, error) {
+func (o *WalletOps) Create(ctx context.Context, wallet *Wallet) (*Wallet, error) {
 	return o.repo.Create(ctx, wallet)
 }

@@ -2,9 +2,7 @@ package storage
 
 import (
 	"context"
-	"errors"
 	"gorm.io/gorm"
-	"server/internal/errors/users"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage/mappers"
 )
@@ -22,9 +20,6 @@ func (r *walletRepo) Create(ctx context.Context, wallet *wallet.Wallet) (*wallet
 	newWallet := mappers.WalletDomainToEntity(wallet)
 	err := r.db.Create(&newWallet).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return nil, users.ErrUserExists
-		}
 		return nil, err
 	}
 	createdWallet := mappers.WalletEntityToDomain(newWallet)

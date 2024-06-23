@@ -10,12 +10,11 @@ import (
 )
 
 type AuthHandler struct {
-	authService   services.AuthService
-	walletService services.WalletService
+	authService services.AuthService
 }
 
-func NewAuthHandler(authService services.AuthService, walletService services.WalletService) *AuthHandler {
-	return &AuthHandler{authService, walletService}
+func NewAuthHandler(authService services.AuthService) *AuthHandler {
+	return &AuthHandler{authService}
 }
 func (h *AuthHandler) HandleRegister(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeRegisterRequest(req.Data)
@@ -26,7 +25,7 @@ func (h *AuthHandler) HandleRegister(ctx context.Context, conn net.Conn, req *tc
 		return
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
-	createdUser, token, err := h.authService.CreateUser(ctx, newUser)
+	_, token, err := h.authService.CreateUser(ctx, newUser)
 	response := tcp.RegisterResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -37,7 +36,6 @@ func (h *AuthHandler) HandleRegister(ctx context.Context, conn net.Conn, req *tc
 			Token:   token,
 		}
 	}
-	_, err = h.walletService.CreateWalletByUserID(ctx, createdUser.ID)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return

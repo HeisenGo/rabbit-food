@@ -10,6 +10,16 @@ func DecodeRegisterRequest(data []byte) (RegisterRequest, error) {
 	return req, err
 }
 
+func DecodeAddCardToWalletRequest(data []byte) (AddCardToWalletRequest, error) {
+	var req AddCardToWalletRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeAddCardToWalletResponse(res AddCardToWalletResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
 func EncodeRegisterResponse(res RegisterResponse) ([]byte, error) {
 	return json.Marshal(res)
 }

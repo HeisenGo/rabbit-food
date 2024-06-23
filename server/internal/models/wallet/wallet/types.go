@@ -14,9 +14,6 @@ type Wallet struct {
 	Balance uint
 }
 
-func NewWallet(userID uint) *Wallet {
-	return &Wallet{
-		UserID:  userID,
-		Balance: 0,
-	}
+func NewWallet() *Wallet {
+	return &Wallet{}
 }
