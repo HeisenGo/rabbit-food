@@ -4,6 +4,7 @@ import (
 	"log"
 	"server/config"
 	"server/internal/models/user"
+	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
 
@@ -59,5 +60,5 @@ func (a *AppContainer) setWalletService() {
 	if a.WalletService != nil {
 		return
 	}
-	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)))
+	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)), creditCard.NewCreditCardOps(a.dbConn, storage.NewCreditCardRepo(a.dbConn)))
 }
