@@ -22,7 +22,7 @@ func main() {
 	//message, _ := reader.ReadString('\n')
 
 	// Send the message to the server
-	_, err = conn.Write([]byte(`{"location":"auth/register","header":{"authorization":"Bearer ehihiieirfiig.rfuhugr.ruhuhfhh"},"data":{"phone":"09187867201","email":"kiarash@gk.co","password":"Kiarash@123"}}
+	_, err = conn.Write([]byte(`{"location":"auth/register","header":{"method":"POST"},"data":{"phone":"09187567211","email":"kia5ra1sh@gk.co","password":"AliJaf@123"}}
 `))
 	fmt.Println("Data has been sent!")
 	if err != nil {

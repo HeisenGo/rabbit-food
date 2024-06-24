@@ -8,8 +8,8 @@ type RegisterRequest struct {
 	Password string  `json:"password"`
 }
 type RegisterResponse struct {
-	Message string      `json:"message"`
-	Token   *auth.Token `json:"token"`
+	Message string
+	Token   *auth.Token
 }
 type LoginRequest struct {
 	PhoneOrEmail string `json:"phone_or_email"`
