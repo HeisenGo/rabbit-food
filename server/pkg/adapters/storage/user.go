@@ -2,57 +2,59 @@ package storage
 
 import (
 	"context"
-	"errors"
 	"gorm.io/gorm"
-	"server/internal/errors/users"
 	"server/internal/models/user"
-	"server/pkg/adapters/storage/entities"
-	"server/pkg/adapters/storage/mappers"
 )
 
-type userRepo struct {
+type UserRepo struct {
 	db *gorm.DB
 }
 
-func (r *userRepo) Create(ctx context.Context, user *user.User) (*user.User, error) {
-	newUser := mappers.UserDomainToEntity(user)
-	err := r.db.Create(&newUser).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return nil, users.ErrUserExists
-		}
-		return nil, err
-	}
-	createdUser := mappers.UserEntityToDomain(newUser)
-	return createdUser, nil
+func NewUserRepo(db *gorm.DB) *UserRepo {
+	return &UserRepo{db: db}
 }
 
-func (r *userRepo) GetByPhone(ctx context.Context, phone string) (*user.User, error) {
-	var userEntity entities.User
-	err := r.db.WithContext(ctx).Model(&entities.User{}).Where("Phone = ?", phone).First(&userEntity).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, users.ErrUserNotFound
-		}
+func (r *UserRepo) Create(ctx context.Context, user *user.User) (*user.User, error) {
+	if err := r.db.WithContext(ctx).Create(user).Error; err != nil {
 		return nil, err
 	}
-	return mappers.UserEntityToDomain(&userEntity), nil
+	return user, nil
 }
 
-func (r *userRepo) GetByEmail(ctx context.Context, email string) (*user.User, error) {
-	var userEntity entities.User
-	err := r.db.WithContext(ctx).Model(&entities.User{}).Where("Email = ?", email).First(&userEntity).Error
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, users.ErrUserNotFound
-		}
+func (r *UserRepo) GetByPhone(ctx context.Context, phone string) (*user.User, error) {
+	var u user.User
+	if err := r.db.WithContext(ctx).Where("phone = ?", phone).First(&u).Error; err != nil {
 		return nil, err
 	}
-	return mappers.UserEntityToDomain(&userEntity), nil
+	return &u, nil
 }
 
-func NewUserRepo(db *gorm.DB) user.Repo {
-	return &userRepo{
-		db: db,
+func (r *UserRepo) GetByEmail(ctx context.Context, email string) (*user.User, error) {
+	var u user.User
+	if err := r.db.WithContext(ctx).Where("email = ?", email).First(&u).Error; err != nil {
+		return nil, err
 	}
+	return &u, nil
+}
+
+func (r *UserRepo) GetByID(ctx context.Context, id uint) (*user.User, error) {
+	var u user.User
+	if err := r.db.WithContext(ctx).First(&u, id).Error; err != nil {
+		return nil, err
+	}
+	return &u, nil
+}
+
+func (r *UserRepo) Update(ctx context.Context, user *user.User) (*user.User, error) {
+	if err := r.db.WithContext(ctx).Save(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (r *UserRepo) Delete(ctx context.Context, id uint) error {
+	if err := r.db.WithContext(ctx).Delete(&user.User{}, id).Error; err != nil {
+		return err
+	}
+	return nil
 }
