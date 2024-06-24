@@ -6,15 +6,16 @@ import (
 	"net"
 	"server/api/tcp/handlers"
 	"server/internal/protocol/tcp"
-	"strings"
+	"server/pkg/utils"
 )
 
 type Server struct {
-	authHandler *handlers.AuthHandler
+	authHandler   *handlers.AuthHandler
+	walletHandler *handlers.WalletHandler
 }
 
-func NewServer(authHandler *handlers.AuthHandler) *Server {
-	return &Server{authHandler}
+func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler) *Server {
+	return &Server{authHandler, walletHandler}
 }
 
 func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
@@ -36,12 +37,13 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 			fmt.Println("request format is not correct.", err)
 			return
 		}
-		allRoutes := strings.Split(requestData.Location, "/")
-		route := allRoutes[0]
-		requestData.Location = strings.Join(allRoutes[1:], "/")
-		switch route {
+		firstRoute, postRoutes := utils.RouteSplitter(requestData.Location)
+		requestData.Location = postRoutes
+		switch firstRoute {
 		case "auth":
 			s.authHandler.ServeTCP(ctx, conn, requestData)
+		case "wallets":
+			s.walletHandler.ServeTCP(ctx, conn, requestData)
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))
