@@ -9,6 +9,9 @@ type Repo interface {
 	Create(ctx context.Context, user *User) (*User, error)
 	GetByPhone(ctx context.Context, phone string) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
+	GetByID(ctx context.Context, id uint) (*User, error)
+	Update(ctx context.Context, user *User) (*User, error)
+	Delete(ctx context.Context, id uint) error
 }
 
 type User struct {
@@ -20,6 +23,7 @@ type User struct {
 	Password  string
 	BirthDate time.Time
 	IsAdmin   bool
+	Address   string
 }
 
 func NewUser(phone string, email *string, password string) *User {
@@ -33,9 +37,11 @@ func NewUser(phone string, email *string, password string) *User {
 func (u *User) SetEmail(email string) {
 	u.Email = &email
 }
+
 func (u *User) SetPhone(phone string) {
 	u.Phone = phone
 }
+
 func (u *User) SetPassword(password string) {
 	u.Password = password
 }
