@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 	"server/config"
+	"server/internal/models/restaurant"
 	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
@@ -12,10 +13,11 @@ import (
 )
 
 type AppContainer struct {
-	cfg           config.Config
-	dbConn        *gorm.DB
-	AuthService   *AuthService
-	WalletService *WalletService
+	cfg               config.Config
+	dbConn            *gorm.DB
+	AuthService       *AuthService
+	WalletService     *WalletService
+	RestaurantService *RestaurantService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -31,6 +33,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
 	app.setWalletService()
+	app.setRestaurantService()
 
 	return app, nil
 }
@@ -61,4 +64,12 @@ func (a *AppContainer) setWalletService() {
 		return
 	}
 	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)), creditCard.NewCreditCardOps(a.dbConn, storage.NewCreditCardRepo(a.dbConn)))
+}
+
+func (a *AppContainer) setRestaurantService() {
+	if a.RestaurantService != nil {
+		return
+	}
+	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)))
+	// hint: ** probably food or menu should be added or category
 }
