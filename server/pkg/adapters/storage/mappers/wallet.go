@@ -28,6 +28,14 @@ func CreditCardEntityToDomain(entity *entities.CreditCard) *creditCard.CreditCar
 	}
 }
 
+func BatchCreditCardEntityToDomain(entities []*entities.CreditCard) []*creditCard.CreditCard {
+	var domainCreditCards []*creditCard.CreditCard
+	for _, e := range entities {
+		domainCreditCards = append(domainCreditCards, &creditCard.CreditCard{ID: e.ID, Number: e.Number})
+	}
+	return domainCreditCards
+}
+
 func CreditCardDomainToEntity(domainWallet *creditCard.CreditCard) *entities.CreditCard {
 	return &entities.CreditCard{
 		Number: domainWallet.Number,
