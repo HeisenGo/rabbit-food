@@ -31,6 +31,7 @@ func (o *Ops) Create(ctx context.Context, user *User) (*User, error) {
 	user.SetPassword(hashedPass)
 	return o.repo.Create(ctx, user)
 }
+
 func (o *Ops) GetUser(ctx context.Context, phoneOrEmail, password string) (*User, error) {
 	var user *User
 	if users.ValidatePhone(phoneOrEmail) != nil {
@@ -52,6 +53,18 @@ func (o *Ops) GetUser(ctx context.Context, phoneOrEmail, password string) (*User
 		return nil, userErrors.ErrUserPassDoesNotMatch
 	}
 	return user, nil
+}
+
+func (o *Ops) GetUserByID(ctx context.Context, id uint) (*User, error) {
+	return o.repo.GetByID(ctx, id)
+}
+
+func (o *Ops) Update(ctx context.Context, user *User) (*User, error) {
+	return o.repo.Update(ctx, user)
+}
+
+func (o *Ops) Delete(ctx context.Context, id uint) error {
+	return o.repo.Delete(ctx, id)
 }
 
 func validateUserRegistration(user *User) error {
