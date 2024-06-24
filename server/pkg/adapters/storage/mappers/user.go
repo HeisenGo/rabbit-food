@@ -18,7 +18,7 @@ func UserEntityToDomain(entity *entities.User) *user.User {
 }
 
 func UserDomainToEntity(domainUser *user.User) *entities.User {
-	entityWallet := entities.NewEntityWallet()
+	entityWallet := entities.NewWalletEntity()
 	return &entities.User{
 		Phone:    domainUser.Phone,
 		Email:    domainUser.Email,
