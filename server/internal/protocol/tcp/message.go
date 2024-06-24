@@ -12,8 +12,8 @@ type RegisterRequest struct {
 }
 
 type RegisterResponse struct {
-	Message string
-	Token   *auth.Token
+	Message string      `json:"message"`
+	Token   *auth.Token `json:"token"`
 }
 
 type LoginRequest struct {
@@ -22,8 +22,8 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Message   string
-	AuthToken *auth.Token
+	Message string      `json:"message"`
+	Token   *auth.Token `json:"token"`
 }
 
 type AddCardToWalletRequest struct {
