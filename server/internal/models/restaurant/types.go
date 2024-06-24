@@ -7,6 +7,7 @@ import (
 type Restaurant struct {
 	ID   uint
 	Name string
+	//UserID uint
 	//Users []user.User
 }
 
@@ -15,8 +16,6 @@ type UserRestaurant struct {
 	UserID       uint
 	RestaurantID uint
 	RoleType     string
-	//User         user.User
-	//Restaurant   Restaurant
 }
 
 type Repo interface {

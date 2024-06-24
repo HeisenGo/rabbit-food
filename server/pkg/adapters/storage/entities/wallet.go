@@ -8,14 +8,18 @@ type Wallet struct {
 	gorm.Model
 	UserID      uint `gorm:"uniqueIndex"`
 	Balance     uint
-	CreditCards []CreditCard `gorm:"many2many:wallet_credit_cards;"`
+	CreditCards []*CreditCard `gorm:"many2many:wallet_credit_cards;"`
+}
+
+func NewWalletEntity() *Wallet {
+	return &Wallet{}
 }
 
 type CreditCard struct {
 	gorm.Model
-	Number string
+	Number  string    `gorm:"uniqueIndex"`
+	Wallets []*Wallet `gorm:"many2many:wallet_credit_cards;"`
 }
-
 type WalletTransaction struct {
 	gorm.Model
 	Amount             uint
@@ -24,9 +28,10 @@ type WalletTransaction struct {
 	WalletCreditCardID uint
 	WalletCreditCard   *WalletCreditCard `gorm:"foreignKey:WalletCreditCardID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
-
 type WalletCreditCard struct {
 	gorm.Model
-	WalletID     uint `gorm:"index"`
-	CreditCardID uint `gorm:"index"`
+	WalletID     uint        `gorm:"index:idx_together_wallet_card,unique"`
+	Wallet       *Wallet     `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	CreditCardID uint        `gorm:"index:idx_together_wallet_card,unique"`
+	CreditCard   *CreditCard `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
