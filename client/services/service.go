@@ -6,8 +6,9 @@ import (
 )
 
 type Service interface {
-	Register(*models.User) (tcp.Token, error)
-	Login(req *models.LoginUserReq) (*tcp.Token, error)
-	Logout(req *models.LogoutUserReq) error
+	Register(*models.User) (*models.Token, error)
+	Login(req *tcp.LoginBody) (*models.Token, error)
+	Logout(req *tcp.LogoutUserReq) error
 	GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
+	AddCard(req *tcp.AddCardBody) (*models.CreditCard, error)
 }
