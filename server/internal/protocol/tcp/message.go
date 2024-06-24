@@ -3,6 +3,7 @@ package tcp
 import (
 	"server/internal/models/auth"
 	creditCard "server/internal/models/wallet/credit_card"
+	"server/internal/models/wallet/wallet"
 )
 
 type RegisterRequest struct {
@@ -30,7 +31,29 @@ type AddCardToWalletRequest struct {
 	CardNumber string `json:"card_number"`
 }
 
+type DepositRequest struct {
+	CardNumber string `json:"card_number"`
+	Amount     uint   `json:"amount"`
+}
+type WithdrawRequest struct {
+	CardNumber string `json:"card_number"`
+	Amount     uint   `json:"amount"`
+}
+
 type AddCardToWalletResponse struct {
 	Message string
 	Card    *creditCard.CreditCard
+}
+
+type GetUserWalletCardsResponse struct {
+	Message string
+	Cards   []*creditCard.CreditCard
+}
+type DepositResponse struct {
+	Message string
+	Wallet  *wallet.Wallet
+}
+type WithdrawResponse struct {
+	Message string
+	Wallet  *wallet.Wallet
 }
