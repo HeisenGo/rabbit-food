@@ -51,3 +51,13 @@ func ReadConfig(envFilePath string) Config {
 	config := NewConfig(*server, *db)
 	return config
 }
+
+var cfg = Config{}
+
+func Set(config Config) {
+	cfg = config
+}
+
+func Get() Config {
+	return cfg
+}

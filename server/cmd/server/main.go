@@ -12,6 +12,7 @@ var envFilePath = flag.String("envpath", "", "configuration path")
 
 func main() {
 	cfg := readConfig()
+	config.Set(cfg)
 
 	app, err := services.NewAppContainer(cfg)
 	if err != nil {
