@@ -1,8 +1,9 @@
 package commands
 
 import (
-	"client/models"
+	"client/protocol/tcp"
 	"client/services"
+	"client/services/tcp_service"
 	"errors"
 	"fmt"
 )
@@ -12,11 +13,12 @@ type LoginCommand struct {
 }
 
 func (c *LoginCommand) Execute(userData any) error {
-	user, ok := userData.(*models.LoginUserReq)
+	userReq, ok := userData.(*tcp.LoginBody)
 	if !ok {
 		return errors.New("data type isn't user")
 	}
-	token, err := c.service.Login(user)
+	token, err := c.service.Login(userReq)
+	tcp_service.SetToken(token.AuthorizationToken)
 	fmt.Println("New: ", token)
 	fmt.Println("token: ", token.AuthorizationToken,
 		"\nReferesh:", token.RefreshToken,
