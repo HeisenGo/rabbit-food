@@ -64,8 +64,8 @@ func (h *AuthHandler) HandleLogin(ctx context.Context, conn net.Conn, req *tcp.R
 		return
 	} else {
 		response = tcp.LoginResponse{
-			Message:   fmt.Sprintf("User-Logged-in."),
-			AuthToken: authenticatedUserToken,
+			Message: fmt.Sprintf("User-Logged-in."),
+			Token:   authenticatedUserToken,
 		}
 	}
 	resData, err := tcp.EncodeLoginResponse(response)
