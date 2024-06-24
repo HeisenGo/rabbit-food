@@ -25,3 +25,27 @@ func (s *WalletService) AddCardToWalletByUserID(ctx context.Context, card *credi
 	}
 	return createdCard, nil
 }
+
+func (s *WalletService) GetUserWalletCards(ctx context.Context) ([]*creditCard.CreditCard, error) {
+	userWalletCards, err := s.creditCardOps.GetUserWalletCards(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return userWalletCards, nil
+}
+
+func (s *WalletService) Deposit(ctx context.Context, card *creditCard.CreditCard, amount uint) (*wallet.Wallet, error) {
+	userWallet, err := s.walletOps.Deposit(ctx, card, amount)
+	if err != nil {
+		return nil, err
+	}
+	return userWallet, nil
+}
+
+func (s *WalletService) Withdraw(ctx context.Context, card *creditCard.CreditCard, amount uint) (*wallet.Wallet, error) {
+	userWallet, err := s.walletOps.Withdraw(ctx, card, amount)
+	if err != nil {
+		return nil, err
+	}
+	return userWallet, nil
+}
