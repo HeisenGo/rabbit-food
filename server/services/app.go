@@ -13,6 +13,7 @@ type AppContainer struct {
 	cfg         config.Config
 	dbConn      *gorm.DB
 	AuthService *AuthService
+	UserService *UserService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -27,6 +28,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 	}
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
+	app.setUserService()
 
 	return app, nil
 }
@@ -50,4 +52,11 @@ func (a *AppContainer) setAuthService(secret []byte,
 		return
 	}
 	a.AuthService = NewAuthService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)), secret, tokenExpiration, refreshTokenExpiration)
+}
+
+func (a *AppContainer) setUserService() {
+	if a.UserService != nil {
+		return
+	}
+	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
 }
