@@ -3,6 +3,7 @@ package commands
 import (
 	"client/models"
 	"client/services"
+	"client/services/tcp_service"
 	"errors"
 	"fmt"
 )
@@ -17,6 +18,10 @@ func (c *RegisterCommand) Execute(userData any) error {
 		return errors.New("data type isn't user")
 	}
 	token, err := c.service.Register(user)
+	tcp_service.SetToken(token.AuthorizationToken)
+	if err != nil {
+		return err
+	}
 	fmt.Println("New: ", token)
 	fmt.Println("token: ", token.AuthorizationToken,
 		"\nReferesh:", token.RefreshToken,
