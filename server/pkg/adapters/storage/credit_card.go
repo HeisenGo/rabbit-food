@@ -38,10 +38,13 @@ func (r *creditCardRepo) CreateCardAndAddToWallet(ctx context.Context, creditCar
 		return nil, err
 	}
 	newCreditCard := mappers.CreditCardDomainToEntity(creditCard)
-	if err = tx.FirstOrCreate(&newCreditCard).Error; err != nil {
-		tx.Rollback()
-		return nil, err
+	if err = tx.Where("number = ?", newCreditCard.Number).First(&newCreditCard).Error; err != nil {
+		if err = tx.Create(&newCreditCard).Error; err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 	}
+
 	walletCreditCardEntity := wallet.NewWalletCreditCard(userWalletEntity.ID, newCreditCard.ID)
 	if err = tx.Create(&walletCreditCardEntity).Error; err != nil {
 		tx.Rollback()
@@ -53,4 +56,24 @@ func (r *creditCardRepo) CreateCardAndAddToWallet(ctx context.Context, creditCar
 
 	createdCreditCard := mappers.CreditCardEntityToDomain(newCreditCard)
 	return createdCreditCard, nil
+}
+
+func (r *creditCardRepo) GetUserWalletCards(ctx context.Context) ([]*creditCard.CreditCard, error) {
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var creditCardEntities []*entities.CreditCard
+
+	err = r.db.Joins("JOIN wallet_credit_cards ON wallet_credit_cards.credit_card_id = credit_cards.id").
+		Joins("JOIN wallets ON wallets.id = wallet_credit_cards.wallet_id").
+		Where("wallets.user_id = ?", userID).
+		Find(&creditCardEntities).Error
+
+	if err != nil {
+		return nil, err
+	}
+	allDomainCards := mappers.BatchCreditCardEntityToDomain(creditCardEntities)
+	return allDomainCards, nil
 }
