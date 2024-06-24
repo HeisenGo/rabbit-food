@@ -20,3 +20,7 @@ func NewCreditCardOps(db *gorm.DB, repo Repo) *CreditCardOps {
 func (o *CreditCardOps) CreateCardAndAddToWallet(ctx context.Context, creditCard *CreditCard) (*CreditCard, error) {
 	return o.repo.CreateCardAndAddToWallet(ctx, creditCard)
 }
+
+func (o *CreditCardOps) GetUserWalletCards(ctx context.Context) ([]*CreditCard, error) {
+	return o.repo.GetUserWalletCards(ctx)
+}
