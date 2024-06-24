@@ -28,12 +28,6 @@ func SendRequest(conn net.Conn, location string, header map[string]string, data 
 // 	conn.Write(encodeResponse)
 // }
 
-type Token struct {
-	AuthorizationToken string `json:"AuthorizationToken"`
-	RefreshToken       string `json:"RefreshToken"`
-	ExpiresAt          int64  `json:"ExpiresAt"`
-}
-
 type Request struct {
 	Location string            `json:"location"`
 	Header   map[string]string `json:"header"`
