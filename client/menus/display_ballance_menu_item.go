@@ -16,7 +16,7 @@ type DisplayBallanceMenuItem struct {
 	PostMenu MenuComponent
 }
 
-func NewDisplayBallanceMenuItem(name string, command *commands.DisplayBallanceCommand, postMenu MenuComponent) *DisplayBallanceMenuItem {
+func NewDisplayBalanceMenuItem(name string, command *commands.DisplayBallanceCommand, postMenu MenuComponent) *DisplayBallanceMenuItem {
 	return &DisplayBallanceMenuItem{
 		Name:     name,
 		Command:  command,
