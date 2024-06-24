@@ -8,3 +8,7 @@ type Wallet struct {
 type GetWalletReq struct {
 	ID int
 }
+
+type CreditCard struct {
+	Number string
+}
