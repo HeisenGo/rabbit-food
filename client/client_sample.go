@@ -22,8 +22,8 @@ func main() {
 	//message, _ := reader.ReadString('\n')
 
 	// Send the message to the server
-	_, err = conn.Write([]byte(`{"location":"auth/register","header":{"method":"POST"},"data":{"phone":"09187567211","email":"kia5ra1sh@gk.co","password":"AliJaf@123"}}
-`))
+	//_, err = conn.Write([]byte(`{"location":"auth/register","header":{"method":"POST"},"data":{"phone":"09187567111","email":"kia55raa1sh@gk.co","password":"AliJaf@123"}}`))
+	_, err = conn.Write([]byte(`{"location":"wallets/cards","header":{"method":"POST","Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTkyNjkxODksIlVzZXJJRCI6MiwiSXNBZG1pbiI6ZmFsc2V9.yrZVongFbbqzzmlO7MkelKoo-5LR85MYmnMMyoII7bI_YOlf2kr7-kPve9_bpnJg-RCNiAFt-9glDsTYPvfLIA"},"data":{"card_number":"123456"}}`))
 	fmt.Println("Data has been sent!")
 	if err != nil {
 		fmt.Println("Error writing to server:", err)
