@@ -12,7 +12,9 @@ import (
 
 func Run(cfg config.Server, app *services.AppContainer) {
 	authHandler := handlers.NewAuthHandler(*app.AuthService)
-	newServer := server.NewServer(authHandler)
+	userHandler := handlers.NewUserHandler(*app.UserService)
+
+	newServer := server.NewServer(authHandler, userHandler)
 	listener, err := net.Listen("tcp", ":"+cfg.Port)
 	fmt.Println("listening!")
 	if err != nil {
