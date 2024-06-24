@@ -12,7 +12,7 @@ var (
 	//////       Home Menu ///////////////
 	homeMenu                 *Menu // TODO: bayad be interface vabaste bashe ye fekri bokon
 	profileManagementMenu    *Menu
-	walletManagementMenu     MenuComponent
+	walletManagementMenu     *Menu
 	foodOrderMenu            MenuComponent
 	restaurantManagementMenu MenuComponent
 	logoutMenuItem           MenuComponent
@@ -23,11 +23,59 @@ var (
 	editAddress     MenuComponent
 	deleteAddress   MenuComponent
 	addNewAddress   MenuComponent
+
+	/// wallet management menu ////
+	displayBallanceMenu    MenuComponent
+	diaplayCardsMenu       MenuComponent
+	connectACreditCardMenu MenuComponent
+	depositMenu            MenuComponent
+	withDrawMenu           MenuComponent
 )
+
+func getDisplayBallanceMenu(service services.Service) MenuComponent {
+	if displayBallanceMenu == nil {
+		displayBallanceMenu = NewDisplayBallanceMenuItem("Display Ballance", commands.NewDisplayBallanceCommand(service), getWalletManagementMenu(service))
+	}
+	return displayBallanceMenu
+}
+
+func getDiaplayCardsMenu(service services.Service) MenuComponent {
+	if diaplayCardsMenu == nil {
+		diaplayCardsMenu = NewDisplayCreditCardsMenuItem("Display Ballance", commands.NewDisplayCreditCardsCommand(service), getWalletManagementMenu(service))
+	}
+	return diaplayCardsMenu
+}
+
+func getConnectACreditCardMenu(service services.Service) MenuComponent {
+	if connectACreditCardMenu == nil {
+		connectACreditCardMenu = NewConnectACreditCardMenuItem("Connect A New Credit Card", commands.NewConnectACreditCardCommand(service), getWalletManagementMenu(service))
+	}
+	return connectACreditCardMenu
+}
+
+func getDepositMenu(service services.Service) MenuComponent {
+	if depositMenu == nil {
+
+	}
+	return depositMenu
+}
+
+func getWithDrawMenu(service services.Service) MenuComponent {
+	if withDrawMenu == nil {
+
+	}
+	return withDrawMenu
+}
 
 func getWalletManagementMenu(service services.Service) MenuComponent {
 	if walletManagementMenu == nil {
-		walletManagementMenu = NewWalletMenuItem("Wallet Management Menu", commands.NewGetWalletCommand(service), nil)
+		walletManagementMenu = NewMenu("Wallet ManagementMenu")
+		walletManagementMenu.Add(getDisplayBallanceMenu(service))
+		walletManagementMenu.Add(getDiaplayCardsMenu(service))
+		walletManagementMenu.Add(getConnectACreditCardMenu(service))
+		walletManagementMenu.Add(getDepositMenu(service))
+		walletManagementMenu.Add(getWithDrawMenu(service)) // TODO: remove token from context & add context to flow
+
 	}
 	return walletManagementMenu
 }
@@ -39,11 +87,15 @@ func getManageAddressesMenu(service services.Service) MenuComponent {
 	return manageAddresses
 }
 
-func getEditInfoMenue(service services.Service) MenuComponent {
+func getEditInfoMenu(service services.Service) MenuComponent {
 	// if editInfoMenu == nil {
 	// 	//editInfoMenu = New
 	// }
 	return editInfoMenu
+}
+
+func getEditInfoMenue(service services.Service) MenuComponent {
+	return NewMenu("Edit Info Menu")
 }
 
 func getProfileManagementMenu(service services.Service) MenuComponent {
