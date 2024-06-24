@@ -11,9 +11,10 @@ type WalletService struct {
 	creditCardOps *creditCard.CreditCardOps
 }
 
-func NewWalletService(walletOps *wallet.WalletOps) *WalletService {
+func NewWalletService(walletOps *wallet.WalletOps, creditCardOps *creditCard.CreditCardOps) *WalletService {
 	return &WalletService{
-		walletOps: walletOps,
+		walletOps:     walletOps,
+		creditCardOps: creditCardOps,
 	}
 }
 
