@@ -6,6 +6,7 @@ import (
 
 type Repo interface {
 	CreateCardAndAddToWallet(ctx context.Context, creditCard *CreditCard) (*CreditCard, error)
+	GetUserWalletCards(ctx context.Context) ([]*CreditCard, error)
 }
 
 type CreditCard struct {
