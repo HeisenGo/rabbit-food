@@ -14,6 +14,10 @@ func EncodeRegisterRequest(req RegisterRequest) ([]byte, error) {
 	return json.Marshal(req)
 }
 
+func EncodeAddCardReqBody(req *AddCardBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
 func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
 	var res RegisterResponse
 	err := json.Unmarshal(data, &res)
@@ -33,6 +37,6 @@ func DecodeLoginResponse(data []byte) (LoginResponse, error) {
 	return req, err
 }
 
-func EncodeLoginRequest(req LoginRequest) ([]byte, error) {
+func EncodeLoginReqBody(req *LoginBody) ([]byte, error) {
 	return json.Marshal(req)
 }
