@@ -11,10 +11,14 @@ import (
 
 type Server struct {
 	authHandler *handlers.AuthHandler
+	userHandler *handlers.UserHandler
 }
 
-func NewServer(authHandler *handlers.AuthHandler) *Server {
-	return &Server{authHandler}
+func NewServer(authHandler *handlers.AuthHandler, userHandler *handlers.UserHandler) *Server {
+	return &Server{
+		authHandler: authHandler,
+		userHandler: userHandler,
+	}
 }
 
 func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
@@ -42,6 +46,8 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		switch route {
 		case "auth":
 			s.authHandler.AuthRouter(ctx, conn, requestData)
+		case "user":
+			s.userHandler.UserRouter(ctx, conn, requestData)
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))
