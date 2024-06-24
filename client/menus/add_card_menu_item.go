@@ -4,27 +4,27 @@ import (
 	"bufio"
 	"client/commands"
 	"client/constants"
-	"client/models"
+	"client/protocol/tcp"
 	"client/utils"
 	"fmt"
 	"time"
 )
 
-type ConnectACreditCardMenuItem struct {
+type AddCardMenuItem struct {
 	Name     string
-	Command  *commands.ConnectACreditCardCommand
+	Command  *commands.AddCreditCardCommand
 	PostMenu MenuComponent
 }
 
-func NewConnectACreditCardMenuItem(name string, command *commands.ConnectACreditCardCommand, postMenu MenuComponent) *ConnectACreditCardMenuItem {
-	return &ConnectACreditCardMenuItem{
+func NewAddCardMenuItem(name string, command *commands.AddCreditCardCommand, postMenu MenuComponent) *AddCardMenuItem {
+	return &AddCardMenuItem{
 		Name:     name,
 		Command:  command,
 		PostMenu: postMenu,
 	}
 }
 
-func (mi *ConnectACreditCardMenuItem) Display() {
+func (mi *AddCardMenuItem) Display() {
 	fmt.Println(mi.Name)
 }
 
@@ -34,14 +34,13 @@ func (mi *ConnectACreditCardMenuItem) Display() {
 // 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
 // }
 
-func (mi *ConnectACreditCardMenuItem) Execute(scanner *bufio.Scanner) {
+func (mi *AddCardMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
-	var userLoggingin models.LoginUserReq
-	userLoggingin.PhoneOrEmail = utils.ReadInput(scanner, "Phone/Email: ")
-	userLoggingin.Password = utils.ReadInput(scanner, "Password: ")
-	err := mi.Command.Execute(&userLoggingin)
+	var addCardData tcp.AddCardBody
+	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
+	_, err := mi.Command.Execute(&addCardData)
 	if err != nil {
 		fmt.Println(err)
 		utils.ReadInput(scanner, "Press any key to continue... ")
@@ -58,6 +57,6 @@ func (mi *ConnectACreditCardMenuItem) Execute(scanner *bufio.Scanner) {
 	}
 }
 
-func (mi *ConnectACreditCardMenuItem) GetName() string {
+func (mi *AddCardMenuItem) GetName() string {
 	return mi.Name
 }
