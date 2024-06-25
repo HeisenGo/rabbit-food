@@ -2,12 +2,13 @@ package storage
 
 import (
 	"context"
-	"gorm.io/gorm"
 	creditCard "server/internal/models/wallet/credit_card"
 	wallet "server/internal/models/wallet/wallet_credit_card"
 	"server/pkg/adapters/storage/entities"
 	"server/pkg/adapters/storage/mappers"
 	"server/pkg/utils"
+
+	"gorm.io/gorm"
 )
 
 type creditCardRepo struct {
@@ -33,6 +34,9 @@ func (r *creditCardRepo) CreateCardAndAddToWallet(ctx context.Context, creditCar
 
 	var userWalletEntity *entities.Wallet
 	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if err = tx.Where("user_id = ?", userID).First(&userWalletEntity).Error; err != nil {
 		tx.Rollback()
 		return nil, err
