@@ -2,7 +2,6 @@ package address
 
 import (
 	"context"
-	"server/internal/models/user"
 )
 
 type Repo interface {

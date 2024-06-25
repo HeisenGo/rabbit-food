@@ -1,12 +1,15 @@
 package storage
+
 import (
 	"context"
-	"gorm.io/gorm"
+	"errors"
+	"server/internal/errors/users"
+	"server/internal/models/address"
 	"server/pkg/adapters/storage/entities"
 	"server/pkg/adapters/storage/mappers"
-	"server/internal/models/address"
-	"server/internal/errors/users"
-	"server/pkg/utils"
+	//"server/pkg/utils"
+
+	"gorm.io/gorm"
 )
 type addressRepo struct {
 	db *gorm.DB
@@ -27,10 +30,10 @@ func (r *addressRepo) Create(ctx context.Context, address *address.Address) (*ad
 }
 func (r *addressRepo) GetByUser(ctx context.Context, userID uint ) (*address.Address, error) {
 	var addressEntity entities.Address
-	err := r.db.WithContext(ctx).Model(&entities.Address{}).Where("ID = ?", userID.First(&addressEntity).Error
+	err := r.db.WithContext(ctx).Model(&entities.Address{}).Where("userid = ?", userID).First(&addressEntity).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, address.ErrAddressNotFound
+			return nil, users.ErrAddressNotFound
 		}
 		return nil, err
 	}
@@ -38,4 +41,14 @@ func (r *addressRepo) GetByUser(ctx context.Context, userID uint ) (*address.Add
 }
 
 func (r *addressRepo) GetByRestaurant(ctx context.Context, name string) (*address.Address, error) {
+	var addressEntity entities.Address
+	err := r.db.WithContext(ctx).Model(&entities.Address{}).Where("name = ?", name).First(&addressEntity).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			//Change to restaurant error
+			return nil, users.ErrAddressNotFound
+		}
+		return nil, err
+	}
+	return mappers.AddressEntityToDomain(&addressEntity), nil
 }

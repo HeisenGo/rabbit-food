@@ -1,8 +1,9 @@
 package entities
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
@@ -13,8 +14,7 @@ type User struct {
 	LastName  string
 	Password  string
 	BirthDate time.Time
-	IsAdmin   bool    `gorm:"default:false"`
-	Wallet    *Wallet `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Address   *Address `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-
+	IsAdmin   bool       `gorm:"default:false"`
+	Wallet    *Wallet    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Address   []*Address `gorm:"many2many:user_addresses;constraint:OnDelete:CASCADE;"`
 }
