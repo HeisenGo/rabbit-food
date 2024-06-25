@@ -11,4 +11,5 @@ type Service interface {
 	Logout(req *tcp.LogoutUserReq) error
 	GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
 	AddCard(req *tcp.AddCardBody) (*models.CreditCard, error)
+	DiplayCards() ([]*models.CreditCard, error)
 }

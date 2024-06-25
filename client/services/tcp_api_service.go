@@ -293,3 +293,73 @@ func (s *APIService) Logout(req *tcp.LogoutUserReq) error {
 	//TODO implement me
 	return nil
 }
+
+func (s *APIService) DiplayCards() ([]*models.CreditCard, error) {
+	//location: "wallets/cards" meth
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+	if err != nil {
+		return nil, fmt.Errorf("error connecting to server: %v", err)
+	}
+	defer conn.Close()
+
+	token := tcp_service.GetToken()
+
+	header := map[string]string{"method": "GET", "Authorization": token}
+
+	err = tcp.SendRequest(conn, "wallets/cards", header, nil)
+	//fmt.Println("Data has been sent!")
+	if err != nil {
+		fmt.Println("Error writing to server:", err)
+		time.Sleep(time.Second * 2)
+
+		//return tcp.Token{}, err
+		return nil, err
+	}
+
+	// Read the response from the server
+	buffer := make([]byte, 4096)
+	n, err := conn.Read(buffer)
+	// _, err = bufio.NewReader(conn).ReadString(' ')
+	if err != nil {
+		fmt.Println("Error reading from server:", err)
+		time.Sleep(time.Second * 2)
+		return nil, err
+	}
+	buffer = buffer[:n]
+	fmt.Println(string(buffer), "********************")
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	fmt.Println(response)
+	if err != nil {
+		fmt.Println("Error decoding response", response)
+		return nil, err
+	}
+	if response.StatusCode != uint(200) {
+		fmt.Println(string(response.Data))
+		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
+		if err != nil {
+			fmt.Println("error in decoding server error")
+			return nil, err
+		}
+		fmt.Println("Error creating", responseErr.Message)
+		return nil, fmt.Errorf(responseErr.Message)
+	}
+	var addCardResBody *tcp.AddCardResponse
+	fmt.Println(string(response.Data))
+
+	err = json.Unmarshal(response.Data, addCardResBody)
+	if err != nil {
+		fmt.Println("Error in decoding a successful response", err)
+		return nil, err
+	}
+	var newCard *models.CreditCard
+	err = json.Unmarshal(addCardResBody.Card, newCard)
+	if err != nil {
+		fmt.Println("Error in decoding the token part of data")
+		//return tcp.Token{}, err
+		return nil, err
+	}
+	fmt.Println("Login:", token)
+	//fmt.Printf("Server response: %s", response)
+	return nil, nil
+}
