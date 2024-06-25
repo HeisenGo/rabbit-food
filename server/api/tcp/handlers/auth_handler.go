@@ -26,20 +26,17 @@ func (h *AuthHandler) HandleRegister(ctx context.Context, conn net.Conn, req *tc
 	}
 	newUser := user.NewUser(reqData.Phone, reqData.Email, reqData.Password)
 	_, token, err := h.authService.CreateUser(ctx, newUser)
-	response := tcp.RegisterResponse{}
+	// response := tcp.RegisterResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.RegisterResponse{
-			Message: fmt.Sprintf("user created"),
-			Token:   token,
-		}
+	} //else {
+	response := tcp.RegisterResponse{
+		Message: "user created",
+		Token:   token,
 	}
-	if err != nil {
-		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
-		return
-	}
+	//}
+
 	resData, err := tcp.EncodeRegisterResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
@@ -58,16 +55,16 @@ func (h *AuthHandler) HandleLogin(ctx context.Context, conn net.Conn, req *tcp.R
 		return
 	}
 	authenticatedUserToken, err := h.authService.LoginUser(ctx, reqData.PhoneOrEmail, reqData.Password)
-	response := tcp.LoginResponse{}
+	//response := tcp.LoginResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.LoginResponse{
-			Message: fmt.Sprintf("User-Logged-in."),
-			Token:   authenticatedUserToken,
-		}
+	} //else {
+	response := tcp.LoginResponse{
+		Message: "User-Logged-in.",
+		Token:   authenticatedUserToken,
 	}
+	//}
 	resData, err := tcp.EncodeLoginResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
