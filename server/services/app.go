@@ -7,7 +7,7 @@ import (
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
-
+	"server/internal/models/address"
 	"gorm.io/gorm"
 )
 
@@ -16,6 +16,7 @@ type AppContainer struct {
 	dbConn        *gorm.DB
 	AuthService   *AuthService
 	WalletService *WalletService
+	AddressService *AddressService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -31,6 +32,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
 	app.setWalletService()
+	app.setAddressService()
 
 	return app, nil
 }
@@ -61,4 +63,11 @@ func (a *AppContainer) setWalletService() {
 		return
 	}
 	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)), creditCard.NewCreditCardOps(a.dbConn, storage.NewCreditCardRepo(a.dbConn)))
+}
+
+func (a *AppContainer) setAddressService() {
+	if a.AddressService != nil {
+		return
+	}
+	a.AddressService = NewAddressService(address.NewAddressOps(a.dbConn, storage.NewAddressRepo(a.dbConn)))
 }

@@ -12,10 +12,11 @@ import (
 type Server struct {
 	authHandler   *handlers.AuthHandler
 	walletHandler *handlers.WalletHandler
+	addressHandler *handlers.AddressHandler
 }
 
-func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler) *Server {
-	return &Server{authHandler, walletHandler}
+func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler,addressHandler *handlers.AddressHandler) *Server {
+	return &Server{authHandler, walletHandler,addressHandler}
 }
 
 func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {

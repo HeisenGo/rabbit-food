@@ -43,6 +43,7 @@ func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.Us
 		return nil, nil, err
 	}
 	token := auth.NewToken(authToken, refreshToken, authExp.Unix())
+	// err should be returned , below condition is impossible condition nil != nil ??
 	if err != nil {
 		return nil, nil, err
 	}

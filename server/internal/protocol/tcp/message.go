@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"server/internal/models/address"
 	"server/internal/models/auth"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
@@ -39,7 +40,12 @@ type WithdrawRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
-
+type AddressRequest struct{
+	AddressLine string `json:"address_line"`
+	Cordinates string	`json:"cordinates"`
+ 	Types      uint		`json:"types"`
+	City       string	`json:"city"`
+}
 type AddCardToWalletResponse struct {
 	Message string
 	Card    *creditCard.CreditCard
@@ -56,4 +62,8 @@ type DepositResponse struct {
 type WithdrawResponse struct {
 	Message string
 	Wallet  *wallet.Wallet
+}
+type AddressResponse struct{
+	Message string
+	Address *address.Address
 }
