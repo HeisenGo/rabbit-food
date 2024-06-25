@@ -37,15 +37,16 @@ func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.Us
 		refreshExp = time.Now().Add(time.Minute * time.Duration(s.refreshTokenExpiration))
 	)
 	authToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, authExp))
+	if err != nil {
+		return nil, nil, err
+	}
 
 	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, refreshExp))
 	if err != nil {
 		return nil, nil, err
 	}
 	token := auth.NewToken(authToken, refreshToken, authExp.Unix())
-	if err != nil {
-		return nil, nil, err
-	}
+
 	return createdUser, token, nil
 }
 

@@ -66,3 +66,13 @@ func DecodeLoginResponse(data []byte) (LoginResponse, error) {
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
+
+func DecodeCreateRestaurantRequest(data []byte) (CreateRestaurantRequest, error) {
+	var req CreateRestaurantRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 	middleware "server/api/tcp/middlewares"
-	"server/internal/models/wallet/credit_card"
+	wallet "server/internal/models/wallet/credit_card"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
@@ -28,16 +28,16 @@ func (h *WalletHandler) HandleAddCardToWallet(ctx context.Context, conn net.Conn
 	}
 	newCard := wallet.NewCreditCard(reqData.CardNumber)
 	createdCard, err := h.walletService.AddCardToWalletByUserID(ctx, newCard)
-	response := tcp.AddCardToWalletResponse{}
+	//response := tcp.AddCardToWalletResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.AddCardToWalletResponse{
-			Message: fmt.Sprintf("card added."),
-			Card:    createdCard,
-		}
+	} //else {
+	response := tcp.AddCardToWalletResponse{
+		Message: "card added.",
+		Card:    createdCard,
 	}
+	//}
 	resData, err := tcp.EncodeAddCardToWalletResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
@@ -50,16 +50,16 @@ func (h *WalletHandler) HandleAddCardToWallet(ctx context.Context, conn net.Conn
 
 func (h *WalletHandler) HandleWalletCards(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	userWalletCards, err := h.walletService.GetUserWalletCards(ctx)
-	response := tcp.GetUserWalletCardsResponse{}
+	//response := tcp.GetUserWalletCardsResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
-	} else {
-		response = tcp.GetUserWalletCardsResponse{
-			Message: fmt.Sprintf("user wallet cards successfuly fetched."),
-			Cards:   userWalletCards,
-		}
+	} //else {
+	response := tcp.GetUserWalletCardsResponse{
+		Message: "user wallet cards successfuly fetched.",
+		Cards:   userWalletCards,
 	}
+	//}
 	resData, err := tcp.EncodeGetUserWalletCardsResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
@@ -80,16 +80,16 @@ func (h *WalletHandler) HandleDeposit(ctx context.Context, conn net.Conn, req *t
 	}
 	card := wallet.NewCreditCard(reqData.CardNumber)
 	userWallet, err := h.walletService.Deposit(ctx, card, reqData.Amount)
-	response := tcp.DepositResponse{}
+	//response := tcp.DepositResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.DepositResponse{
-			Message: fmt.Sprintf("successful deposit."),
-			Wallet:  userWallet,
-		}
+	} //else {
+	response := tcp.DepositResponse{
+		Message: "successful deposit.",
+		Wallet:  userWallet,
 	}
+	//}
 	resData, err := tcp.EncodeDepositResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
@@ -110,16 +110,16 @@ func (h *WalletHandler) HandleWithdraw(ctx context.Context, conn net.Conn, req *
 	}
 	card := wallet.NewCreditCard(reqData.CardNumber)
 	userWallet, err := h.walletService.Withdraw(ctx, card, reqData.Amount)
-	response := tcp.WithdrawResponse{}
+	//response := tcp.WithdrawResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.WithdrawResponse{
-			Message: fmt.Sprintf("seccessful withdraw."),
-			Wallet:  userWallet,
-		}
+	} //else {
+	response := tcp.WithdrawResponse{
+		Message: "seccessful withdraw.",
+		Wallet:  userWallet,
 	}
+	//}
 	resData, err := tcp.EncodeWithdrawResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
@@ -158,5 +158,4 @@ func (h *WalletHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp
 		}
 	}
 	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
-	return
 }
