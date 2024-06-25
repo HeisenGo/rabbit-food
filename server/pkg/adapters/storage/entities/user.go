@@ -15,4 +15,6 @@ type User struct {
 	BirthDate time.Time
 	IsAdmin   bool    `gorm:"default:false"`
 	Wallet    *Wallet `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Address   *Address `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+
 }
