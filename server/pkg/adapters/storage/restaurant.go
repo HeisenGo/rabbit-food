@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"server"
 	"server/internal/errors/restaurants"
+	"server/internal/models/restaurant/motor"
 	"server/internal/models/restaurant/restaurant"
 	userRestaurant "server/internal/models/restaurant/user_restaurant"
 	"server/internal/models/user"
@@ -41,7 +42,7 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	if err != nil {
 		//logger?
 		fmt.Println("UserId could not be recognized in context to create a restaurant for it")
-		return nil, err
+		return nil, restaurants.ErrFailedRetrieveID
 	}
 	// Create the new restaurant
 	newRestaurantEntity := mappers.RestaurantDomainToEntity(restauran)
@@ -107,39 +108,161 @@ func (r *restaurantRepo) CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx context.
 		return false, err
 	}
 	ownerID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		return false, restaurants.ErrFailedRetrieveID
+	}
 	if userrestautantEntity.UserID != ownerID {
 		return false, restaurants.ErrMismatchedOwner
 	}
 	return true, nil
 }
 
-func GetAllOperators(ctx context.Context, restaurantID uint) ([]user.User, error) {
-	var operators []user.User
-	// err := db.WithContext(ctx).
-	//     Model(&User{}).
-	//     Joins("JOIN user_restaurants ON user_restaurants.user_id = users.id").
-	//     Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", restaurantID, OperatorRoleType).
-	//     Preload("Restaurants"). // Preload the Restaurants if needed
-	//     Find(&operators).Error
-	return operators, nil
+func (r *restaurantRepo) GetByID(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, error) {
+	var restaurantEntity entities.Restaurant
+	err := r.db.WithContext(ctx).Model(&entities.Restaurant{}).Where("id = ?", restaurantID).First(&restaurantEntity).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, restaurants.ErrRestaurantNotFound
+		}
+		return nil, err
+	}
+	return mappers.RestaurantEntityToDomain(&restaurantEntity), nil
 }
 
-// func (r *creditCardRepo) GetUserWalletCards(ctx context.Context) ([]*creditCard.CreditCard, error) {
-// 	userID, err := utils.GetUserIDFromContext(ctx)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (r *restaurantRepo) AssignOperatorToRestarant(ctx context.Context, operator *user.User, restaurant restaurant.Restaurant) (*user.User, error) {
+	userRestaurant := userRestaurant.NewUserRestaurant(operator.ID, restaurant.ID, server.Operator)
+	err := r.db.Create(&userRestaurant).Error
+	if err != nil {
+		return nil, restaurants.ErrOperatorAssignFailed
+	}
+	return operator, nil
+}
 
-// 	var creditCardEntities []*entities.CreditCard
+func (r *restaurantRepo) RemoveOperatorFromRestarant(ctx context.Context, operatorID uint, restaurantID uint) error {
+	err := r.db.Where("role_type = ? AND restaurant_id=? AND user_id=?", server.Operator, restaurantID, operatorID).Delete(&entities.UserRestaurant{}).Error
+	if err != nil {
+		return restaurants.ErrRemoveOperatorFailed
+	}
+	return nil
+}
 
-// 	err = r.db.Joins("JOIN wallet_credit_cards ON wallet_credit_cards.credit_card_id = credit_cards.id").
-// 		Joins("JOIN wallets ON wallets.id = wallet_credit_cards.wallet_id").
-// 		Where("wallets.user_id = ?", userID).
-// 		Find(&creditCardEntities).Error
+func (r *restaurantRepo) WithdrawRestaurant(ctx context.Context, newOwnerID uint, restaurantID uint) error {
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
 
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	allDomainCards := mappers.BatchCreditCardEntityToDomain(creditCardEntities)
-// 	return allDomainCards, nil
-// }
+	defer func() {
+		if rv := recover(); rv != nil {
+			tx.Rollback()
+		}
+	}()
+	ownerID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		//logger?
+		fmt.Println("UserId could not be recognized in context to create a restaurant for it")
+		return restaurants.ErrFailedRetrieveID
+	}
+	// Create the new restaurant
+	err = tx.Where("user_id = ? AND restaurant_id = ? AND role_type=?", ownerID, restaurantID, server.Owner).Delete(&entities.UserRestaurant{}).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Create the new UserRestaurant association with role 'owner'
+	newUserRestaurantEntity := userRestaurant.NewUserRestaurant(newOwnerID, restaurantID, server.Owner)
+	err = tx.Create(&newUserRestaurantEntity).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit the transaction
+	err = tx.Commit().Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *restaurantRepo) AddMotor(ctx context.Context, motor *motor.Motor, restaurantID uint) (*motor.Motor, error) {
+	// userRestaurant := userRestaurant.NewUserRestaurant(operator.ID, restaurant.ID, server.Operator)
+	motorEntity := mappers.MotorDomainToEntity(motor)
+	motorEntity.RestaurantID = restaurantID
+	err := r.db.Create(&motorEntity).Error
+	if err != nil {
+		return nil, restaurants.ErrMotorAdditionFailed
+	}
+	return mappers.MotorEntityToDomain(motorEntity), nil
+}
+
+func (r *restaurantRepo) RemoveMotor(ctx context.Context, motorID uint) error {
+	err := r.db.Delete(&entities.Motor{}, motorID).Error
+	if err != nil {
+		return restaurants.ErrRemoveOperatorFailed
+	}
+	return nil
+}
+
+func (r *restaurantRepo) GetAllMotors(ctx context.Context, restaurantID uint) ([]*motor.Motor, error) {
+	// userID, err := utils.GetUserIDFromContext(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	var restaurant entities.Restaurant
+	err := r.db.Preload("Motors").First(&restaurant, restaurantID).Error
+	if err != nil {
+		return nil, err
+	}
+	motors := []*motor.Motor{}
+	for _, motor := range restaurant.Motors {
+		domainMotor := mappers.MotorEntityToDomain(&motor)
+		motors = append(motors, domainMotor)
+	}
+	return motors, nil
+}
+
+func (r *restaurantRepo) GetAllOperators(ctx context.Context, restaurantID uint) ([]*user.User, error) {
+	var operators []*entities.User
+
+	err := r.db.Joins("JOIN user_restaurants ON user_restaurants.user_id = users.id").
+		Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", restaurantID, server.Operator).
+		Find(&operators).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	domainOperators := []*user.User{}
+	for _, user := range operators {
+		duser := mappers.UserEntityToDomain(user)
+		domainOperators = append(domainOperators, duser)
+	}
+	return domainOperators, nil
+}
+
+func (r *restaurantRepo) DoeseThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error) {
+	var restaurantUsers []*entities.User
+
+	err := r.db.WithContext(ctx).
+		Joins("JOIN user_restaurants ON user_restaurants.user_id = users.id").
+		Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type IN ?", restaurantID, []string{string(server.Operator), string(server.Owner)}).
+		Find(&restaurantUsers).Error
+	if err != nil {
+		return false, err
+	}
+
+	workingUserID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	for _, user := range restaurantUsers {
+		if user.ID == workingUserID {
+			return true, nil
+		}
+	}
+
+	return false, restaurants.ErrUserNotAllowed
+}
