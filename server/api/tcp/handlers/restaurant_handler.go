@@ -6,7 +6,6 @@ import (
 	"net"
 	middleware "server/api/tcp/middlewares"
 	"server/internal/models/restaurant/restaurant"
-	wallet "server/internal/models/wallet/credit_card"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
@@ -51,7 +50,7 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding create restaurn response:", err)
-		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
 	}
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
@@ -67,33 +66,53 @@ func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, c
 	}
 
 	// Is the owner of restaurant the requester?
-	introducedOperatorPhoneOrEmail := reqData.OperatorPhoneOrEmail
-	restaurantId := reqData.RestaurantID
-	// getuser
-	introducedOerator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
-	if err != nil {
-		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-		return
-	}
-	// getrestarant
+	isOwner, err := h.restauarntService.IsRestaurantOwner(ctx, reqData.RestaurantID)
 
-	newCard := wallet.NewCreditCard(reqData.CardNumber)
-	createdCard, err := h.walletService.AddCardToWalletByUserID(ctx, newCard)
-	response := tcp.AddCardToWalletResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.AddCardToWalletResponse{
-			Message: fmt.Sprintf("card added."),
-			Card:    createdCard,
-		}
 	}
-	resData, err := tcp.EncodeAddCardToWalletResponse(response)
+	if !isOwner {
+		tcp.Error(conn, tcp.StatusForbidden, nil, err.Error())
+		return
+	}
+
+	// getuser
+	introducedOperatorPhoneOrEmail := reqData.OperatorPhoneOrEmail
+	introducedOerator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	restaurantId := reqData.RestaurantID
+	// getrestarant
+	restaurant, err := h.restauarntService.GetRestaurantByID(ctx, restaurantId)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	// assign
+	_, err = h.restauarntService.AssignOperatorToRestarant(ctx, introducedOerator, *restaurant)
+
+	if err != nil {
+		new_err := fmt.Errorf("failed to assign operator to the restaurant %s", restaurant.Name)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, new_err.Error())
+		return
+	}
+	assignOperatorResponse := tcp.AssignOperatorResponse{OperatorPhoneOrEmaile: introducedOperatorPhoneOrEmail,
+		RestaurantName: restaurant.Name}
+	response := tcp.AssignOperatorToRestaurantResponse{
+		Message:                fmt.Sprintf("operator %s card added to %s restaurant", introducedOperatorPhoneOrEmail, restaurant.Name),
+		AssignOperatorResponse: &assignOperatorResponse}
+
+	resData, err := tcp.EncodeAssignOperatorResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding add to card response:", err)
-		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
 	}
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)

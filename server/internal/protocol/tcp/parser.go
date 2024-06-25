@@ -38,6 +38,10 @@ func EncodeAddCardToWalletResponse(res AddCardToWalletResponse) ([]byte, error) 
 	return json.Marshal(res)
 }
 
+func EncodeAssignOperatorResponse(res AssignOperatorToRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
 func EncodeGetUserWalletCardsResponse(res GetUserWalletCardsResponse) ([]byte, error) {
 	return json.Marshal(res)
 }

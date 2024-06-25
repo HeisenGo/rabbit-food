@@ -64,6 +64,16 @@ type AddCardToWalletResponse struct {
 	Card    *creditCard.CreditCard
 }
 
+type AssignOperatorToRestaurantResponse struct {
+	Message                string
+	AssignOperatorResponse *AssignOperatorResponse
+}
+
+type AssignOperatorResponse struct {
+	OperatorPhoneOrEmaile string `json:"operator"`
+	RestaurantName        string `json:"restaurant_name"`
+}
+
 type CreateRestaurantResponse struct {
 	Message    string
 	Restaurant *restaurant.Restaurant
