@@ -17,6 +17,9 @@ func (e *Error) Error() string {
 }
 
 var (
-	ErrRestaurantNotFound = newError("restaurant", "restaurant Not Found")
-	ErrMismatchedOwner    = newError("restaurant", "owner mismatched")
+	ErrRestaurantNotFound   = newError("restaurant", "restaurant Not Found")
+	ErrMismatchedOwner      = newError("restaurant", "owner mismatched")
+	ErrOperatorAssignFailed = newError("restaurant", "assigning operator failed")
+	ErrRemoveOperatorFailed = newError("restaurant", "removing operator failed")
+	ErrMotorAdditionFailed  = newError("motor", "motor did not add to restaurant")
 )
