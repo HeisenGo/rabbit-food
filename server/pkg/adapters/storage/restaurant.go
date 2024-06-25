@@ -2,10 +2,14 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"server"
+	"server/internal/errors/restaurants"
 	"server/internal/models/restaurant/restaurant"
 	userRestaurant "server/internal/models/restaurant/user_restaurant"
+	"server/internal/models/user"
+	"server/pkg/adapters/storage/entities"
 	"server/pkg/adapters/storage/mappers"
 	"server/pkg/utils"
 
@@ -78,6 +82,46 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	// }
 	// createdRestaurant := mappers.RestaurantEntityToDomain(newRestaurant)
 	// return createdRestaurant, nil
+}
+
+func (r *restaurantRepo) GetRestaurantByID(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, error) {
+	var restautantEntity entities.Restaurant
+	err := r.db.WithContext(ctx).Model(&entities.Restaurant{}).Where("id = ?", restaurantID).First(&restautantEntity).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, restaurants.ErrRestaurantNotFound
+		}
+		return nil, err
+	}
+	return mappers.RestaurantEntityToDomain(&restautantEntity), nil
+}
+
+func (r *restaurantRepo) CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx context.Context, restaurantID uint) (bool, error) {
+	var userrestautantEntity entities.UserRestaurant
+	err := r.db.WithContext(ctx).Model(&entities.UserRestaurant{}).Where("restaurant_id = ? AND role_type = ?", restaurantID, server.Owner).First(&userrestautantEntity).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, restaurants.ErrMismatchedOwner
+		}
+		return false, err
+	}
+	ownerID, err := utils.GetUserIDFromContext(ctx)
+	if userrestautantEntity.UserID != ownerID {
+		return false, restaurants.ErrMismatchedOwner
+	}
+	return true, nil
+}
+
+func GetAllOperators(ctx context.Context, restaurantID uint) ([]user.User, error) {
+	var operators []user.User
+	// err := db.WithContext(ctx).
+	//     Model(&User{}).
+	//     Joins("JOIN user_restaurants ON user_restaurants.user_id = users.id").
+	//     Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", restaurantID, OperatorRoleType).
+	//     Preload("Restaurants"). // Preload the Restaurants if needed
+	//     Find(&operators).Error
+	return operators, nil
 }
 
 // func (r *creditCardRepo) GetUserWalletCards(ctx context.Context) ([]*creditCard.CreditCard, error) {

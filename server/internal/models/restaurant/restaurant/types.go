@@ -18,6 +18,7 @@ type Restaurant struct {
 }
 type Repo interface {
 	CreateRestaurantAndAssignOwner(ctx context.Context, restauran *Restaurant) (*Restaurant, error)
+	CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx context.Context, restaurantID uint) (bool, error)
 }
 
 func NewRestaurant(name string, phone string, city string, address string, coordiantes string) *Restaurant {

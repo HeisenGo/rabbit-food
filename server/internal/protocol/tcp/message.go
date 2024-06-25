@@ -32,6 +32,11 @@ type AddCardToWalletRequest struct {
 	CardNumber string `json:"card_number"`
 }
 
+type AddOperatorToRestarantRequest struct {
+	OperatorPhoneOrEmail string `json:"phone"` //operator phone
+	RestaurantID         uint   `json:"restaurant_id"`
+}
+
 type CreateRestaurantRequest struct {
 	Name        string `json:"name"`
 	Phone       string `json:"phone"`

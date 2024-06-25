@@ -16,6 +16,12 @@ func DecodeAddCardToWalletRequest(data []byte) (AddCardToWalletRequest, error) {
 	return req, err
 }
 
+func DecodeAddOperatorToRestarantRequest(data []byte) (AddOperatorToRestarantRequest, error) {
+	var req AddOperatorToRestarantRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
 func DecodeDepositRequest(data []byte) (DepositRequest, error) {
 	var req DepositRequest
 	err := json.Unmarshal(data, &req)

@@ -6,6 +6,7 @@ import (
 	"net"
 	middleware "server/api/tcp/middlewares"
 	"server/internal/models/restaurant/restaurant"
+	wallet "server/internal/models/wallet/credit_card"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
@@ -13,10 +14,14 @@ import (
 
 type RestaurantHandler struct {
 	restauarntService services.RestaurantService
+	userService       services.UserService
 }
 
-func NewRestaurantHandler(restauarntService services.RestaurantService) *RestaurantHandler {
-	return &RestaurantHandler{restauarntService}
+func NewRestaurantHandler(restauarntService services.RestaurantService, userService services.UserService) *RestaurantHandler {
+	return &RestaurantHandler{
+		restauarntService: restauarntService,
+		userService:       userService,
+	}
 }
 
 func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
@@ -52,7 +57,46 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
-func (h *RestaurantHandler) HandleAddOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
+func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeAddOperatorToRestarantRequest(req.Data)
+	if err != nil {
+		//logger.Error("Error decoding register request:", err)
+		fmt.Println("Error decoding register request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	// Is the owner of restaurant the requester?
+	introducedOperatorPhoneOrEmail := reqData.OperatorPhoneOrEmail
+	restaurantId := reqData.RestaurantID
+	// getuser
+	introducedOerator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	// getrestarant
+
+	newCard := wallet.NewCreditCard(reqData.CardNumber)
+	createdCard, err := h.walletService.AddCardToWalletByUserID(ctx, newCard)
+	response := tcp.AddCardToWalletResponse{}
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	} else {
+		response = tcp.AddCardToWalletResponse{
+			Message: fmt.Sprintf("card added."),
+			Card:    createdCard,
+		}
+	}
+	resData, err := tcp.EncodeAddCardToWalletResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding add to card response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
 // func (h *WalletHandler) HandleWalletCards(ctx context.Context, conn net.Conn, req *tcp.Request) {
@@ -155,7 +199,7 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 	case "operator":
 		// (post, get, delete)
 		if TCPReq.Header["method"] == tcp.MethodPost {
-			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperator, middleware.AuthMiddleware)
+			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
 			addOperatorHandler(ctx, conn, TCPReq)
 		}
 	case "delivery":
