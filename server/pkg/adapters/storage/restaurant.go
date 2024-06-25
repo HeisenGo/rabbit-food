@@ -266,3 +266,52 @@ func (r *restaurantRepo) DoeseThisHaveARoleInRestaurant(ctx context.Context, res
 
 	return false, restaurants.ErrUserNotAllowed
 }
+
+func (r *restaurantRepo) GetOwnerInfo(ctx context.Context, restaurantID uint) (*user.User, error) {
+	var userRestaurant entities.UserRestaurant
+	err := r.db.Preload("User").Where("restaurant_id = ? AND role_type = ?", restaurantID, "owner").First(&userRestaurant).Error
+	if err != nil {
+		return nil, err
+	}
+
+	owner := userRestaurant.User
+	return mappers.UserEntityToDomain(&owner), nil
+}
+
+func (r *restaurantRepo) GetRestarantInfo(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, *user.User, []*user.User, []*motor.Motor, error) {
+	restaurant, err := r.GetByID(ctx, restaurantID)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+
+	owner, err := r.GetOwnerInfo(ctx, restaurantID)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+
+	operators, err := r.GetAllOperators(ctx, restaurantID)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+
+	motors, err := r.GetAllMotors(ctx, restaurantID)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+
+	return restaurant, owner, operators, motors, nil
+}
+
+func (r *restaurantRepo) EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error {
+	err := r.db.Model(&entities.Restaurant{}).Where("id = ?", restaurantID).Update("Name", newName).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/// func (r *restaurantRepo) EditRestaurantPhone() error
+
+/// func (r *restaurantRepo) EditRestaurantAddress() error
+
+/// func (r *restaurantRepo) GetRestaurantAddress()
