@@ -30,17 +30,17 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 	newRestaurant := restaurant.NewRestaurant(reqData.Name, reqData.Phone, reqData.City, reqData.Address, reqData.Coordinates)
 	createdRestaurant, err := h.restauarntService.CreateResturantForOwner(ctx, newRestaurant)
 
-	response := tcp.CreateRestaurantResponse{}
+	///response := tcp.CreateRestaurantResponse{}
 
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.CreateRestaurantResponse{
-			Message:    fmt.Sprintf("restaurant created :)"),
-			Restaurant: createdRestaurant,
-		}
+	} //else {
+	response := tcp.CreateRestaurantResponse{
+		Message:    "restaurant created :)",
+		Restaurant: createdRestaurant,
 	}
+	//}
 
 	resData, err := tcp.EncodeCreateRestaurantResponse(response)
 	if err != nil {
@@ -50,6 +50,9 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 		return
 	}
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
+}
+
+func (h *RestaurantHandler) HandleAddOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
 }
 
 // func (h *WalletHandler) HandleWalletCards(ctx context.Context, conn net.Conn, req *tcp.Request) {
@@ -137,12 +140,31 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
-	case "restaurant":
+	case "retaurants":
+		// get/ see restaurants with role of user in them
+	case "create":
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			createRestaurantHandler := middleware.ApplyMiddlewares(h.HandleCreateRestaurant, middleware.AuthMiddleware)
 			createRestaurantHandler(ctx, conn, TCPReq)
 			return
 		}
+	case "withdraw":
+		//withdraw_ownership
+		fmt.Println("not implemented")
+
+	case "operator":
+		// (post, get, delete)
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperator, middleware.AuthMiddleware)
+			addOperatorHandler(ctx, conn, TCPReq)
+		}
+	case "delivery":
+		// add/remove delivery (post, get, delete)
+		fmt.Println("not implemented")
+
+	default:
+		fmt.Println("bad request")
+		//get and add operators and delete //maybe edit
 		// if TCPReq.Header["method"] == tcp.MethodGet {
 		// 	walletCardsHandler := middleware.ApplyMiddlewares(h.HandleWalletCards, middleware.AuthMiddleware)
 		// 	walletCardsHandler(ctx, conn, TCPReq)
@@ -162,5 +184,4 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 		// 	}
 	}
 	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
-	return
 }

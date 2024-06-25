@@ -3,7 +3,7 @@ package services
 import (
 	"log"
 	"server/config"
-	"server/internal/models/restaurant"
+	"server/internal/models/restaurant/restaurant"
 	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"

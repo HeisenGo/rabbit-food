@@ -31,6 +31,7 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 			return
 		}
 		buffer = buffer[:n]
+		fmt.Println(string(buffer))
 
 		requestData, err := tcp.DecodeTCPRequest(buffer)
 		if err != nil {

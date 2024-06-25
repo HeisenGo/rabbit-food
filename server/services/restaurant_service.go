@@ -15,9 +15,8 @@ func NewRestaurantService(restauarntOps *restaurant.Ops) *RestaurantService {
 	}
 }
 
-func (s *RestaurantService) CreateResturantForOwner(ctx context.Context) (*restaurant.Restaurant, error) {
-	newRestaurant := restaurant.NewRestaurant()
-	createdWallet, err := s.restauarntOps.Create(ctx, newRestaurant)
+func (s *RestaurantService) CreateResturantForOwner(ctx context.Context, restaurant *restaurant.Restaurant) (*restaurant.Restaurant, error) {
+	createdWallet, err := s.restauarntOps.Create(ctx, restaurant)
 	if err != nil {
 		return nil, err
 	}
