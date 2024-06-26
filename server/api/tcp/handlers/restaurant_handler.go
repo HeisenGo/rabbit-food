@@ -73,7 +73,7 @@ func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, c
 		return
 	}
 	if !isOwner {
-		tcp.Error(conn, tcp.StatusForbidden, nil, err.Error())
+		tcp.Error(conn, tcp.StatusForbidden, nil, "owner not found")
 		return
 	}
 
