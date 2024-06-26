@@ -310,8 +310,117 @@ func (r *restaurantRepo) EditRestaurantName(ctx context.Context, restaurantID ui
 	return nil
 }
 
+func (r *restaurantRepo) RemoveRestaurant(ctx context.Context, restaurantID uint) error {
+	//err := r.db.Where("role_type = ? AND restaurant_id=? AND user_id=?", server.Operator, restaurantID, operatorID).Delete(&entities.UserRestaurant{}).Error
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	defer func() {
+		if rv := recover(); rv != nil {
+			tx.Rollback()
+		}
+	}()
+	// delete the association of restaurant
+	err := tx.Where("restaurant_id = ?", restaurantID).Delete(&entities.UserRestaurant{}).Error
+	if err != nil {
+		tx.Rollback()
+		// if errors.Is(err, gorm.ErrDuplicatedKey) {
+		// 	return nil, fmt.Errorf("restaurant already exists")
+		// }
+		return err
+	}
+
+	//** delete restaurant foods/menu/category
+
+	// delete the Restaurant
+	err = tx.Where("restaurant_id = ?", restaurantID).Delete(&entities.Restaurant{}).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Commit the transaction
+	err = tx.Commit().Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *restaurantRepo) GetRestaurantsOfAnOwner(ctx context.Context) ([]*restaurant.Restaurant, error) {
+
+	var owningRestaurants []*entities.Restaurant
+	ownerID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		//logger?
+		fmt.Println("UserId could not be recognized in context to create a restaurant for it")
+		return nil, restaurants.ErrFailedRetrieveID
+	}
+
+	err = r.db.Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurants.id").
+		Where("user_restaurants.user_id = ? AND user_restaurants.role_type = ?", ownerID, server.Owner).
+		Find(&owningRestaurants).Error
+
+	// err = r.db.Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurant.id").
+	// 	Joins("JOIN restaurants ON restaurant.id = ").Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", ownerID, server.Owner).
+	// 	Find(&restauarnts).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	domainOperatingRestaurants := []*restaurant.Restaurant{}
+	for _, rest := range owningRestaurants {
+		dRest := mappers.RestaurantEntityToDomain(rest)
+		domainOperatingRestaurants = append(domainOperatingRestaurants, dRest)
+	}
+	return domainOperatingRestaurants, nil
+
+}
+
+func (r *restaurantRepo) GetRestaurantsOfAnOperator(ctx context.Context) ([]*restaurant.Restaurant, error) {
+
+	var operatingRestaurants []*entities.Restaurant
+	operatorID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		//logger?
+		fmt.Println("UserId could not be recognized in context to create a restaurant for it")
+		return nil, restaurants.ErrFailedRetrieveID
+	}
+
+	err = r.db.Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurants.id").
+		Where("user_restaurants.user_id = ? AND user_restaurants.role_type = ?", operatorID, server.Operator).
+		Find(&operatingRestaurants).Error
+
+	// err = r.db.Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurant.id").
+	// 	Joins("JOIN restaurants ON restaurant.id = ").Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", ownerID, server.Owner).
+	// 	Find(&restauarnts).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	domainOperatingRestaurants := []*restaurant.Restaurant{}
+	for _, rest := range operatingRestaurants {
+		dRest := mappers.RestaurantEntityToDomain(rest)
+		domainOperatingRestaurants = append(domainOperatingRestaurants, dRest)
+	}
+	return domainOperatingRestaurants, nil
+
+}
+
 /// func (r *restaurantRepo) EditRestaurantPhone() error
 
 /// func (r *restaurantRepo) EditRestaurantAddress() error
 
 /// func (r *restaurantRepo) GetRestaurantAddress()
+
+/// func (r *restaurantRepo) GetRestaurantCategories()
+
+///// func (r *restaurantRepo) GetRestaurantMenus()
+
+///// func (r *restaurantRepo) GetRestaurantFoods()
+
+// func (r *restaurantRepo) RemoveRestaurant()

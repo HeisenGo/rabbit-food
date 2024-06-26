@@ -56,7 +56,146 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
+func (h *RestaurantHandler) HandleGetOwnerRestaurants(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	restaurants, err := h.restauarntService.GetRestaurantsOfAnOwner(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.GetOwnerOperatorRestaurantsResponse{
+		Message:     "user wallet cards successfuly fetched.",
+		Restaurants: restaurants,
+	}
+	//}
+	resData, err := tcp.EncodeGetOwnerOperatorRestaurantsResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding get cards response:", err)
+		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
+
+func (h *RestaurantHandler) HandleEditRestaurantName(ctx context.Context, conn net.Conn, req *tcp.Request) {
+
+	reqData, err := tcp.DecodeEditRestarantNameRequest(req.Data)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	isOwner, err := h.restauarntService.IsRestaurantOwner(ctx, reqData.RestaurantID)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	if !isOwner {
+		tcp.Error(conn, tcp.StatusForbidden, nil, "owner not found")
+		return
+	}
+
+	err = h.restauarntService.EditRestaurantName(ctx, reqData.RestaurantID, reqData.NewName)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+
+	// ** need implementaion
+}
+
+func (h *RestaurantHandler) HandleGetOperatorRestaurants(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	restaurants, err := h.restauarntService.GetRestaurantsOfAnOperator(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.GetOwnerOperatorRestaurantsResponse{
+		Message:     "user wallet cards successfuly fetched.",
+		Restaurants: restaurants,
+	}
+	//}
+	resData, err := tcp.EncodeGetOwnerOperatorRestaurantsResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding get cards response:", err)
+		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
+
+
+
 func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeAddOperatorToRestarantRequest(req.Data)
+	if err != nil {
+		//logger.Error("Error decoding register request:", err)
+		fmt.Println("Error decoding register request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	// Is the owner of restaurant the requester?
+	isOwner, err := h.restauarntService.IsRestaurantOwner(ctx, reqData.RestaurantID)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	if !isOwner {
+		tcp.Error(conn, tcp.StatusForbidden, nil, "owner not found")
+		return
+	}
+
+	// getuser
+	introducedOperatorPhoneOrEmail := reqData.OperatorPhoneOrEmail
+	introducedOerator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	restaurantId := reqData.RestaurantID
+	// getrestarant
+	restaurant, err := h.restauarntService.GetRestaurantByID(ctx, restaurantId)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+
+	// assign
+	_, err = h.restauarntService.AssignOperatorToRestarant(ctx, introducedOerator, *restaurant)
+
+	if err != nil {
+		new_err := fmt.Errorf("failed to assign operator to the restaurant %s", restaurant.Name)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, new_err.Error())
+		return
+	}
+	assignOperatorResponse := tcp.AssignOperatorResponse{OperatorPhoneOrEmaile: introducedOperatorPhoneOrEmail,
+		RestaurantName: restaurant.Name}
+	response := tcp.AssignOperatorToRestaurantResponse{
+		Message:                fmt.Sprintf("operator %s card added to %s restaurant", introducedOperatorPhoneOrEmail, restaurant.Name),
+		AssignOperatorResponse: &assignOperatorResponse}
+
+	resData, err := tcp.EncodeAssignOperatorResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding add to card response:", err)
+		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
+}
+
+func (h *RestaurantHandler) HandleGetAllOperatorsOfRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	
+}
+
+func (h *RestaurantHandler) HandleRemoveOperatorFromRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeAddOperatorToRestarantRequest(req.Data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)

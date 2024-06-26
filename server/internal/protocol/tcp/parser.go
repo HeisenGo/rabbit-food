@@ -22,6 +22,10 @@ func DecodeAddOperatorToRestarantRequest(data []byte) (AddOperatorToRestarantReq
 	return req, err
 }
 
+func DecodeGetAllOperatorsOFRestaurant(data []byte)(){
+	
+}
+
 func DecodeDepositRequest(data []byte) (DepositRequest, error) {
 	var req DepositRequest
 	err := json.Unmarshal(data, &req)
@@ -43,6 +47,10 @@ func EncodeAssignOperatorResponse(res AssignOperatorToRestaurantResponse) ([]byt
 }
 
 func EncodeGetUserWalletCardsResponse(res GetUserWalletCardsResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetOwnerOperatorRestaurantsResponse(res GetOwnerOperatorRestaurantsResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
@@ -85,4 +93,10 @@ func DecodeCreateRestaurantRequest(data []byte) (CreateRestaurantRequest, error)
 
 func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
+}
+
+func DecodeEditRestarantNameRequest(data []byte)(EditRestarantNameRequest, error){
+	var req EditRestarantNameRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
 }

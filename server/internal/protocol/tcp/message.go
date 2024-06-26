@@ -83,6 +83,12 @@ type GetUserWalletCardsResponse struct {
 	Message string
 	Cards   []*creditCard.CreditCard
 }
+
+type GetOwnerOperatorRestaurantsResponse struct {
+	Message     string
+	Restaurants []*restaurant.Restaurant
+}
+
 type DepositResponse struct {
 	Message string
 	Wallet  *wallet.Wallet
@@ -90,4 +96,9 @@ type DepositResponse struct {
 type WithdrawResponse struct {
 	Message string
 	Wallet  *wallet.Wallet
+}
+
+type EditRestarantNameRequest struct {
+	RestaurantID uint
+	NewName      string
 }

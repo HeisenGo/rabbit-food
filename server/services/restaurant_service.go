@@ -115,5 +115,21 @@ func (s *RestaurantService) GetOwnerInfo(ctx context.Context, restaurantID uint)
 
 func (s *RestaurantService) GetRestarantInfo(ctx context.Context, restaurantID uint) (*restaurant.Restaurant,
 	*user.User, []*user.User, []*motor.Motor, error) {
-		return s.restauarntOps.GetRestarantInfo(ctx, restaurantID)
+	return s.restauarntOps.GetRestarantInfo(ctx, restaurantID)
+}
+
+func (s *RestaurantService) RemoveRestaurant(ctx context.Context, restaurantID uint) error {
+	return s.restauarntOps.RemoveRestaurant(ctx, restaurantID)
+}
+
+func (s *RestaurantService) GetRestaurantsOfAnOwner(ctx context.Context) ([]*restaurant.Restaurant, error) {
+	return s.restauarntOps.GetRestaurantsOfAnOwner(ctx)
+}
+func (s *RestaurantService) GetRestaurantsOfAnOperator(ctx context.Context) ([]*restaurant.Restaurant, error) {
+	return s.restauarntOps.GetRestaurantsOfAnOperator(ctx)
+}
+
+func (s *RestaurantService)  EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error{
+
+	return s.restauarntOps.EditRestaurantName(ctx, restaurantID, newName)
 }

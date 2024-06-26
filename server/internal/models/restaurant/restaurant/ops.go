@@ -68,3 +68,19 @@ func (o *Ops) GetRestarantInfo(ctx context.Context, restaurantID uint) (*Restaur
 	*user.User, []*user.User, []*motor.Motor, error) {
 	return o.repo.GetRestarantInfo(ctx, restaurantID)
 }
+
+func (o *Ops) RemoveRestaurant(ctx context.Context, restaurantID uint) error {
+	return o.repo.RemoveRestaurant(ctx, restaurantID)
+}
+
+func (o *Ops) GetRestaurantsOfAnOwner(ctx context.Context) ([]*Restaurant, error){
+	return o.repo.GetRestaurantsOfAnOwner(ctx)
+}
+func (o *Ops) GetRestaurantsOfAnOperator(ctx context.Context) ([]*Restaurant, error){
+	return o.repo.GetRestaurantsOfAnOperator(ctx)
+}
+
+func (o *Ops) EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error{
+
+	return o.repo.EditRestaurantName(ctx, restaurantID, newName)
+}

@@ -30,8 +30,12 @@ type Repo interface {
 	GetAllMotors(ctx context.Context, restaurantID uint) ([]*motor.Motor, error)
 	GetAllOperators(ctx context.Context, restaurantID uint) ([]*user.User, error)
 	DoeseThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error)
-	GetOwnerInfo(ctx context.Context, restaurantID uint) (*user.User, error) 
-	GetRestarantInfo(ctx context.Context, restaurantID uint) (*Restaurant, *user.User, []*user.User, []*motor.Motor, error) 
+	GetOwnerInfo(ctx context.Context, restaurantID uint) (*user.User, error)
+	GetRestarantInfo(ctx context.Context, restaurantID uint) (*Restaurant, *user.User, []*user.User, []*motor.Motor, error)
+	RemoveRestaurant(ctx context.Context, restaurantID uint) error
+	GetRestaurantsOfAnOwner(ctx context.Context) ([]*Restaurant, error)
+	GetRestaurantsOfAnOperator(ctx context.Context) ([]*Restaurant, error)
+	EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error
 }
 
 func NewRestaurant(name string, phone string, city string, address string, coordiantes string) *Restaurant {
