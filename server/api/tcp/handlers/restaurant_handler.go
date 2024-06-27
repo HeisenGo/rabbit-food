@@ -143,6 +143,36 @@ func (h *RestaurantHandler) HandleAddMenuItemToMenu(ctx context.Context, conn ne
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
+func (h *RestaurantHandler) HandleGetMenuItemsOfMenu(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeGetMenuItemsOfMenuRequest(req.Data)
+	if err != nil {
+		//logger
+		fmt.Println("Error decoding get menu items request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	newMenu := menu.NewMenuByID(reqData.MenuID)
+	fetchedMenuItems, err := h.restaurantService.GetMenuItemsOfMenu(ctx, newMenu)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.GetMenuItemsOfMenuResponse{
+		Message:   "menu items successfully fetched",
+		MenuItems: fetchedMenuItems,
+	}
+
+	resData, err := tcp.EncodeGetMenuItemsOfMenuResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding menu item response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
+
 func (h *RestaurantHandler) HandleAddOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
 }
 
@@ -170,6 +200,11 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			addMenuItemToMenuHandler := middleware.ApplyMiddlewares(h.HandleAddMenuItemToMenu, middleware.AuthMiddleware)
 			addMenuItemToMenuHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			getMenuItemsOfMenuHandler := h.HandleGetMenuItemsOfMenu
+			getMenuItemsOfMenuHandler(ctx, conn, TCPReq)
 			return
 		}
 	case "withdraw":
