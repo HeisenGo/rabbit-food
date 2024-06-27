@@ -9,6 +9,7 @@ type Repo interface {
 	Create(ctx context.Context, user *Wallet) (*Wallet, error)
 	Deposit(ctx context.Context, creditCard *creditCard.CreditCard, amount uint) (*Wallet, error)
 	Withdraw(ctx context.Context, creditCard *creditCard.CreditCard, amount uint) (*Wallet, error)
+	GetWallet(ctx context.Context, wallet *Wallet) (*Wallet, error)
 }
 
 type Wallet struct {
@@ -17,6 +18,6 @@ type Wallet struct {
 	Balance uint
 }
 
-func NewWallet() *Wallet {
-	return &Wallet{}
+func NewWalletByID(id uint) *Wallet {
+	return &Wallet{ID: id}
 }

@@ -125,3 +125,13 @@ func (r *walletRepo) Withdraw(ctx context.Context, card *creditCard.CreditCard, 
 	createdWallet := mappers.WalletEntityToDomain(userWalletEntity)
 	return createdWallet, nil
 }
+
+func (r *walletRepo) GetWallet(ctx context.Context, wallet *wallet.Wallet) (*wallet.Wallet, error) {
+	var fetchedWalletEntity *entities.Wallet
+	err := r.db.WithContext(ctx).Model(&entities.Wallet{}).Where("id = ?", wallet.ID).First(&fetchedWalletEntity).Error
+	if err != nil {
+		return nil, err
+	}
+	fetchedWalletDomain := mappers.WalletEntityToDomain(fetchedWalletEntity)
+	return fetchedWalletDomain, nil
+}
