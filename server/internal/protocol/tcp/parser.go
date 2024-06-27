@@ -91,6 +91,12 @@ func DecodeAddMenuItemToMenuRequest(data []byte) (AddMenuItemToMenuRequest, erro
 	return req, err
 }
 
+func DecodeGetMenuItemsOfMenuRequest(data []byte) (GetMenuItemsOfMenuRequest, error) {
+	var req GetMenuItemsOfMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
 func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
@@ -104,5 +110,9 @@ func EncodeGetAllMenusResponse(res GetAllMenusResponse) ([]byte, error) {
 }
 
 func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
