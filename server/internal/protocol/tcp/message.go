@@ -42,7 +42,7 @@ type WithdrawRequest struct {
 }
 type AddressRequest struct{
 	AddressLine string `json:"address_line"`
-	Cordinates string	`json:"cordinates"`
+	Cordinates [2]float64	`json:"cordinates"` //coordinates should be changed to the float 64 type
  	Types     string		`json:"types"`
 	City       string	`json:"city"`
 }

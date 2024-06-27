@@ -23,12 +23,12 @@ func NewAddressEntity() *Address {
 type RestaurantAddress struct {
 	ID           uint `gorm:"primarykey"`
 	AddressID    uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:address"`
-	RestaurantID uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:restaurant"`
+	RestaurantID uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:RestaurantID;references:restaurant"`
 	//*Restaurant 		*Restaurant
 }
 type UserAddress struct {
 	ID        uint  `gorm:"primarykey"`
 	AddressID uint  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:address"`
-	UserID    *uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:users"`
+	UserID    *uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:UserID;references:users"`
 	User      *User
 }

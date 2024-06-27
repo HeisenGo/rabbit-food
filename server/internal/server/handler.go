@@ -45,6 +45,8 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 			s.authHandler.ServeTCP(ctx, conn, requestData)
 		case "wallets":
 			s.walletHandler.ServeTCP(ctx, conn, requestData)
+		case "user":
+			s.addressHandler.ServeTCP(ctx,conn,requestData)
 		default:
 			fmt.Println("default option!")
 			conn.Write([]byte("incorrect option!"))
