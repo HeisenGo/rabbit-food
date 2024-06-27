@@ -121,7 +121,7 @@ func (h *RestaurantHandler) HandleAddMenuItemToMenu(ctx context.Context, conn ne
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	newMenuItem := menu.NewMenuItem(reqData.Name, reqData.Price, reqData.PreparationTime, reqData.MenuID)
+	newMenuItem := menu.NewMenuItem(reqData.Name, reqData.Price, reqData.PreparationTime, reqData.CancellationPenaltyPercentage, reqData.MenuID)
 	createdMenuItem, err := h.restaurantService.AddMenuItemToMenu(ctx, newMenuItem)
 
 	if err != nil {

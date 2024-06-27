@@ -15,11 +15,12 @@ func MenuEntityToDomain(entity *entities.Menu) *menu.Menu {
 
 func MenuItemEntityToDomain(entity *entities.MenuItem) *menu.MenuItem {
 	return &menu.MenuItem{
-		ID:              entity.ID,
-		Name:            entity.Name,
-		Price:           entity.Price,
-		PreparationTime: entity.PreparationTime,
-		MenuID:          entity.MenuID,
+		ID:                            entity.ID,
+		Name:                          entity.Name,
+		Price:                         entity.Price,
+		PreparationTime:               entity.PreparationTime,
+		CancellationPenaltyPercentage: entity.CancellationPenaltyPercentage,
+		MenuID:                        entity.MenuID,
 	}
 }
 
@@ -35,11 +36,12 @@ func BatchMenuItemEntityToDomain(entities []*entities.MenuItem) []*menu.MenuItem
 	var domainMenuItems []*menu.MenuItem
 	for _, e := range entities {
 		domainMenuItems = append(domainMenuItems, &menu.MenuItem{
-			ID:              e.ID,
-			Name:            e.Name,
-			Price:           e.Price,
-			PreparationTime: e.PreparationTime,
-			MenuID:          e.MenuID,
+			ID:                            e.ID,
+			Name:                          e.Name,
+			Price:                         e.Price,
+			PreparationTime:               e.PreparationTime,
+			CancellationPenaltyPercentage: e.CancellationPenaltyPercentage,
+			MenuID:                        e.MenuID,
 		})
 	}
 	return domainMenuItems
@@ -54,9 +56,10 @@ func MenuDomainToEntity(domainMenu *menu.Menu) *entities.Menu {
 
 func MenuItemDomainToEntity(domainMenuItem *menu.MenuItem) *entities.MenuItem {
 	return &entities.MenuItem{
-		Name:            domainMenuItem.Name,
-		Price:           domainMenuItem.Price,
-		PreparationTime: domainMenuItem.PreparationTime,
-		MenuID:          domainMenuItem.MenuID,
+		Name:                          domainMenuItem.Name,
+		Price:                         domainMenuItem.Price,
+		PreparationTime:               domainMenuItem.PreparationTime,
+		CancellationPenaltyPercentage: domainMenuItem.CancellationPenaltyPercentage,
+		MenuID:                        domainMenuItem.MenuID,
 	}
 }

@@ -12,15 +12,16 @@ type Menu struct {
 }
 
 type MenuItem struct {
-	ID              uint
-	Name            string
-	Price           uint
-	PreparationTime uint
-	MenuID          uint
+	ID                            uint
+	Name                          string
+	Price                         uint
+	PreparationTime               uint
+	CancellationPenaltyPercentage uint
+	MenuID                        uint
 }
 
-func NewMenuItem(name string, price uint, preparationTime uint, menuID uint) *MenuItem {
-	return &MenuItem{Name: name, Price: price, PreparationTime: preparationTime, MenuID: menuID}
+func NewMenuItem(name string, price uint, preparationTime uint, cancellationPenaltyPercentage uint, menuID uint) *MenuItem {
+	return &MenuItem{Name: name, Price: price, PreparationTime: preparationTime, CancellationPenaltyPercentage: cancellationPenaltyPercentage, MenuID: menuID}
 }
 
 type Repo interface {

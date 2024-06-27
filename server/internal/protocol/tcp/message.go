@@ -51,10 +51,11 @@ type GetRestaurantMenusRequest struct {
 }
 
 type AddMenuItemToMenuRequest struct {
-	MenuID          uint   `json:"menu_id"`
-	Name            string `json:"name"`
-	Price           uint   `json:"price"`
-	PreparationTime uint   `json:"preparation_time"`
+	MenuID                        uint   `json:"menu_id"`
+	Name                          string `json:"name"`
+	Price                         uint   `json:"price"`
+	PreparationTime               uint   `json:"preparation_time"`
+	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
 }
 
 type GetMenuItemsOfMenuRequest struct {
