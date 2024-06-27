@@ -2,6 +2,7 @@ package tcp
 
 import (
 	"server/internal/models/auth"
+	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
@@ -37,7 +38,23 @@ type CreateRestaurantRequest struct {
 	Phone       string `json:"phone"`
 	City        string `json:"city"`
 	Address     string `json:"address"`
-	Coordinates string `json:"coordiantes"`
+	Coordinates string `json:"coordinates"`
+}
+
+type CreateMenuRequest struct {
+	RestaurantID uint   `json:"restaurant_id"`
+	Name         string `json:"name"`
+}
+
+type GetRestaurantMenusRequest struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type AddMenuItemToMenuRequest struct {
+	MenuID          uint   `json:"menu_id"`
+	Name            string `json:"name"`
+	Price           uint   `json:"price"`
+	PreparationTime uint   `json:"preparation_time"`
 }
 
 type Coordinates struct {
@@ -62,6 +79,21 @@ type AddCardToWalletResponse struct {
 type CreateRestaurantResponse struct {
 	Message    string
 	Restaurant *restaurant.Restaurant
+}
+
+type CreateMenuResponse struct {
+	Message string
+	Menu    *menu.Menu
+}
+
+type AddMenuItemToMenuResponse struct {
+	Message  string
+	MenuItem *menu.MenuItem
+}
+
+type GetAllMenusResponse struct {
+	Message string
+	Menus   []*menu.Menu
 }
 
 type GetUserWalletCardsResponse struct {
