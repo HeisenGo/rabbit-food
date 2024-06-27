@@ -20,15 +20,20 @@ type Repo interface {
 	CreateRestaurantAndAssignOwner(ctx context.Context, restauran *Restaurant) (*Restaurant, error)
 }
 
-func NewRestaurant(name string, phone string, city string, address string, coordiantes string) *Restaurant {
-	//users := []User
-	//users = append(users, user)
+func NewRestaurant(name string, phone string, city string, address string, coordinates string) *Restaurant {
 	restaurant := &Restaurant{
 		Name:        name,
 		Phone:       phone,
 		City:        city,
 		Address:     address,
-		Coordinates: coordiantes,
+		Coordinates: coordinates,
+	}
+	return restaurant
+}
+
+func NewRestaurantByID(id uint) *Restaurant {
+	restaurant := &Restaurant{
+		ID: id,
 	}
 	return restaurant
 }
