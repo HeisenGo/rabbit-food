@@ -23,7 +23,11 @@ func Migrate(db *gorm.DB) error {
 		&entities.WalletTransaction{},
 		&entities.WalletCreditCard{},
 		&entities.Restaurant{},
-		&entities.UserRestaurant{})
+		&entities.UserRestaurant{},
+		&entities.Menu{},
+		&entities.MenuItem{},
+		&entities.RestaurantCategory{},
+	)
 	if err != nil {
 		return err
 	}
