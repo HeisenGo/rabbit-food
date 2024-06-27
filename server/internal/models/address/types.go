@@ -13,12 +13,12 @@ type Repo interface {
 type Address struct {
 	UserID      uint 		
 	Addressline string		
-	Cordinates  string 		
+	Cordinates  [2]float64 		
 	Types  		string			
 	City 		string 			
 	
 }
-func NewAddress(addressline string, cordinates  string, types string,city string ) *Address {
+func NewAddress(addressline string, cordinates  [2]float64, types string,city string ) *Address {
 	return &Address{
 		Addressline:    addressline,
 		Cordinates:     cordinates,
@@ -30,7 +30,7 @@ func NewAddress(addressline string, cordinates  string, types string,city string
 func (u *Address) SetAddressline(addressline string) {
 	u.Addressline = addressline
 }
-func (u *Address) SetCordinates(cordinates string) {
+func (u *Address) SetCordinates(cordinates [2]float64) {
 	u.Cordinates = cordinates
 }
 func (u *Address) SetCity(city string) {
@@ -39,12 +39,12 @@ func (u *Address) SetCity(city string) {
 func (u *Address) SetUserAddress(types string){
 	a := types==u.Types
 	if a== true && (types == "User") {
-		NewAddress(u.Addressline,u.Cordinates,u.Cordinates,u.City)
+		NewAddress(u.Addressline,u.Cordinates,u.Types,u.City)
 	}  
 }
 func (u *Address) SetRestaurantAddress(types string){
 	a := types==u.Types
 	if a== true && (types == "Restaurant") {
-		NewAddress(u.Addressline,u.Cordinates,u.Cordinates,u.City)
+		NewAddress(u.Addressline,u.Cordinates,u.Types,u.City)
 	}  
 }

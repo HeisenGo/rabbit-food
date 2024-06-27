@@ -11,7 +11,7 @@ func NewAddressService(addressOps *address.AddressOps) *AddressService {
 		addressOps: addressOps,
 	}
 }
-func (s *AddressService) Create(ctx context.Context, addressline string,cordinates string,types string,city string,userID uint) (*address.Address, error) {
+func (s *AddressService) Create(ctx context.Context, addressline string,cordinates [2]float64,types string,city string,userID uint) (*address.Address, error) {
 	
 	newaddress := &address.Address{
 		Addressline:addressline,

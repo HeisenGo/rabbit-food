@@ -7,7 +7,7 @@ import (
 type Address struct {
 	gorm.Model
 	Addressline  string `gorm:"size:255;not null"`
-	Cordinates   string `gorm:"type:geography(POINT, 4326);not null"`
+	Cordinates   [2]float64 `gorm:"type:geography(POINT, 4326);not null"`
 	Types        string `gorm:"size:255;not null"`
 	City         string `gorm:"size:255;not null"`
 	UserID       *uint  `gorm:"unique;index"`
