@@ -25,6 +25,18 @@ func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
 	return res, err
 }
 
+func DecodeAddCardResponse(data []byte) (*AddCardResponse, error) {
+	var res *AddCardResponse
+	err := json.Unmarshal(data, &res)
+	return res, err
+}
+
+func DecodeCreditCard(card json.RawMessage) (*models.CreditCard, error) {
+	var newCard *models.CreditCard
+	err := json.Unmarshal(card, newCard)
+	return newCard, err
+}
+
 func DecodeToken(data []byte) (*models.Token, error) {
 	var t *models.Token
 	err := json.Unmarshal(data, &t)

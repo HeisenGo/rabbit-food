@@ -1,7 +1,6 @@
 package services
 
 import (
-	"bufio"
 	"client/errors"
 	"client/models"
 	"client/protocol/tcp"
@@ -45,34 +44,11 @@ func (s *APIService) MakeNewTCPConnection() (net.Conn, error) {
 	return conn, nil
 }
 
-func (s *APIService) ReadResponseFromServer(conn net.Conn) ([]byte, error) {
-	reader := bufio.NewReader(conn)
-	buffer := make([]byte, 4096)
-	n, err := reader.Read(buffer)
-	if err != nil {
-		fmt.Println("Error reading from server:", err)
-		return nil, err
-	}
-	return buffer[:n], nil
-}
-
-func setMethodHeader(header map[string]string, method string) {
-	header["method"] = method
-}
-
-func produceNotASuccessfulResponseError(data json.RawMessage) error {
-	responseErr, err := tcp.DecodeTCPResponseError(data)
-	if err != nil {
-		return errors.ErrDecodingServerErrorResponse
-	}
-	return fmt.Errorf(responseErr.Message)
-}
-
 func (s *APIService) Register(userData *models.User) (*models.Token, error) {
 	location := "auth/register"
 	header := make(map[string]string)
 	methodHeader := tcp.MethodPost
-	setMethodHeader(header, methodHeader)
+	tcp_service.SetMethodHeader(header, methodHeader)
 
 	conn, err := s.MakeNewTCPConnection()
 	if err != nil {
@@ -94,7 +70,7 @@ func (s *APIService) Register(userData *models.User) (*models.Token, error) {
 		return nil, errors.ErrWritingToServer
 	}
 	// Read the response from the server
-	buffer, err := s.ReadResponseFromServer(conn)
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
 		return nil, errors.ErrReadingResponse
 	}
@@ -104,7 +80,7 @@ func (s *APIService) Register(userData *models.User) (*models.Token, error) {
 		return nil, errors.ErrDecodingResponse
 	}
 	if response.StatusCode != tcp.StatusCreated {
-		return nil, produceNotASuccessfulResponseError(response.Data)
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
 	}
 
 	var responseData tcp.RegisterResponse
@@ -126,7 +102,7 @@ func (s *APIService) Login(req *tcp.LoginBody) (*models.Token, error) {
 	location := "auth/login"
 	header := make(map[string]string)
 	methodHeader := tcp.MethodPost
-	setMethodHeader(header, methodHeader)
+	tcp_service.SetMethodHeader(header, methodHeader)
 
 	conn, err := s.MakeNewTCPConnection()
 	if err != nil {
@@ -143,7 +119,7 @@ func (s *APIService) Login(req *tcp.LoginBody) (*models.Token, error) {
 		return nil, errors.ErrWritingToServer
 	}
 
-	buffer, err := s.ReadResponseFromServer(conn)
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
 		return nil, errors.ErrReadingResponse
 	}
@@ -152,7 +128,7 @@ func (s *APIService) Login(req *tcp.LoginBody) (*models.Token, error) {
 		return nil, errors.ErrDecodingResponse
 	}
 	if response.StatusCode != tcp.StatusOK {
-		return nil, produceNotASuccessfulResponseError(response.Data)
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
 	}
 	responseData, err := tcp.DecodeLoginResponse(response.Data)
 	if err != nil {
@@ -176,67 +152,44 @@ func (s *APIService) GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
 }
 
 func (s *APIService) AddCard(reqBody *tcp.AddCardBody) (*models.CreditCard, error) {
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+	location := "wallets/cards"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
 	if err != nil {
-		return nil, fmt.Errorf("error connecting to server: %v", err)
+		return nil, errors.ErrConnectionFailed
 	}
 	defer conn.Close()
 
-	token := tcp_service.GetToken()
-	header := map[string]string{"method": "POST", "Authorization": token}
+	tcp_service.SetAuthorizationHeader(header)
 	addCardReqBody := tcp.NewAddCardBody(reqBody.CardNumber)
 	encodedAddCardReqBody, err := tcp.EncodeAddCardReqBody(addCardReqBody)
 	if err != nil {
-		fmt.Println("Encoding Problem") //:To Do
-		time.Sleep(time.Second * 2)
-		//return tcp.Token{}, err
-		return nil, err
+		return nil, errors.ErrEncodingRequest
 	}
-
-	err = tcp.SendRequest(conn, "wallets/cards", header, encodedAddCardReqBody)
-	//fmt.Println("Data has been sent!")
+	err = tcp.SendRequest(conn, location, header, encodedAddCardReqBody)
 	if err != nil {
-		fmt.Println("Error writing to server:", err)
-		time.Sleep(time.Second * 2)
-
-		//return tcp.Token{}, err
-		return nil, err
+		return nil, errors.ErrWritingToServer
 	}
 
-	// Read the response from the server
-	buffer := make([]byte, 4096)
-	n, err := conn.Read(buffer)
-	// _, err = bufio.NewReader(conn).ReadString(' ')
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
-		fmt.Println("Error reading from server:", err)
-		time.Sleep(time.Second * 2)
-		return nil, err
+		return nil, errors.ErrReadingResponse
 	}
-	buffer = buffer[:n]
-	fmt.Println(string(buffer))
+
 	response, err := tcp.DecodeTCPResponse(buffer)
-	fmt.Println(response)
 	if err != nil {
-		fmt.Println("Error decoding response", response)
-		return nil, err
+		return nil, errors.ErrDecodingResponse
 	}
-	if response.StatusCode != uint(200) {
-		fmt.Println(string(response.Data))
-		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
-		if err != nil {
-			fmt.Println("error in decoding server error")
-			return nil, err
-		}
-		fmt.Println("Error creating", responseErr.Message)
-		return nil, fmt.Errorf(responseErr.Message)
+	if response.StatusCode != tcp.StatusCreated {
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
 	}
 	var addCardResBody *tcp.AddCardResponse
-	fmt.Println(string(response.Data))
-
-	err = json.Unmarshal(response.Data, addCardResBody)
+	addCardResBody, err = tcp.DecodeAddCardResponse(response.Data)
 	if err != nil {
-		fmt.Println("Error in decoding a successful response", err)
-		return nil, err
+		return nil, errors.ErrDecodingSuccessfulResponse
 	}
 	var newCard *models.CreditCard
 	err = json.Unmarshal(addCardResBody.Card, newCard)
@@ -245,8 +198,6 @@ func (s *APIService) AddCard(reqBody *tcp.AddCardBody) (*models.CreditCard, erro
 		//return tcp.Token{}, err
 		return nil, err
 	}
-	fmt.Println("Login:", token)
-	//fmt.Printf("Server response: %s", response)
 	return newCard, nil
 }
 
