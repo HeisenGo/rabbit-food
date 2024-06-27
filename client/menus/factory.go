@@ -100,9 +100,10 @@ func getEditInfoMenue(service services.Service) MenuComponent {
 
 func getProfileManagementMenu(service services.Service) MenuComponent {
 	if profileManagementMenu == nil {
+		displayProfileCmd := commands.NewDisplayProfileCommand(service)
+		editProfileCmd := commands.NewEditProfileCommand(service)
 		profileManagementMenu = NewMenu("Profile Management Menu")
-		profileManagementMenu.Add(getEditInfoMenue(service))
-		profileManagementMenu.Add(getManageAddressesMenu(service))
+		profileManagementMenu.Add(NewProfileMenuItem("Profile Management", displayProfileCmd, editProfileCmd, getHomeMenu(service)))
 	}
 	return profileManagementMenu
 }
