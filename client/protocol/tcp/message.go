@@ -19,8 +19,8 @@ type LoginRequest struct {
 	Password     string `json:"password"`
 }
 type LoginResponse struct {
-	Message   string
-	AuthToken json.RawMessage
+	Message   string          `json:"message"`
+	AuthToken json.RawMessage `json:"token"`
 }
 
 type AddCardResponse struct {
@@ -34,8 +34,8 @@ type LoginUserReq struct {
 }
 
 type LoginBody struct {
-	PhoneOrEmail string
-	Password     string
+	PhoneOrEmail string `json:"phone_or_email"`
+	Password     string `json:"password"`
 }
 
 type AddCardBody struct {

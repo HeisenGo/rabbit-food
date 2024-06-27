@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"client/models"
 	"encoding/json"
 )
 
@@ -23,6 +24,13 @@ func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
 	err := json.Unmarshal(data, &res)
 	return res, err
 }
+
+func DecodeToken(data []byte) (*models.Token, error) {
+	var t *models.Token
+	err := json.Unmarshal(data, &t)
+	return t, err
+}
+
 func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 	var req LoginRequest
 	err := json.Unmarshal(data, &req)

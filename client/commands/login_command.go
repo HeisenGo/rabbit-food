@@ -5,7 +5,6 @@ import (
 	"client/services"
 	"client/services/tcp_service"
 	"errors"
-	"fmt"
 )
 
 type LoginCommand struct {
@@ -18,26 +17,12 @@ func (c *LoginCommand) Execute(userData any) error {
 		return errors.New("data type isn't user")
 	}
 	token, err := c.service.Login(userReq)
+	if err != nil {
+		return err
+	}
 	tcp_service.SetToken(token.AuthorizationToken)
-	fmt.Println("New: ", token)
-	fmt.Println("token: ", token.AuthorizationToken,
-		"\nReferesh:", token.RefreshToken,
-		"\nexpire: ", token.ExpiresAt)
-	//time.Sleep(time.Minute * 2)
-	return err
+	return nil
 }
-
-// func (c *LoginCommand) Execute(LoginData any) (*models.User, error) {
-// 	LoginReq, ok := LoginData.(*models.LoginUserReq)
-// 	if !ok {
-// 		return nil, errors.New("data type isn't LoginReq")
-// 	}
-// 	loggedInUser, err := c.service.Login(LoginReq)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return loggedInUser, nil
-// }
 
 func NewLoginCommand(service services.Service) *LoginCommand {
 	return &LoginCommand{service: service}
