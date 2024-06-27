@@ -123,7 +123,7 @@ func getHomeMenu(service services.Service) MenuComponent {
 		homeMenu.Add(getWalletManagementMenu(service))
 		homeMenu.Add(getFoodOrderMenu(service))
 		homeMenu.Add(getRestaurantManagementMenu(service))
-		homeMenu.Add(getLogoutMenuItem(service)) // TODO: remove token from context & add context to flow
+		homeMenu.Add(getLogoutMenuItem(service))
 
 	}
 	return homeMenu

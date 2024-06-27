@@ -12,18 +12,18 @@ import (
 )
 
 type WithdrawMenuItem struct {
-	Name                  string
-	DepositCommand        *commands.WithdrawCommand
-	GetWalletCardsCommand *commands.DisplayCardsCommand
-	PostMenu              MenuComponent
+	Name                string
+	DepositCommand      *commands.WithdrawCommand
+	DisplayCardsCommand *commands.DisplayCardsCommand
+	PostMenu            MenuComponent
 }
 
-func NewWithdrawMenuItem(name string, depositCommand *commands.WithdrawCommand, getWalletCardsCommand *commands.DisplayCardsCommand, postMenu MenuComponent) *WithdrawMenuItem {
+func NewWithdrawMenuItem(name string, depositCommand *commands.WithdrawCommand, DisplayCardsCommand *commands.DisplayCardsCommand, postMenu MenuComponent) *WithdrawMenuItem {
 	return &WithdrawMenuItem{
-		Name:                  name,
-		DepositCommand:        depositCommand,
-		GetWalletCardsCommand: getWalletCardsCommand,
-		PostMenu:              postMenu,
+		Name:                name,
+		DepositCommand:      depositCommand,
+		DisplayCardsCommand: DisplayCardsCommand,
+		PostMenu:            postMenu,
 	}
 }
 
@@ -34,7 +34,7 @@ func (mi *WithdrawMenuItem) Display() {
 func (mi *WithdrawMenuItem) Execute(scanner *bufio.Scanner) {
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
-	cards, err := mi.GetWalletCardsCommand.Execute()
+	cards, err := mi.DisplayCardsCommand.Execute()
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err)
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
@@ -62,6 +62,11 @@ func (mi *WithdrawMenuItem) Execute(scanner *bufio.Scanner) {
 	amount, err := strconv.Atoi(utils.ReadInput(scanner, "Amount: "))
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", errors.ErrDataType.Message)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		return
+	}
+	if amount <= 0 {
+		utils.ColoredPrint(constants.Red, "\n\t", "Entered Amount should be positive")
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
