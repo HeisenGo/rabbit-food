@@ -30,6 +30,6 @@ func (o *WalletOps) Withdraw(ctx context.Context, creditCard *creditCard.CreditC
 	return o.repo.Withdraw(ctx, creditCard, amount)
 }
 
-func (o *WalletOps) GetWallet(ctx context.Context, wallet *Wallet) (*Wallet, error) {
-	return o.repo.GetWallet(ctx, wallet)
+func (o *WalletOps) GetWallet(ctx context.Context) (*Wallet, error) {
+	return o.repo.GetWallet(ctx)
 }

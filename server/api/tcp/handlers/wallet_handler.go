@@ -6,7 +6,6 @@ import (
 	"net"
 	middleware "server/api/tcp/middlewares"
 	creditCard "server/internal/models/wallet/credit_card"
-	"server/internal/models/wallet/wallet"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
@@ -132,15 +131,7 @@ func (h *WalletHandler) HandleWithdraw(ctx context.Context, conn net.Conn, req *
 }
 
 func (h *WalletHandler) HandleGetWallet(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	reqData, err := tcp.DecodeGetWalletRequest(req.Data)
-	if err != nil {
-		//logger.Error("Error decoding register request:", err)
-		fmt.Println("Error decoding get wallet request:", err)
-		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-		return
-	}
-	chosenWallet := wallet.NewWalletByID(reqData.WalletID)
-	userWallet, err := h.walletService.GetWallet(ctx, chosenWallet)
+	userWallet, err := h.walletService.GetWallet(ctx)
 	//response := tcp.WithdrawResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -164,7 +155,7 @@ func (h *WalletHandler) HandleGetWallet(ctx context.Context, conn net.Conn, req 
 func (h *WalletHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
-	case "wallet":
+	case "":
 		if TCPReq.Header["method"] == tcp.MethodGet {
 			getWalletHandler := middleware.ApplyMiddlewares(h.HandleGetWallet, middleware.AuthMiddleware)
 			getWalletHandler(ctx, conn, TCPReq)
