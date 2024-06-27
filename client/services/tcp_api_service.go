@@ -305,7 +305,7 @@ func (s *APIService) Withdraw(data *tcp.WithdrawBody) error {
 }
 
 func (s *APIService) GetWallet() (*models.Wallet, error) {
-	location := "wallets/wallet"
+	location := "wallets"
 	header := make(map[string]string)
 	methodHeader := tcp.MethodGet
 	tcp_service.SetMethodHeader(header, methodHeader)
@@ -330,15 +330,17 @@ func (s *APIService) GetWallet() (*models.Wallet, error) {
 
 	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
 	fmt.Println(string(tcpResponse.Data))
-	// if err != nil {
-	// 	return nil, errors.ErrDecodingResponse
-	// }
-	// if tcpResponse.StatusCode != tcp.StatusOK {
-	// 	return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
-	// }
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
+	}
+	var wallet *models.Wallet
+	wallet, err = tcp.DecodeTCPWalletResponse(tcpResponse.Data)
 	// _, err := tcp.DecodeGetCardsBodyResponse(tcpResponse.Data)
 	// if err != nil {
 	// 	return nil, errors.ErrDecodingSuccessfulResponse
 	// }
-	return nil, nil
+	return wallet, nil
 }

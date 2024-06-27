@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"client/models"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -71,3 +72,4 @@ func DecodeTCPResponseError(data []byte) (*ResponseError, error) {
 	err := json.Unmarshal(data, &resp)
 	return &resp, err
 }
+
