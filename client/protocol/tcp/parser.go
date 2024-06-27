@@ -31,9 +31,9 @@ func DecodeAddCardResponse(data []byte) (*AddCardResponse, error) {
 	return res, err
 }
 
-func DecodeCreditCard(card json.RawMessage) (*models.CreditCard, error) {
+func DecodeCreditCard(card []byte) (*models.CreditCard, error) {
 	var newCard *models.CreditCard
-	err := json.Unmarshal(card, newCard)
+	err := json.Unmarshal(card, &newCard)
 	return newCard, err
 }
 

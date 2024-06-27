@@ -34,13 +34,13 @@ func (mi *AddCardMenuItem) Execute(scanner *bufio.Scanner) {
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
 	var addCardData tcp.AddCardBody
 	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
-	_, err := mi.Command.Execute(&addCardData)
+	newCard, err := mi.Command.Execute(&addCardData)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
 		utils.ReadInput(scanner, "Press any key to go back... ")
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tSuccessful Login :)\n")
+		utils.ColoredPrint(constants.Green, "\n\tCard "+newCard.Number+" Successfully added :)\n")
 		utils.ReadInput(scanner, "Press any key to continue... ")
 	}
 	if mi.PostMenu != nil {

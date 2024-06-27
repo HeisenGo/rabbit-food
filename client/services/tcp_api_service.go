@@ -191,12 +191,9 @@ func (s *APIService) AddCard(reqBody *tcp.AddCardBody) (*models.CreditCard, erro
 	if err != nil {
 		return nil, errors.ErrDecodingSuccessfulResponse
 	}
-	var newCard *models.CreditCard
-	err = json.Unmarshal(addCardResBody.Card, newCard)
+	newCard, err := tcp.DecodeCreditCard(addCardResBody.Card)
 	if err != nil {
-		fmt.Println("Error in decoding the token part of data")
-		//return tcp.Token{}, err
-		return nil, err
+		return nil, errors.ErrDecodingSuccessfulResponse
 	}
 	return newCard, nil
 }
@@ -206,56 +203,37 @@ func (s *APIService) Logout(req *tcp.LogoutUserReq) error {
 	return nil
 }
 
-func (s *APIService) DiplayCards() ([]*models.CreditCard, error) {
-	//location: "wallets/cards" meth
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+func (s *APIService) DisplayCards() ([]*models.CreditCard, error) {
+	location := "wallets/cards"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodGet
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
 	if err != nil {
-		return nil, fmt.Errorf("error connecting to server: %v", err)
+		return nil, errors.ErrConnectionFailed
 	}
 	defer conn.Close()
-
-	token := tcp_service.GetToken()
-
-	header := map[string]string{"method": "GET", "Authorization": token}
-
-	err = tcp.SendRequest(conn, "wallets/cards", header, nil)
-	//fmt.Println("Data has been sent!")
+	tcp_service.SetAuthorizationHeader(header)
+	err = tcp.SendRequest(conn, location, header, nil)
 	if err != nil {
-		fmt.Println("Error writing to server:", err)
-		time.Sleep(time.Second * 2)
-
-		//return tcp.Token{}, err
-		return nil, err
+		return nil, errors.ErrWritingToServer
 	}
 
 	// Read the response from the server
-	buffer := make([]byte, 4096)
-	n, err := conn.Read(buffer)
-	// _, err = bufio.NewReader(conn).ReadString(' ')
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
-		fmt.Println("Error reading from server:", err)
-		time.Sleep(time.Second * 2)
-		return nil, err
+		return nil, errors.ErrReadingResponse
 	}
-	buffer = buffer[:n]
-	fmt.Println(string(buffer), "********************")
 
 	response, err := tcp.DecodeTCPResponse(buffer)
-	fmt.Println(response)
 	if err != nil {
-		fmt.Println("Error decoding response", response)
-		return nil, err
+		return nil, errors.ErrDecodingResponse
 	}
-	if response.StatusCode != uint(200) {
-		fmt.Println(string(response.Data))
-		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
-		if err != nil {
-			fmt.Println("error in decoding server error")
-			return nil, err
-		}
-		fmt.Println("Error creating", responseErr.Message)
-		return nil, fmt.Errorf(responseErr.Message)
+	if response.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
 	}
+
 	var addCardResBody *tcp.AddCardResponse
 	fmt.Println(string(response.Data))
 
@@ -271,7 +249,6 @@ func (s *APIService) DiplayCards() ([]*models.CreditCard, error) {
 		//return tcp.Token{}, err
 		return nil, err
 	}
-	fmt.Println("Login:", token)
 	//fmt.Printf("Server response: %s", response)
 	return nil, nil
 }

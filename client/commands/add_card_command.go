@@ -1,10 +1,10 @@
 package commands
 
 import (
+	"client/errors"
 	"client/models"
 	"client/protocol/tcp"
 	"client/services"
-	"errors"
 )
 
 type AddCreditCardCommand struct {
@@ -14,7 +14,7 @@ type AddCreditCardCommand struct {
 func (c *AddCreditCardCommand) Execute(addCardData any) (*models.CreditCard, error) {
 	addCardBody, ok := addCardData.(*tcp.AddCardBody)
 	if !ok {
-		return nil, errors.New("data type isn't AddCardReq")
+		return nil, errors.ErrDataType
 	}
 	addedCard, err := c.service.AddCard(addCardBody)
 	if err != nil {
@@ -22,18 +22,6 @@ func (c *AddCreditCardCommand) Execute(addCardData any) (*models.CreditCard, err
 	}
 	return addedCard, nil
 }
-
-// func (c *LoginCommand) Execute(LoginData any) (*models.User, error) {
-// 	LoginReq, ok := LoginData.(*models.LoginUserReq)
-// 	if !ok {
-// 		return nil, errors.New("data type isn't LoginReq")
-// 	}
-// 	loggedInUser, err := c.service.Login(LoginReq)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return loggedInUser, nil
-// }
 
 func NewAddCardCommand(service services.Service) *AddCreditCardCommand {
 	return &AddCreditCardCommand{service: service}
