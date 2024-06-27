@@ -69,7 +69,7 @@ func getWithDrawMenu(service services.Service) MenuComponent {
 
 func getWalletManagementMenu(service services.Service) MenuComponent {
 	if walletManagementMenu == nil {
-		walletManagementMenu = NewMenu("Wallet ManagementMenu")
+		walletManagementMenu = NewMenu("Wallet Management Menu")
 		//walletManagementMenu.Add(getDisplayBalanceMenu(service))
 		walletManagementMenu.Add(getDisplayCardsMenu(service))
 		walletManagementMenu.Add(getAddCardMenuItem(service))

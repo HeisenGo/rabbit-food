@@ -28,12 +28,6 @@ func (mi *AddCardMenuItem) Display() {
 	fmt.Println(mi.Name)
 }
 
-// func (mi *LoginMenuItem) Execute(scanner *bufio.Scanner) {
-// 	defer time.Sleep(time.Second)
-// 	utils.ClearScreen()
-// 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
-// }
-
 func (mi *AddCardMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
@@ -42,15 +36,13 @@ func (mi *AddCardMenuItem) Execute(scanner *bufio.Scanner) {
 	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
 	_, err := mi.Command.Execute(&addCardData)
 	if err != nil {
-		fmt.Println(err)
-		utils.ReadInput(scanner, "Press any key to continue... ")
-
+		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
+		utils.ReadInput(scanner, "Press any key to go back... ")
 		return
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tSuccessful Login :)\n")
 		utils.ReadInput(scanner, "Press any key to continue... ")
 	}
-	// TODO: mi.state = ProfileMngmnt state
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)
 		return

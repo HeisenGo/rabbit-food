@@ -38,8 +38,8 @@ func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
 	user.Password = utils.ReadInput(scanner, "Password: ")
 	err := mi.Command.Execute(&user)
 	if err != nil {
-		fmt.Println(err)
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
+		utils.ReadInput(scanner, "Press any key to go back... ")
 		return
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tSuccessful Registration!\n")
