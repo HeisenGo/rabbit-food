@@ -329,18 +329,16 @@ func (s *APIService) GetWallet() (*models.Wallet, error) {
 	}
 
 	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
-	fmt.Println(string(tcpResponse.Data))
 	if err != nil {
 		return nil, errors.ErrDecodingResponse
 	}
 	if tcpResponse.StatusCode != tcp.StatusOK {
 		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
 	}
-	var wallet *models.Wallet
-	wallet, err = tcp.DecodeTCPWalletResponse(tcpResponse.Data)
-	// _, err := tcp.DecodeGetCardsBodyResponse(tcpResponse.Data)
-	// if err != nil {
-	// 	return nil, errors.ErrDecodingSuccessfulResponse
-	// }
-	return wallet, nil
+	wallet, err := tcp.DecodeTCPWalletResponse(tcpResponse.Data)
+
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return wallet.Wallet, nil
 }

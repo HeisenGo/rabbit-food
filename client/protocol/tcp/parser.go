@@ -75,8 +75,8 @@ func DecodeGetCardsBodyResponse(data []byte) (GetCardsBodyResponse, error) {
 	return resBody, err
 }
 
-func DecodeTCPWalletResponse(data []byte) (*models.Wallet, error) {
-	var wallet *models.Wallet
-	err := json.Unmarshal(data, &wallet)
-	return wallet, err
+func DecodeTCPWalletResponse(data []byte) (GetWalletBodyResponse, error) {
+	var res GetWalletBodyResponse
+	err := json.Unmarshal(data, &res)
+	return res, err
 }

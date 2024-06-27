@@ -3,7 +3,6 @@ package commands
 import (
 	"client/models"
 	"client/services"
-	"fmt"
 )
 
 type GetWalletCommand struct {
@@ -12,7 +11,6 @@ type GetWalletCommand struct {
 
 func (c *GetWalletCommand) Execute() (*models.Wallet, error) {
 
-	fmt.Println("\nBallance is:")
 	wallet, err := c.service.GetWallet()
 	if err != nil {
 		return nil, err

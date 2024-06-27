@@ -1,7 +1,6 @@
 package tcp
 
 import (
-	"client/models"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -20,14 +19,6 @@ func SendRequest(conn net.Conn, location string, header map[string]string, data 
 	_, err = conn.Write(encodedRequest)
 	return err
 }
-
-// func Error(conn net.Conn, statusCode uint, header map[string]string, message string) {
-// 	errData := NewResponseError(message)
-// 	encodedErrData, _ := encodeErrData(errData)
-// 	tcpResponse := NewTCPResponse(statusCode, header, encodedErrData)
-// 	encodeResponse, _ := encodeTCPResponse(tcpResponse)
-// 	conn.Write(encodeResponse)
-// }
 
 type Request struct {
 	Location string            `json:"location"`
@@ -72,4 +63,3 @@ func DecodeTCPResponseError(data []byte) (*ResponseError, error) {
 	err := json.Unmarshal(data, &resp)
 	return &resp, err
 }
-

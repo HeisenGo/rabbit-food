@@ -6,7 +6,6 @@ import (
 	"client/constants"
 	"client/utils"
 	"fmt"
-	"strconv"
 	"time"
 )
 
@@ -31,16 +30,16 @@ func (mi *GetWalletMenuItem) Display() {
 func (mi *GetWalletMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	wallet, err := mi.Command.Execute()
 	if err != nil {
-		utils.ColoredPrint(constants.Red, err)
-		utils.ReadInput(scanner, "\nPress any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", err)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tYour Ballance is: ", strconv.Itoa(wallet.Balance))
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ColoredPrint(constants.Green, "\n\n\tYour Ballance is: ", wallet.Balance, "\n")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)

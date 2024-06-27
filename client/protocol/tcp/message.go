@@ -58,6 +58,11 @@ type GetCardsBodyResponse struct {
 	Cards   []*models.CreditCard `json:"cards"`
 }
 
+type GetWalletBodyResponse struct {
+	Message string         `json:"message"`
+	Wallet  *models.Wallet `json:"wallet"`
+}
+
 func NewAddCardBody(cardNumber string) *AddCardBody {
 	return &AddCardBody{CardNumber: cardNumber}
 }
