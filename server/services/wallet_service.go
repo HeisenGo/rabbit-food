@@ -49,3 +49,11 @@ func (s *WalletService) Withdraw(ctx context.Context, card *creditCard.CreditCar
 	}
 	return userWallet, nil
 }
+
+func (s *WalletService) GetWallet(ctx context.Context, wallet *wallet.Wallet) (*wallet.Wallet, error) {
+	userWallet, err := s.walletOps.GetWallet(ctx, wallet)
+	if err != nil {
+		return nil, err
+	}
+	return userWallet, nil
+}

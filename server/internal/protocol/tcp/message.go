@@ -76,6 +76,10 @@ type WithdrawRequest struct {
 	Amount     uint   `json:"amount"`
 }
 
+type GetWalletRequest struct {
+	WalletID uint `json:"wallet_id"`
+}
+
 type AddCardToWalletResponse struct {
 	Message string
 	Card    *creditCard.CreditCard

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"net"
 	middleware "server/api/tcp/middlewares"
-	wallet "server/internal/models/wallet/credit_card"
+	creditCard "server/internal/models/wallet/credit_card"
+	"server/internal/models/wallet/wallet"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
@@ -26,7 +27,7 @@ func (h *WalletHandler) HandleAddCardToWallet(ctx context.Context, conn net.Conn
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	newCard := wallet.NewCreditCard(reqData.CardNumber)
+	newCard := creditCard.NewCreditCard(reqData.CardNumber)
 	createdCard, err := h.walletService.AddCardToWalletByUserID(ctx, newCard)
 	//response := tcp.AddCardToWalletResponse{}
 	if err != nil {
@@ -78,7 +79,7 @@ func (h *WalletHandler) HandleDeposit(ctx context.Context, conn net.Conn, req *t
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	card := wallet.NewCreditCard(reqData.CardNumber)
+	card := creditCard.NewCreditCard(reqData.CardNumber)
 	userWallet, err := h.walletService.Deposit(ctx, card, reqData.Amount)
 	//response := tcp.DepositResponse{}
 	if err != nil {
@@ -108,7 +109,7 @@ func (h *WalletHandler) HandleWithdraw(ctx context.Context, conn net.Conn, req *
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	card := wallet.NewCreditCard(reqData.CardNumber)
+	card := creditCard.NewCreditCard(reqData.CardNumber)
 	userWallet, err := h.walletService.Withdraw(ctx, card, reqData.Amount)
 	//response := tcp.WithdrawResponse{}
 	if err != nil {
@@ -116,7 +117,7 @@ func (h *WalletHandler) HandleWithdraw(ctx context.Context, conn net.Conn, req *
 		return
 	} //else {
 	response := tcp.WithdrawResponse{
-		Message: "seccessful withdraw.",
+		Message: "successful withdraw.",
 		Wallet:  userWallet,
 	}
 	//}
@@ -130,9 +131,45 @@ func (h *WalletHandler) HandleWithdraw(ctx context.Context, conn net.Conn, req *
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
+func (h *WalletHandler) HandleGetWallet(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeGetWalletRequest(req.Data)
+	if err != nil {
+		//logger.Error("Error decoding register request:", err)
+		fmt.Println("Error decoding get wallet request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	chosenWallet := wallet.NewWalletByID(reqData.WalletID)
+	userWallet, err := h.walletService.GetWallet(ctx, chosenWallet)
+	//response := tcp.WithdrawResponse{}
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	} //else {
+	response := tcp.WithdrawResponse{
+		Message: "successful withdraw.",
+		Wallet:  userWallet,
+	}
+	//}
+	resData, err := tcp.EncodeWithdrawResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding get cards response:", err)
+		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
+
 func (h *WalletHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
+	case "wallet":
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			getWalletHandler := middleware.ApplyMiddlewares(h.HandleGetWallet, middleware.AuthMiddleware)
+			getWalletHandler(ctx, conn, TCPReq)
+			return
+		}
 	case "cards":
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			addToCardHandler := middleware.ApplyMiddlewares(h.HandleAddCardToWallet, middleware.AuthMiddleware)
