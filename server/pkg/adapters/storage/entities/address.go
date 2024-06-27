@@ -6,12 +6,14 @@ import (
 
 type Address struct {
 	gorm.Model
-	Addressline  string
-	Cordinates   string `gorm:"type:geography(POINT, 4326)"`
-	Types        uint   //Restaurant Or User
-	City         string
-	UsersAddress []*User `gorm:"many2many:user_addresses;"`
-	//RestaurantAddress []*User 	`gorm:"many2many:addresses_restaurants;"`
+	Addressline  string `gorm:"size:255;not null"`
+	Cordinates   string `gorm:"type:geography(POINT, 4326);not null"`
+	Types        string `gorm:"size:255;not null"`
+	City         string `gorm:"size:255;not null"`
+	UserID       *uint  `gorm:"unique;index"`
+	User         User
+	RestaurantID *uint `gorm:"unique;index"`
+	//Restaurant   Restaurant
 }
 
 func NewAddressEntity() *Address {
@@ -20,13 +22,13 @@ func NewAddressEntity() *Address {
 
 type RestaurantAddress struct {
 	ID           uint `gorm:"primarykey"`
-	AddressID    uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:restaurant"`
-	RestaurantID uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	AddressID    uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:address"`
+	RestaurantID uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:restaurant"`
 	//*Restaurant 		*Restaurant
 }
 type UserAddress struct {
 	ID        uint  `gorm:"primarykey"`
-	AddressID uint  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:users"`
-	UserID    *uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	AddressID uint  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:address"`
+	UserID    *uint `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;foreignkey:AddressID;references:users"`
 	User      *User
 }

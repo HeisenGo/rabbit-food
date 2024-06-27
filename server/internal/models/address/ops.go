@@ -17,8 +17,8 @@ func NewAddressOps(db *gorm.DB, repo Repo) *AddressOps {
 	}
 }
 
-func (o *AddressOps) Create(ctx context.Context, address *Address) (*Address, error) {
-	return o.repo.Create(ctx, address)
+func (o *AddressOps) Create(ctx context.Context, address *Address,userID uint) (*Address, error) {
+	return o.repo.Create(ctx, address,userID)
 }
 
 func (o *AddressOps) GetByUser(ctx context.Context, userID uint) (*Address, error) {

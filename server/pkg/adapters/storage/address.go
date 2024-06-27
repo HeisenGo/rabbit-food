@@ -18,8 +18,9 @@ func NewAddressRepo(db *gorm.DB) address.Repo {
 		db: db,
 	}
 }
-func (r *addressRepo) Create(ctx context.Context, address *address.Address) (*address.Address, error) {
+func (r *addressRepo) Create(ctx context.Context, address *address.Address, userID uint) (*address.Address, error) {
 	newAddress := mappers.AddressDomainToEntity(address)
+	newAddress.UserID = &userID
 	err := r.db.Create(&newAddress).Error
 	if err != nil {
 		return nil, err

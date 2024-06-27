@@ -43,7 +43,7 @@ type WithdrawRequest struct {
 type AddressRequest struct{
 	AddressLine string `json:"address_line"`
 	Cordinates string	`json:"cordinates"`
- 	Types      uint		`json:"types"`
+ 	Types     string		`json:"types"`
 	City       string	`json:"city"`
 }
 type AddCardToWalletResponse struct {
