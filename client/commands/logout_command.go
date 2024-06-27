@@ -3,6 +3,7 @@ package commands
 import (
 	"client/protocol/tcp"
 	"client/services"
+	"client/services/tcp_service"
 	"errors"
 )
 
@@ -19,6 +20,7 @@ func (c *LogoutCommand) Execute(LogoutData any) error {
 	if err != nil {
 		return err
 	}
+	tcp_service.UnSetToken()
 	return nil
 }
 
