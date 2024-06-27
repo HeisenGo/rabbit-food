@@ -18,7 +18,7 @@ type Server struct {
 }
 
 
-func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler, restaurantHandler *handlers.RestaurantHandler,addressHandler *handler.AddressHandler) *Server {
+func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler, restaurantHandler *handlers.RestaurantHandler,addressHandler *handlers.AddressHandler) *Server {
 	return &Server{authHandler, walletHandler, restaurantHandler, addressHandler}
 
 }

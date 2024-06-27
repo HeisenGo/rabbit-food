@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 )
 
