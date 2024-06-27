@@ -13,7 +13,8 @@ import (
 func Run(cfg config.Server, app *services.AppContainer) {
 	authHandler := handlers.NewAuthHandler(*app.AuthService)
 	walletHandler := handlers.NewWalletHandler(*app.WalletService)
-	newServer := server.NewServer(authHandler, walletHandler)
+	restaurantHandler := handlers.NewRestaurantHandler(*app.RestaurantService)
+	newServer := server.NewServer(authHandler, walletHandler, restaurantHandler)
 	listener, err := net.Listen("tcp", ":"+cfg.Port)
 	fmt.Println("listening!")
 	if err != nil {

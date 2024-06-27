@@ -18,7 +18,16 @@ func NewPostgresGormConnection(dbConfig config.DB) (*gorm.DB, error) {
 func Migrate(db *gorm.DB) error {
 	migrator := db.Migrator()
 
-	err := migrator.AutoMigrate(&entities.User{}, &entities.Wallet{}, &entities.CreditCard{}, &entities.WalletTransaction{}, &entities.WalletCreditCard{})
+	err := migrator.AutoMigrate(&entities.User{},
+		&entities.Wallet{}, &entities.CreditCard{},
+		&entities.WalletTransaction{},
+		&entities.WalletCreditCard{},
+		&entities.Restaurant{},
+		&entities.UserRestaurant{},
+		&entities.Menu{},
+		&entities.MenuItem{},
+		&entities.RestaurantCategory{},
+	)
 	if err != nil {
 		return err
 	}
