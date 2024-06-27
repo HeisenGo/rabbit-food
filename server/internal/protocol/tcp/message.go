@@ -57,6 +57,10 @@ type AddMenuItemToMenuRequest struct {
 	PreparationTime uint   `json:"preparation_time"`
 }
 
+type GetMenuItemsOfMenuRequest struct {
+	MenuID uint `json:"menu_id"`
+}
+
 type Coordinates struct {
 	X float64
 	Y float64
@@ -89,6 +93,11 @@ type CreateMenuResponse struct {
 type AddMenuItemToMenuResponse struct {
 	Message  string
 	MenuItem *menu.MenuItem
+}
+
+type GetMenuItemsOfMenuResponse struct {
+	Message   string
+	MenuItems []*menu.MenuItem
 }
 
 type GetAllMenusResponse struct {
