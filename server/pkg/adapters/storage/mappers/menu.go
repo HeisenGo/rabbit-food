@@ -31,6 +31,20 @@ func BatchMenuEntityToDomain(entities []*entities.Menu) []*menu.Menu {
 	return domainMenus
 }
 
+func BatchMenuItemEntityToDomain(entities []*entities.MenuItem) []*menu.MenuItem {
+	var domainMenuItems []*menu.MenuItem
+	for _, e := range entities {
+		domainMenuItems = append(domainMenuItems, &menu.MenuItem{
+			ID:              e.ID,
+			Name:            e.Name,
+			Price:           e.Price,
+			PreparationTime: e.PreparationTime,
+			MenuID:          e.MenuID,
+		})
+	}
+	return domainMenuItems
+}
+
 func MenuDomainToEntity(domainMenu *menu.Menu) *entities.Menu {
 	return &entities.Menu{
 		Name:         domainMenu.Name,
