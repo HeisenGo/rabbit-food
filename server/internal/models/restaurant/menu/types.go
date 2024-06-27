@@ -26,13 +26,21 @@ func NewMenuItem(name string, price uint, preparationTime uint, menuID uint) *Me
 type Repo interface {
 	CreateMenu(ctx context.Context, menu *Menu) (*Menu, error)
 	GetAllRestaurantMenus(ctx context.Context, restaurant *restaurant.Restaurant) ([]*Menu, error)
-	AddMenuItemToMenu(ctx context.Context, menu *MenuItem) (*MenuItem, error)
+	AddMenuItemToMenu(ctx context.Context, menuItem *MenuItem) (*MenuItem, error)
+	GetMenuItemsOfMenu(ctx context.Context, menu *Menu) ([]*MenuItem, error)
 }
 
 func NewMenu(name string, restaurantID uint) *Menu {
 	menu := &Menu{
 		Name:         name,
 		RestaurantID: restaurantID,
+	}
+	return menu
+}
+
+func NewMenuByID(id uint) *Menu {
+	menu := &Menu{
+		ID: id,
 	}
 	return menu
 }
