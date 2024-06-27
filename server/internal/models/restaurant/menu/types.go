@@ -15,13 +15,13 @@ type MenuItem struct {
 	ID                            uint
 	Name                          string
 	Price                         uint
-	PreparationTime               uint
+	PreparationMinutes            uint // in minutes
 	CancellationPenaltyPercentage uint
 	MenuID                        uint
 }
 
-func NewMenuItem(name string, price uint, preparationTime uint, cancellationPenaltyPercentage uint, menuID uint) *MenuItem {
-	return &MenuItem{Name: name, Price: price, PreparationTime: preparationTime, CancellationPenaltyPercentage: cancellationPenaltyPercentage, MenuID: menuID}
+func NewMenuItem(name string, price uint, preparationMinutes uint, cancellationPenaltyPercentage uint, menuID uint) *MenuItem {
+	return &MenuItem{Name: name, Price: price, PreparationMinutes: preparationMinutes, CancellationPenaltyPercentage: cancellationPenaltyPercentage, MenuID: menuID}
 }
 
 type Repo interface {

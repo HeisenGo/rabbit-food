@@ -31,7 +31,7 @@ type MenuItem struct {
 	gorm.Model
 	Name                          string `gorm:"index"`
 	Price                         uint
-	PreparationTime               uint
+	PreparationMinutes            uint
 	CancellationPenaltyPercentage uint
 	MenuID                        uint
 	Menu                          *Menu `gorm:"foreignKey:MenuID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

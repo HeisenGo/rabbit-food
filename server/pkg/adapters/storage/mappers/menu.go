@@ -18,7 +18,7 @@ func MenuItemEntityToDomain(entity *entities.MenuItem) *menu.MenuItem {
 		ID:                            entity.ID,
 		Name:                          entity.Name,
 		Price:                         entity.Price,
-		PreparationTime:               entity.PreparationTime,
+		PreparationMinutes:            entity.PreparationMinutes,
 		CancellationPenaltyPercentage: entity.CancellationPenaltyPercentage,
 		MenuID:                        entity.MenuID,
 	}
@@ -39,7 +39,7 @@ func BatchMenuItemEntityToDomain(entities []*entities.MenuItem) []*menu.MenuItem
 			ID:                            e.ID,
 			Name:                          e.Name,
 			Price:                         e.Price,
-			PreparationTime:               e.PreparationTime,
+			PreparationMinutes:            e.PreparationMinutes,
 			CancellationPenaltyPercentage: e.CancellationPenaltyPercentage,
 			MenuID:                        e.MenuID,
 		})
@@ -58,7 +58,7 @@ func MenuItemDomainToEntity(domainMenuItem *menu.MenuItem) *entities.MenuItem {
 	return &entities.MenuItem{
 		Name:                          domainMenuItem.Name,
 		Price:                         domainMenuItem.Price,
-		PreparationTime:               domainMenuItem.PreparationTime,
+		PreparationMinutes:            domainMenuItem.PreparationMinutes,
 		CancellationPenaltyPercentage: domainMenuItem.CancellationPenaltyPercentage,
 		MenuID:                        domainMenuItem.MenuID,
 	}

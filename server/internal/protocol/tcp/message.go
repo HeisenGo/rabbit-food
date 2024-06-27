@@ -54,7 +54,7 @@ type AddMenuItemToMenuRequest struct {
 	MenuID                        uint   `json:"menu_id"`
 	Name                          string `json:"name"`
 	Price                         uint   `json:"price"`
-	PreparationTime               uint   `json:"preparation_time"`
+	PreparationMinutes            uint   `json:"preparation_minutes"`
 	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
 }
 
