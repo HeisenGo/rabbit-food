@@ -41,8 +41,8 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 		return
 	}
 	utils.ColoredPrint(constants.Green, "\n\tCards: \n")
-	for i, c := range cards {
-		fmt.Printf("\n\t%d- %v", i+1, c.Number)
+	for i, card := range cards {
+		fmt.Printf("\n\t %v. %v", i+1, utils.SeparateByFour(card.Number))
 	}
 	fmt.Println("\n\n\t")
 

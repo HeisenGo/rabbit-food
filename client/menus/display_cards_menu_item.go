@@ -40,7 +40,7 @@ func (mi *DisplayCardsMenuItem) Execute(scanner *bufio.Scanner) {
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tCards: \n")
 		for i, card := range cards {
-			fmt.Printf("\n\t %v. %v", i+1, card.Number)
+			fmt.Printf("\n\t %v. %v", i+1, utils.SeparateByFour(card.Number))
 		}
 		fmt.Println("")
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")

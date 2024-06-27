@@ -41,13 +41,13 @@ func (mi *WithdrawMenuItem) Execute(scanner *bufio.Scanner) {
 		return
 	}
 	utils.ColoredPrint(constants.Green, "\n\tCards: \n")
-	for i, c := range cards {
-		fmt.Printf("\n\t%d- %v", i+1, c.Number)
+	for i, card := range cards {
+		fmt.Printf("\n\t %v. %v", i+1, utils.SeparateByFour(card.Number))
 	}
 	fmt.Println("\n\n\t")
 
 	var withdrawBody tcp.WithdrawBody
-	cardRow, err := strconv.Atoi(utils.ReadInput(scanner, "Card Row: "))
+	cardRow, err := strconv.Atoi(utils.ReadInput(scanner, "Choose Card Row to Deposit: "))
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", errors.ErrDataType.Message)
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
