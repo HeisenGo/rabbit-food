@@ -12,4 +12,6 @@ type Service interface {
 	GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
 	AddCard(req *tcp.AddCardBody) (*models.CreditCard, error)
 	DisplayCards() ([]*models.CreditCard, error)
+	Deposit(data *tcp.DepositBody) error
+	Withdraw(data *tcp.WithdrawBody) error
 }

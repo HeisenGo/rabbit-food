@@ -28,8 +28,8 @@ var (
 	displayBallanceMenu    MenuComponent
 	diaplayCardsMenu       MenuComponent
 	connectACreditCardMenu MenuComponent
-	depositMenu            MenuComponent
-	withDrawMenu           MenuComponent
+	depositMenuItem        MenuComponent
+	withDrawMenuItem       MenuComponent
 )
 
 func getDisplayCardsMenu(service services.Service) MenuComponent {
@@ -54,17 +54,17 @@ func getAddCardMenuItem(service services.Service) MenuComponent {
 }
 
 func getDepositMenuItem(service services.Service) MenuComponent {
-	if connectACreditCardMenu == nil {
-		//connectACreditCardMenu = NewDepositMenuItem("Deposit", commands.NewGetWalletCardsCommand(service), commands.NewDepositCommand(service), getWalletManagementMenu(service))
+	if depositMenuItem == nil {
+		depositMenuItem = NewDepositMenuItem("Deposit", commands.NewDepositCommand(service), commands.NewDisplayCardsCommand(service), getWalletManagementMenu(service))
 	}
-	return connectACreditCardMenu
+	return depositMenuItem
 }
 
 func getWithDrawMenu(service services.Service) MenuComponent {
-	if withDrawMenu == nil {
-
+	if withDrawMenuItem == nil {
+		withDrawMenuItem = NewWithdrawMenuItem("Withdraw", commands.NewWithdrawCommand(service), commands.NewDisplayCardsCommand(service), getWalletManagementMenu(service))
 	}
-	return withDrawMenu
+	return withDrawMenuItem
 }
 
 func getWalletManagementMenu(service services.Service) MenuComponent {
@@ -74,8 +74,7 @@ func getWalletManagementMenu(service services.Service) MenuComponent {
 		walletManagementMenu.Add(getDisplayCardsMenu(service))
 		walletManagementMenu.Add(getAddCardMenuItem(service))
 		walletManagementMenu.Add(getDepositMenuItem(service))
-		//walletManagementMenu.Add(getWithDrawMenu(service)) // TODO: remove token from context & add context to flow
-
+		walletManagementMenu.Add(getWithDrawMenu(service))
 	}
 	return walletManagementMenu
 }

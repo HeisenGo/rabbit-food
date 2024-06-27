@@ -39,12 +39,22 @@ type LoginBody struct {
 	Password     string `json:"password"`
 }
 
+type DepositBody struct {
+	Number string `json:"card_number"`
+	Amount uint   `json:"amount"`
+}
+
+type WithdrawBody struct {
+	Number string `json:"card_number"`
+	Amount uint   `json:"amount"`
+}
+
 type AddCardBody struct {
 	CardNumber string `json:"card_number"`
 }
 
 type GetCardsBodyResponse struct {
-	Message string            `json:"message"`
+	Message string               `json:"message"`
 	Cards   []*models.CreditCard `json:"cards"`
 }
 
