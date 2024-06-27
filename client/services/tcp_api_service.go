@@ -229,3 +229,76 @@ func (s *APIService) Logout(req *models.LogoutUserReq) error {
 	//TODO implement me
 	return nil
 }
+
+func (s *APIService) DisplayProfile(userID uint) (*models.User, error) {
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+	if err != nil {
+		return nil, fmt.Errorf("error connecting to server: %v", err)
+	}
+	defer conn.Close()
+
+	location := fmt.Sprintf("profile/%d", userID)
+	err = tcp.SendRequest(conn, location, map[string]string{"method": "GET"}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make([]byte, 4096)
+	n, err := conn.Read(response)
+	if err != nil {
+		return nil, err
+	}
+
+	response = response[:n]
+	var res tcp.Response
+	err = json.Unmarshal(response, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	var profile models.User
+	err = json.Unmarshal(res.Data, &profile)
+	if err != nil {
+		return nil, err
+	}
+	return &profile, nil
+}
+
+func (s *APIService) EditProfile(user *models.User) (*models.User, error) {
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+	if err != nil {
+		return nil, fmt.Errorf("error connecting to server: %v", err)
+	}
+	defer conn.Close()
+
+	location := fmt.Sprintf("profile/%d", user.ID)
+	encodedRequest, err := json.Marshal(user)
+	if err != nil {
+		return nil, err
+	}
+
+	err = tcp.SendRequest(conn, location, map[string]string{"method": "POST"}, encodedRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make([]byte, 4096)
+	n, err := conn.Read(response)
+	if err != nil {
+		return nil, err
+	}
+
+	response = response[:n]
+	var res tcp.Response
+	err = json.Unmarshal(response, &res)
+	if err != nil {
+		return nil, err
+	}
+
+	var updatedProfile models.User
+	err = json.Unmarshal(res.Data, &updatedProfile)
+	if err != nil {
+		return nil, err
+	}
+	return &updatedProfile, nil
+}
