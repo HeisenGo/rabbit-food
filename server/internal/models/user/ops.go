@@ -2,9 +2,10 @@ package user
 
 import (
 	"context"
-	"gorm.io/gorm"
 	userErrors "server/internal/errors/users"
 	"server/pkg/utils/users"
+
+	"gorm.io/gorm"
 )
 
 type Ops struct {
@@ -69,4 +70,19 @@ func validateUserRegistration(user *User) error {
 		return err
 	}
 	return nil
+}
+
+func (o *Ops) GetByID(ctx context.Context, userID uint) (*User, error) {
+	var user User
+	if err := o.db.First(&user, userID).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (o *Ops) Update(ctx context.Context, user *User) (*User, error) {
+	if err := o.db.Save(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
 }
