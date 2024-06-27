@@ -44,15 +44,14 @@ func EncodeWithdrawResponse(res WithdrawResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
+func EncodeGetWalletResponse(res GetWalletResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
 func EncodeRegisterResponse(res RegisterResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
-func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
-	var res RegisterResponse
-	err := json.Unmarshal(data, &res)
-	return res, err
-}
 func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 	var req LoginRequest
 	err := json.Unmarshal(data, &req)

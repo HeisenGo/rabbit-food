@@ -137,12 +137,12 @@ func (h *WalletHandler) HandleGetWallet(ctx context.Context, conn net.Conn, req 
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	} //else {
-	response := tcp.WithdrawResponse{
-		Message: "successful withdraw.",
+	response := tcp.GetWalletResponse{
+		Message: "successful fetch.",
 		Wallet:  userWallet,
 	}
 	//}
-	resData, err := tcp.EncodeWithdrawResponse(response)
+	resData, err := tcp.EncodeGetWalletResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding get cards response:", err)

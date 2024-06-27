@@ -118,3 +118,8 @@ type WithdrawResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
 }
+
+type GetWalletResponse struct {
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
+}
