@@ -49,3 +49,11 @@ func (s *RestaurantService) AddMenuItemToMenu(ctx context.Context, menuItem *men
 	}
 	return addedMenuItem, nil
 }
+
+func (s *RestaurantService) GetMenuItemsOfMenu(ctx context.Context, menu *menu.Menu) ([]*menu.MenuItem, error) {
+	fetchedMenuItems, err := s.menuOps.GetMenuItemsOfMenu(ctx, menu)
+	if err != nil {
+		return nil, err
+	}
+	return fetchedMenuItems, nil
+}
