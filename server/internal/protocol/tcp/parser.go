@@ -28,12 +28,6 @@ func DecodeWithdrawRequest(data []byte) (WithdrawRequest, error) {
 	return req, err
 }
 
-func DecodeGetWalletRequest(data []byte) (GetWalletRequest, error) {
-	var req GetWalletRequest
-	err := json.Unmarshal(data, &req)
-	return req, err
-}
-
 func EncodeAddCardToWalletResponse(res AddCardToWalletResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
