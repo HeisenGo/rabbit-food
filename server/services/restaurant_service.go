@@ -2,11 +2,11 @@ package services
 
 import (
 	"context"
-	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 )
 
 type RestaurantService struct {
+
 	restaurantOps *restaurant.Ops
 	menuOps       *menu.Ops
 }

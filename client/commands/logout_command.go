@@ -1,8 +1,9 @@
 package commands
 
 import (
-	"client/models"
+	"client/protocol/tcp"
 	"client/services"
+	"client/services/tcp_service"
 	"errors"
 )
 
@@ -11,7 +12,7 @@ type LogoutCommand struct {
 }
 
 func (c *LogoutCommand) Execute(LogoutData any) error {
-	LogoutReq, ok := LogoutData.(*models.LogoutUserReq)
+	LogoutReq, ok := LogoutData.(*tcp.LogoutUserReq)
 	if !ok {
 		return errors.New("data type isn't LogoutReq")
 	}
@@ -19,6 +20,7 @@ func (c *LogoutCommand) Execute(LogoutData any) error {
 	if err != nil {
 		return err
 	}
+	tcp_service.UnSetToken()
 	return nil
 }
 

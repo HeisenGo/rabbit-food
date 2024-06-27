@@ -107,8 +107,8 @@ type GetAllMenusResponse struct {
 }
 
 type GetUserWalletCardsResponse struct {
-	Message string
-	Cards   []*creditCard.CreditCard
+	Message string                   `json:"message"`
+	Cards   []*creditCard.CreditCard `json:"cards"`
 }
 type DepositResponse struct {
 	Message string

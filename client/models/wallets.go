@@ -8,3 +8,8 @@ type Wallet struct {
 type GetWalletReq struct {
 	ID int
 }
+
+type CreditCard struct {
+	ID     uint   `json:"id"`
+	Number string `json:"number"`
+}
