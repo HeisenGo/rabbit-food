@@ -1,9 +1,12 @@
 package models
 
 type User struct {
-	Phone    string
-	Email    string
-	Password string
+	ID        uint
+	Phone     string
+	Email     string
+	Password  string
+	FirstName string
+	LastName  string
 }
 
 type LoginUserReq struct {
