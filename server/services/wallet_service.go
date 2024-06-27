@@ -50,8 +50,8 @@ func (s *WalletService) Withdraw(ctx context.Context, card *creditCard.CreditCar
 	return userWallet, nil
 }
 
-func (s *WalletService) GetWallet(ctx context.Context, wallet *wallet.Wallet) (*wallet.Wallet, error) {
-	userWallet, err := s.walletOps.GetWallet(ctx, wallet)
+func (s *WalletService) GetWallet(ctx context.Context) (*wallet.Wallet, error) {
+	userWallet, err := s.walletOps.GetWallet(ctx)
 	if err != nil {
 		return nil, err
 	}
