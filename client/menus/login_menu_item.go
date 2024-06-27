@@ -44,7 +44,6 @@ func (mi *LoginMenuItem) Execute(scanner *bufio.Scanner) {
 		utils.ColoredPrint(constants.Green, "\n\tSuccessful Login :)\n")
 		utils.ReadInput(scanner, "Press any key to continue... ")
 	}
-	// TODO: mi.state = ProfileMngmnt state
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)
 		return
