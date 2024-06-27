@@ -1,8 +1,8 @@
 package models
 
 type Wallet struct {
-	ID      int
-	Balance int
+	ID      int `json:"id"`
+	Balance int `json:"balance"`
 }
 
 type GetWalletReq struct {

@@ -19,6 +19,14 @@ func EncodeAddCardReqBody(req *AddCardBody) ([]byte, error) {
 	return json.Marshal(req)
 }
 
+func EncodeDepositReqBody(req *DepositBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func EncodeWithdrawReqBody(req *WithdrawBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
 func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
 	var res RegisterResponse
 	err := json.Unmarshal(data, &res)
@@ -65,4 +73,10 @@ func DecodeGetCardsBodyResponse(data []byte) (GetCardsBodyResponse, error) {
 	var resBody GetCardsBodyResponse
 	err := json.Unmarshal(data, &resBody)
 	return resBody, err
+}
+
+func DecodeTCPWalletResponse(data []byte) (GetWalletBodyResponse, error) {
+	var res GetWalletBodyResponse
+	err := json.Unmarshal(data, &res)
+	return res, err
 }

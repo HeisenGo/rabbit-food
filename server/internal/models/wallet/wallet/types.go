@@ -13,7 +13,7 @@ type Repo interface {
 }
 
 type Wallet struct {
-	ID      uint
-	UserID  uint
-	Balance uint
+	ID      uint 	`json:"id"`
+	UserID  uint	`json:"user_id"`
+	Balance uint	`json:"balance"`
 }

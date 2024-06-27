@@ -9,40 +9,36 @@ import (
 	"time"
 )
 
-type DisplayCardsMenuItem struct {
+type GetWalletMenuItem struct {
 	Name     string
-	Command  *commands.DisplayCardsCommand
+	Command  *commands.GetWalletCommand
 	PostMenu MenuComponent
 }
 
-func NewDisplayCardsMenuItem(name string, command *commands.DisplayCardsCommand, postMenu MenuComponent) *DisplayCardsMenuItem {
-	return &DisplayCardsMenuItem{
+func NewGetWalletMenuItem(name string, command *commands.GetWalletCommand, postMenu MenuComponent) *GetWalletMenuItem {
+	return &GetWalletMenuItem{
 		Name:     name,
 		Command:  command,
 		PostMenu: postMenu,
 	}
 }
 
-func (mi *DisplayCardsMenuItem) Display() {
+func (mi *GetWalletMenuItem) Display() {
 	fmt.Println(mi.Name)
 }
 
-func (mi *DisplayCardsMenuItem) Execute(scanner *bufio.Scanner) {
+func (mi *GetWalletMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
-
-	cards, err := mi.Command.Execute()
+	wallet, err := mi.Command.Execute()
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err)
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tCards: \n")
-		for i, card := range cards {
-			fmt.Printf("\n\t %v. %v", i+1, utils.SeparateByFour(card.Number))
-		}
-		fmt.Println("")
+		utils.ColoredPrint(constants.Green, "\n\n\tYour Ballance is: ", wallet.Balance, "\n")
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {
@@ -51,6 +47,6 @@ func (mi *DisplayCardsMenuItem) Execute(scanner *bufio.Scanner) {
 	}
 }
 
-func (mi *DisplayCardsMenuItem) GetName() string {
+func (mi *GetWalletMenuItem) GetName() string {
 	return mi.Name
 }

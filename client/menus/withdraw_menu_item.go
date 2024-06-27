@@ -11,27 +11,27 @@ import (
 	"strconv"
 )
 
-type DepositMenuItem struct {
+type WithdrawMenuItem struct {
 	Name                string
-	DepositCommand      *commands.DepositCommand
+	WithdrawCommand     *commands.WithdrawCommand
 	DisplayCardsCommand *commands.DisplayCardsCommand
 	PostMenu            MenuComponent
 }
 
-func NewDepositMenuItem(name string, depositCommand *commands.DepositCommand, DisplayCardsCommand *commands.DisplayCardsCommand, postMenu MenuComponent) *DepositMenuItem {
-	return &DepositMenuItem{
+func NewWithdrawMenuItem(name string, withdrawCommand *commands.WithdrawCommand, DisplayCardsCommand *commands.DisplayCardsCommand, postMenu MenuComponent) *WithdrawMenuItem {
+	return &WithdrawMenuItem{
 		Name:                name,
-		DepositCommand:      depositCommand,
+		WithdrawCommand:     withdrawCommand,
 		DisplayCardsCommand: DisplayCardsCommand,
 		PostMenu:            postMenu,
 	}
 }
 
-func (mi *DepositMenuItem) Display() {
+func (mi *WithdrawMenuItem) Display() {
 	fmt.Println(mi.Name)
 }
 
-func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
+func (mi *WithdrawMenuItem) Execute(scanner *bufio.Scanner) {
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	cards, err := mi.DisplayCardsCommand.Execute()
@@ -46,11 +46,10 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 	}
 	fmt.Println("\n\n\t")
 
-	var depositBody tcp.DepositBody
+	var withdrawBody tcp.WithdrawBody
 	cardRow, err := strconv.Atoi(utils.ReadInput(scanner, "Choose Card Row to Deposit: "))
-
 	if err != nil {
-		utils.ColoredPrint(constants.Red, "\t", errors.ErrDataType.Message)
+		utils.ColoredPrint(constants.Red, "\n\t", errors.ErrDataType.Message)
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
@@ -59,7 +58,7 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
-	depositBody.Number = cards[cardRow-1].Number
+	withdrawBody.Number = cards[cardRow-1].Number
 	amount, err := strconv.Atoi(utils.ReadInput(scanner, "Amount: "))
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", errors.ErrDataType.Message)
@@ -71,9 +70,9 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
-	depositBody.Amount = uint(amount)
+	withdrawBody.Amount = uint(amount)
 
-	err = mi.DepositCommand.Execute(&depositBody)
+	err = mi.WithdrawCommand.Execute(&withdrawBody)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
 		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
@@ -88,6 +87,6 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 	}
 }
 
-func (mi *DepositMenuItem) GetName() string {
+func (mi *WithdrawMenuItem) GetName() string {
 	return mi.Name
 }
