@@ -4,45 +4,43 @@ import (
 	"bufio"
 	"client/commands"
 	"client/constants"
-	"client/models"
+	"client/protocol/tcp"
 	"client/utils"
 	"fmt"
 	"time"
 )
 
-type RegisterMenuItem struct {
+type AddCardMenuItem struct {
 	Name     string
-	Command  *commands.RegisterCommand
+	Command  *commands.AddCreditCardCommand
 	PostMenu MenuComponent
 }
 
-func NewRegisterMenuItem(name string, command *commands.RegisterCommand, postMenu MenuComponent) *RegisterMenuItem {
-	return &RegisterMenuItem{
+func NewAddCardMenuItem(name string, command *commands.AddCreditCardCommand, postMenu MenuComponent) *AddCardMenuItem {
+	return &AddCardMenuItem{
 		Name:     name,
 		Command:  command,
 		PostMenu: postMenu,
 	}
 }
 
-func (mi *RegisterMenuItem) Display() {
+func (mi *AddCardMenuItem) Display() {
 	fmt.Println(mi.Name)
 }
 
-func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
+func (mi *AddCardMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
-	var user models.User
-	user.Phone = utils.ReadInput(scanner, "Phone: ")
-	user.Email = utils.ReadInput(scanner, "Email: ")
-	user.Password = utils.ReadInput(scanner, "Password: ")
-	err := mi.Command.Execute(&user)
+	var addCardData tcp.AddCardBody
+	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
+	newCard, err := mi.Command.Execute(&addCardData)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
 		utils.ReadInput(scanner, "Press any key to go back... ")
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tSuccessful Registration!\n")
+		utils.ColoredPrint(constants.Green, "\n\tCard "+newCard.Number+" Successfully added :)\n")
 		utils.ReadInput(scanner, "Press any key to continue... ")
 	}
 	if mi.PostMenu != nil {
@@ -51,6 +49,6 @@ func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
 	}
 }
 
-func (mi *RegisterMenuItem) GetName() string {
+func (mi *AddCardMenuItem) GetName() string {
 	return mi.Name
 }

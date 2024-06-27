@@ -3,6 +3,8 @@ package tcp
 import (
 	"server/internal/models/address"
 	"server/internal/models/auth"
+	"server/internal/models/restaurant/menu"
+	"server/internal/models/restaurant/restaurant"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 )
@@ -32,6 +34,40 @@ type AddCardToWalletRequest struct {
 	CardNumber string `json:"card_number"`
 }
 
+type CreateRestaurantRequest struct {
+	Name        string `json:"name"`
+	Phone       string `json:"phone"`
+	City        string `json:"city"`
+	Address     string `json:"address"`
+	Coordinates string `json:"coordinates"`
+}
+
+type CreateMenuRequest struct {
+	RestaurantID uint   `json:"restaurant_id"`
+	Name         string `json:"name"`
+}
+
+type GetRestaurantMenusRequest struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type AddMenuItemToMenuRequest struct {
+	MenuID                        uint   `json:"menu_id"`
+	Name                          string `json:"name"`
+	Price                         uint   `json:"price"`
+	PreparationMinutes            uint   `json:"preparation_minutes"`
+	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
+}
+
+type GetMenuItemsOfMenuRequest struct {
+	MenuID uint `json:"menu_id"`
+}
+
+type Coordinates struct {
+	X float64
+	Y float64
+}
+
 type DepositRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
@@ -51,9 +87,34 @@ type AddCardToWalletResponse struct {
 	Card    *creditCard.CreditCard
 }
 
-type GetUserWalletCardsResponse struct {
+type CreateRestaurantResponse struct {
+	Message    string
+	Restaurant *restaurant.Restaurant
+}
+
+type CreateMenuResponse struct {
 	Message string
-	Cards   []*creditCard.CreditCard
+	Menu    *menu.Menu
+}
+
+type AddMenuItemToMenuResponse struct {
+	Message  string
+	MenuItem *menu.MenuItem
+}
+
+type GetMenuItemsOfMenuResponse struct {
+	Message   string
+	MenuItems []*menu.MenuItem
+}
+
+type GetAllMenusResponse struct {
+	Message string
+	Menus   []*menu.Menu
+}
+
+type GetUserWalletCardsResponse struct {
+	Message string                   `json:"message"`
+	Cards   []*creditCard.CreditCard `json:"cards"`
 }
 type DepositResponse struct {
 	Message string
