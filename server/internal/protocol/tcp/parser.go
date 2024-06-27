@@ -73,6 +73,46 @@ func DecodeCreateRestaurantRequest(data []byte) (CreateRestaurantRequest, error)
 	return req, err
 }
 
+func DecodeCreateMenuRequest(data []byte) (CreateMenuRequest, error) {
+	var req CreateMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeGetRestaurantMenusRequest(data []byte) (GetRestaurantMenusRequest, error) {
+	var req GetRestaurantMenusRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeAddMenuItemToMenuRequest(data []byte) (AddMenuItemToMenuRequest, error) {
+	var req AddMenuItemToMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeGetMenuItemsOfMenuRequest(data []byte) (GetMenuItemsOfMenuRequest, error) {
+	var req GetMenuItemsOfMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
 func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeCreateMenuResponse(res CreateMenuResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetAllMenusResponse(res GetAllMenusResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }

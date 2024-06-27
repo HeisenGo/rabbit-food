@@ -46,7 +46,7 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 			s.authHandler.ServeTCP(ctx, conn, requestData)
 		case "wallets":
 			s.walletHandler.ServeTCP(ctx, conn, requestData)
-		case "restaurant":
+		case "restaurants":
 			s.restaurantHandler.ServeTCP(ctx, conn, requestData)
 		default:
 			fmt.Println("default option!")
