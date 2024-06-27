@@ -29,3 +29,7 @@ func (o *WalletOps) Deposit(ctx context.Context, creditCard *creditCard.CreditCa
 func (o *WalletOps) Withdraw(ctx context.Context, creditCard *creditCard.CreditCard, amount uint) (*Wallet, error) {
 	return o.repo.Withdraw(ctx, creditCard, amount)
 }
+
+func (o *WalletOps) GetWallet(ctx context.Context, wallet *Wallet) (*Wallet, error) {
+	return o.repo.GetWallet(ctx, wallet)
+}
