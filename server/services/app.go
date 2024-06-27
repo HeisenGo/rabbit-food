@@ -13,11 +13,12 @@ import (
 )
 
 type AppContainer struct {
-	cfg               config.Config
-	dbConn            *gorm.DB
-	AuthService       *AuthService
-	WalletService     *WalletService
-	RestaurantService *RestaurantService
+	cfg                config.Config
+	dbConn             *gorm.DB
+	AuthService        *AuthService
+	WalletService      *WalletService
+	RestaurantService  *RestaurantService
+	UserProfileService *UserProfileService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -34,6 +35,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
 	app.setWalletService()
 	app.setRestaurantService()
+	app.setUserProfileService()
 
 	return app, nil
 }
@@ -71,5 +73,11 @@ func (a *AppContainer) setRestaurantService() {
 		return
 	}
 	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)))
-	// hint: ** probably food or menu should be added or category
+}
+
+func (a *AppContainer) setUserProfileService() {
+	if a.UserProfileService != nil {
+		return
+	}
+	a.UserProfileService = NewUserProfileService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
 }
