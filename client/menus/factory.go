@@ -25,11 +25,11 @@ var (
 	addNewAddress   MenuComponent
 
 	/// wallet management menu ////
-	getBallanceMenuItem   MenuComponent
-	displayCardsMenuItem  MenuComponent
-	AddCreditCardMenuItem MenuComponent
-	depositMenuItem       MenuComponent
-	withDrawMenuItem      MenuComponent
+	displayBallanceMenuItem MenuComponent
+	displayCardsMenuItem    MenuComponent
+	AddCreditCardMenuItem   MenuComponent
+	depositMenuItem         MenuComponent
+	withDrawMenuItem        MenuComponent
 )
 
 func getDisplayCardsMenuItem(service services.Service) MenuComponent {
@@ -39,11 +39,11 @@ func getDisplayCardsMenuItem(service services.Service) MenuComponent {
 	return displayCardsMenuItem
 }
 
-func getGetBalanceMenuItem(service services.Service) MenuComponent {
-	if getBallanceMenuItem == nil {
-		getBallanceMenuItem = NewGetWalletMenuItem("My Ballance", commands.NewGetWalletCommand(service), getWalletManagementMenu(service))
+func getDisplayBalanceMenuItem(service services.Service) MenuComponent {
+	if displayBallanceMenuItem == nil {
+		displayBallanceMenuItem = NewGetWalletMenuItem("Display Ballance", commands.NewGetWalletCommand(service), getWalletManagementMenu(service))
 	}
-	return getBallanceMenuItem
+	return displayBallanceMenuItem
 }
 
 func getAddCardMenuItem(service services.Service) MenuComponent {
@@ -70,7 +70,7 @@ func getWithDrawMenu(service services.Service) MenuComponent {
 func getWalletManagementMenu(service services.Service) MenuComponent {
 	if walletManagementMenu == nil {
 		walletManagementMenu = NewMenu("Wallet Management Menu")
-		walletManagementMenu.Add(getGetBalanceMenuItem(service))
+		walletManagementMenu.Add(getDisplayBalanceMenuItem(service))
 		walletManagementMenu.Add(getDisplayCardsMenuItem(service))
 		walletManagementMenu.Add(getAddCardMenuItem(service))
 		walletManagementMenu.Add(getDepositMenuItem(service))

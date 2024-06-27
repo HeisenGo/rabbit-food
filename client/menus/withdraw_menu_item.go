@@ -13,15 +13,15 @@ import (
 
 type WithdrawMenuItem struct {
 	Name                string
-	DepositCommand      *commands.WithdrawCommand
+	WithdrawCommand     *commands.WithdrawCommand
 	DisplayCardsCommand *commands.DisplayCardsCommand
 	PostMenu            MenuComponent
 }
 
-func NewWithdrawMenuItem(name string, depositCommand *commands.WithdrawCommand, DisplayCardsCommand *commands.DisplayCardsCommand, postMenu MenuComponent) *WithdrawMenuItem {
+func NewWithdrawMenuItem(name string, withdrawCommand *commands.WithdrawCommand, DisplayCardsCommand *commands.DisplayCardsCommand, postMenu MenuComponent) *WithdrawMenuItem {
 	return &WithdrawMenuItem{
 		Name:                name,
-		DepositCommand:      depositCommand,
+		WithdrawCommand:     withdrawCommand,
 		DisplayCardsCommand: DisplayCardsCommand,
 		PostMenu:            postMenu,
 	}
@@ -72,7 +72,7 @@ func (mi *WithdrawMenuItem) Execute(scanner *bufio.Scanner) {
 	}
 	withdrawBody.Amount = uint(amount)
 
-	err = mi.DepositCommand.Execute(&withdrawBody)
+	err = mi.WithdrawCommand.Execute(&withdrawBody)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
 		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
