@@ -19,14 +19,37 @@ func NewAddressRepo(db *gorm.DB) address.Repo {
 	}
 }
 func (r *addressRepo) Create(ctx context.Context, address *address.Address, userID uint) (*address.Address, error) {
+	// Convert domain model to entity model
 	newAddress := mappers.AddressDomainToEntity(address)
 	newAddress.UserID = &userID
-	err := r.db.Create(&newAddress).Error
+
+	// Extract cordinates
+	longitude := address.Cordinates[0]
+	latitude := address.Cordinates[1]
+
+	// Use raw SQL to insert the address with cordinates as geography type
+	err := r.db.Exec(`
+		INSERT INTO addresses (addressline, cordinates, types, city, user_id, created_at, updated_at)
+		VALUES (?, ST_SetSRID(ST_MakePoint(?, ?), 4326), ?, ?, ?, NOW(), NOW())`,
+		newAddress.Addressline, longitude, latitude, newAddress.Types, newAddress.City, userID).Error
+
 	if err != nil {
 		return nil, err
 	}
-	createdAddress := mappers.AddressEntityToDomain(newAddress)
-	return createdAddress, nil
+
+	// Retrieve the created address to return
+	var createdAddress *entities.Address
+	err = r.db.Raw(`
+		SELECT id, addressline, ST_X(cordinates::geometry) AS longitude, ST_Y(cordinates::geometry) AS latitude, types, city, user_id, created_at, updated_at
+		FROM addresses
+		WHERE addressline = ? AND user_id = ?
+		LIMIT 1`, newAddress.Addressline, userID).Scan(&createdAddress).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert entity model back to domain model
+	return mappers.AddressEntityToDomain(createdAddress), nil
 }
 func (r *addressRepo) GetByUser(ctx context.Context, userID uint ) (*address.Address, error) {
 	var addressEntity entities.Address
