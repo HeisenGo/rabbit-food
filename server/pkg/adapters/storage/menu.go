@@ -50,3 +50,13 @@ func (r *manuRepo) AddMenuItemToMenu(ctx context.Context, menuItem *menu.MenuIte
 	createdMenuItem := mappers.MenuItemEntityToDomain(newMenuItem)
 	return createdMenuItem, nil
 }
+
+func (r *manuRepo) GetMenuItemsOfMenu(ctx context.Context, menu *menu.Menu) ([]*menu.MenuItem, error) {
+	var menuItemEntities []*entities.MenuItem
+	err := r.db.WithContext(ctx).Where("menu_id = ?", menu.ID).Find(&menuItemEntities).Error
+	if err != nil {
+		return nil, err
+	}
+	domainMenus := mappers.BatchMenuItemEntityToDomain(menuItemEntities)
+	return domainMenus, nil
+}
