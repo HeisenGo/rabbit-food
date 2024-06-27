@@ -30,3 +30,7 @@ func (o *Ops) GetAllRestaurantMenus(ctx context.Context, restaurant *restaurant.
 func (o *Ops) AddMenuItemToMenu(ctx context.Context, menuItem *MenuItem) (*MenuItem, error) {
 	return o.repo.AddMenuItemToMenu(ctx, menuItem)
 }
+
+func (o *Ops) GetMenuItemsOfMenu(ctx context.Context, menu *Menu) ([]*MenuItem, error) {
+	return o.repo.GetMenuItemsOfMenu(ctx, menu)
+}
