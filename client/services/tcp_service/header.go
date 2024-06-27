@@ -9,3 +9,7 @@ func GetToken() string {
 func SetToken(tk string) {
 	token = &tk
 }
+
+func UnSetToken(){
+	token = nil
+}
