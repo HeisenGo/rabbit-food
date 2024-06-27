@@ -30,7 +30,7 @@ func (mi *LogoutMenuItem) Display() {
 func (mi *LogoutMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	areYouSureToLogout := utils.ReadInput(scanner, "Are you sure to logout?(y/n): ")
 	if areYouSureToLogout == "y" {
 		mi.PostMenu.Execute(scanner)

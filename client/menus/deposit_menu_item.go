@@ -33,31 +33,37 @@ func (mi *DepositMenuItem) Display() {
 
 func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 	utils.ClearScreen()
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	cards, err := mi.GetWalletCardsCommand.Execute()
 	if err != nil {
-		utils.ColoredPrint(constants.Red, err)
-		utils.ReadInput(scanner, "\nPress any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", err)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
 	utils.ColoredPrint(constants.Green, "\n\tCards: \n")
 	for i, c := range cards {
-		utils.ColoredPrint(constants.Purple, fmt.Sprintf("\n\t%d- %v", i+1, c.Number))
+		fmt.Printf("\n\t%d- %v", i+1, c.Number)
 	}
-	fmt.Println("\n\tPlease Choose Which card and How Much to Deposit")
+	fmt.Println("\n\n\t")
 
 	var depositBody tcp.DepositBody
-	cardRow, err := strconv.Atoi(utils.ReadInput(scanner, "Card Row: "))
+	cardRow, err := strconv.Atoi(utils.ReadInput(scanner, "Choose Card Row to Deposit: "))
+
 	if err != nil {
-		utils.ColoredPrint(constants.Red, errors.ErrDataType.Message)
-		utils.ReadInput(scanner, "\nPress any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\t", errors.ErrDataType.Message)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		return
+	}
+	if cardRow > len(cards) {
+		utils.ColoredPrint(constants.Red, "\tInvalid number")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
 	depositBody.Number = cards[cardRow-1].Number
 	amount, err := strconv.Atoi(utils.ReadInput(scanner, "Amount: "))
 	if err != nil {
-		utils.ColoredPrint(constants.Red, errors.ErrDataType.Message)
-		utils.ReadInput(scanner, "\nPress any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", errors.ErrDataType.Message)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
 	depositBody.Amount = uint(amount)
@@ -65,11 +71,11 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 	err = mi.DepositCommand.Execute(&depositBody)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
-		utils.ReadInput(scanner, "Press any key to go back... ")
+		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
 		return
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tSuccessful Deposit :)\n")
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)

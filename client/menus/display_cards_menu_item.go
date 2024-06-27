@@ -30,12 +30,12 @@ func (mi *DisplayCardsMenuItem) Display() {
 func (mi *DisplayCardsMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 
 	cards, err := mi.Command.Execute()
 	if err != nil {
-		utils.ColoredPrint(constants.Red, err)
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", err)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tCards: \n")
@@ -43,7 +43,7 @@ func (mi *DisplayCardsMenuItem) Execute(scanner *bufio.Scanner) {
 			fmt.Printf("\n\t %v. %v", i+1, card.Number)
 		}
 		fmt.Println("")
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)
