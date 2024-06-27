@@ -10,4 +10,6 @@ type Service interface {
 	Login(req *models.LoginUserReq) (*tcp.Token, error)
 	Logout(req *models.LogoutUserReq) error
 	GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
+	DisplayProfile(userID uint) (*models.User, error)
+	EditProfile(user *models.User) (*models.User, error)
 }
