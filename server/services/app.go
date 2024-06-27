@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 	"server/config"
+	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
@@ -70,6 +71,5 @@ func (a *AppContainer) setRestaurantService() {
 	if a.RestaurantService != nil {
 		return
 	}
-	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)))
-	// hint: ** probably food or menu should be added or category
+	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)), menu.NewMenuOps(a.dbConn, storage.NewMenuRepo(a.dbConn)))
 }
