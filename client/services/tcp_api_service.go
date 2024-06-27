@@ -5,7 +5,6 @@ import (
 	"client/models"
 	"client/protocol/tcp"
 	"client/services/tcp_service"
-	"encoding/json"
 	"fmt"
 	"net"
 	"sync"
@@ -226,29 +225,19 @@ func (s *APIService) DisplayCards() ([]*models.CreditCard, error) {
 		return nil, errors.ErrReadingResponse
 	}
 
-	response, err := tcp.DecodeTCPResponse(buffer)
+	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
 	if err != nil {
 		return nil, errors.ErrDecodingResponse
 	}
-	if response.StatusCode != tcp.StatusOK {
-		return nil, tcp_service.ResponseErrorProduction(response.Data)
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
 	}
-
-	var addCardResBody *tcp.AddCardResponse
-	fmt.Println(string(response.Data))
-
-	err = json.Unmarshal(response.Data, addCardResBody)
+	getCardsResBody, err := tcp.DecodeGetCardsBodyResponse(tcpResponse.Data)
 	if err != nil {
-		fmt.Println("Error in decoding a successful response", err)
-		return nil, err
+		return nil, errors.ErrDecodingSuccessfulResponse
 	}
-	var newCard *models.CreditCard
-	err = json.Unmarshal(addCardResBody.Card, newCard)
-	if err != nil {
-		fmt.Println("Error in decoding the token part of data")
-		//return tcp.Token{}, err
-		return nil, err
-	}
-	//fmt.Printf("Server response: %s", response)
-	return nil, nil
+	//cards, err := tcp.DecodeCards(getCardsResBody.Cards)
+	//
+
+	return getCardsResBody.Cards, nil
 }

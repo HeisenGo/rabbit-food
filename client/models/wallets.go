@@ -10,5 +10,6 @@ type GetWalletReq struct {
 }
 
 type CreditCard struct {
-	Number string
+	ID     uint   `json:"id"`
+	Number string `json:"number"`
 }

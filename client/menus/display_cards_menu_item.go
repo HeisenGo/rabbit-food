@@ -32,22 +32,19 @@ func (mi *DisplayCardsMenuItem) Execute(scanner *bufio.Scanner) {
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
 
-	///////////////////// To do
-	// var userLoggingin models.LoginUserReq
-	// userLoggingin.PhoneOrEmail = utils.ReadInput(scanner, "Phone/Email: ")
-	// userLoggingin.Password = utils.ReadInput(scanner, "Password: ")
-	err := mi.Command.Execute()
+	cards, err := mi.Command.Execute()
 	if err != nil {
-		fmt.Println(err)
+		utils.ColoredPrint(constants.Red, err)
 		utils.ReadInput(scanner, "Press any key to continue... ")
-
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tSuccessful Login :)\n")
+		utils.ColoredPrint(constants.Green, "\n\tCards: \n")
+		for i, card := range cards {
+			fmt.Printf("\n\t %v. %v", i+1, card.Number)
+		}
+		fmt.Println("")
 		utils.ReadInput(scanner, "Press any key to continue... ")
 	}
-	/////////////////////////
-	// TODO: mi.state = ProfileMngmnt state
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)
 		return

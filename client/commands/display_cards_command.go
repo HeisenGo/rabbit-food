@@ -1,37 +1,21 @@
 package commands
 
 import (
+	"client/models"
 	"client/services"
-	"fmt"
 )
 
 type DisplayCardsCommand struct {
 	service services.Service
 }
 
-func (c *DisplayCardsCommand) Execute() error {
+func (c *DisplayCardsCommand) Execute() ([]*models.CreditCard, error) {
 
-	fmt.Println("\nCards:")
-	new_cards, err := c.service.DiplayCards()
+	cards, err := c.service.DisplayCards()
 	if err != nil {
-		return err
+		return nil, err
 	}
-	for n, i := range new_cards {
-		
-		fmt.Println(n, i)
-	}
-	// To Do
-	// user, ok := userData.(*models.LoginUserReq)
-	// if !ok {
-	// 	return errors.New("data type isn't user")
-	// }
-	// token, err := c.service.Login(user)
-	// fmt.Println("New: ", token)
-	// fmt.Println("token: ", token.AuthorizationToken,
-	// 	"\nReferesh:", token.RefreshToken,
-	// 	"\nexpire: ", token.ExpiresAt)
-	// //time.Sleep(time.Minute * 2)
-	return nil
+	return cards, nil
 }
 
 func NewDisplayCardsCommand(service services.Service) *DisplayCardsCommand {

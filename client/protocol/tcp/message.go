@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"client/models"
 	"encoding/json"
 )
 
@@ -40,6 +41,11 @@ type LoginBody struct {
 
 type AddCardBody struct {
 	CardNumber string `json:"card_number"`
+}
+
+type GetCardsBodyResponse struct {
+	Message string            `json:"message"`
+	Cards   []*models.CreditCard `json:"cards"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {

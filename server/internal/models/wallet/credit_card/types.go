@@ -10,8 +10,8 @@ type Repo interface {
 }
 
 type CreditCard struct {
-	ID     uint
-	Number string
+	ID     uint   `json:"id"`
+	Number string `json:"number"`
 }
 
 func NewCreditCard(number string) *CreditCard {

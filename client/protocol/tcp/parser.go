@@ -60,3 +60,22 @@ func DecodeLoginResponse(data []byte) (LoginResponse, error) {
 func EncodeLoginReqBody(req *LoginBody) ([]byte, error) {
 	return json.Marshal(req)
 }
+
+func DecodeGetCardsBodyResponse(data []byte) (GetCardsBodyResponse, error) {
+	var resBody GetCardsBodyResponse
+	err := json.Unmarshal(data, &resBody)
+	return resBody, err
+}
+
+func DecodeCards(data []json.RawMessage) ([]*models.CreditCard, error) {
+	var resBody []*models.CreditCard
+	for _, raw_json := range data {
+		var card *models.CreditCard
+		err := json.Unmarshal(raw_json, card)
+		if err != nil {
+			return nil, err
+		}
+		resBody = append(resBody, card)
+	}
+	return resBody, nil
+}
