@@ -5,8 +5,7 @@ import (
 )
 
 func AddressEntityToDomain(entity *entities.Address) *address.Address {
-	return &address.Address{
-		//UserID  	: entity.ID, 			
+	return &address.Address{			
 		Addressline : entity.Addressline,		
 		Cordinates  : entity.Cordinates ,			
 		Types  		: entity.Types		,	

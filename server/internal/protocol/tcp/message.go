@@ -78,8 +78,7 @@ type WithdrawRequest struct {
 }
 type AddressRequest struct{
 	AddressLine string `json:"address_line"`
-	Cordinates [2]float64	`json:"cordinates"` //coordinates should be changed to the float 64 type
- 	Types     string		`json:"types"`
+	Cordinates [2]float64	`json:"cordinates"` //coordinates should be changed to the float 64 type`
 	City       string	`json:"city"`
 }
 type AddCardToWalletResponse struct {

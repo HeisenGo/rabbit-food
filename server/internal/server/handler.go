@@ -50,7 +50,7 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 			s.authHandler.ServeTCP(ctx, conn, requestData)
 		case "wallets":
 			s.walletHandler.ServeTCP(ctx, conn, requestData)
-		case "user":
+		case "users":
 			s.addressHandler.ServeTCP(ctx,conn,requestData)
 		case "restaurants":
 			s.restaurantHandler.ServeTCP(ctx, conn, requestData)

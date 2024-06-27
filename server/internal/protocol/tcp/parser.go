@@ -67,20 +67,20 @@ func DecodeLoginResponse(data []byte) (LoginResponse, error) {
 	return req, err
 }
 
-func DecodeAdd_AddressToUserRequest(data []byte) (AddressRequest, error) {
+func DecodeAddAddressToUserRequest(data []byte) (AddressRequest, error) {
 	var req AddressRequest
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
-func EncodeAdd_AddressToUserRequest(res AddressRequest) ([]byte, error) {
+func EncodeAddAddressToUserRequest(res AddressRequest) ([]byte, error) {
 	return json.Marshal(res)
 }
-func DecodeAdd_AddressToUserResponse(data []byte) (AddressResponse, error) {
+func DecodeAddAddressToUserResponse(data []byte) (AddressResponse, error) {
 	var req AddressResponse
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
-func EncodeAdd_AddressToUserResponse(res AddressResponse) ([]byte, error) {
+func EncodeAddAddressToUserResponse(res AddressResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 

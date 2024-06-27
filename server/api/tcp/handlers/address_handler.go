@@ -8,6 +8,7 @@ import (
 	"server/pkg/utils"
 	"server/services"
 	middleware "server/api/tcp/middlewares"
+	"server"
 )
 type AddressHandler struct {
 	addressService services.AddressService
@@ -16,19 +17,20 @@ func NewAddressHandler(addressService services.AddressService) *AddressHandler {
 	return &AddressHandler{addressService}
 }
 func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	reqData, err := tcp.DecodeAdd_AddressToUserRequest(req.Data)
+	reqData, err := tcp.DecodeAddAddressToUserRequest(req.Data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
 		fmt.Println("Error decoding address request:", err)
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	userID , err := utils.GetUserIDFromContext(ctx)
 	if err != nil{
 		fmt.Println("Error Can't Take Users ID",err)
 		tcp.Error(conn,tcp.StatusConflict,nil,err.Error())
+		return
 	}
-	createdAddress, err := h.addressService.Create(ctx,reqData.AddressLine,reqData.Cordinates,reqData.Types,reqData.City,userID)
+	
+	createdAddress, err := h.addressService.Create(ctx,reqData.AddressLine,reqData.Cordinates,server.UserAddressType,reqData.City)
 	response := tcp.AddressResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -39,7 +41,7 @@ func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Co
 			Address:   createdAddress ,
 		}
 	}
-	resData, err := tcp.EncodeAdd_AddressToUserResponse(response)
+	resData, err := tcp.EncodeAddAddressToUserResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding address to response:", err)
@@ -51,7 +53,7 @@ func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Co
 func (h *AddressHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
-	case "createaddresses":
+	case "addresses":
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			addToCardHandler := middleware.ApplyMiddlewares(h.HandleAddAddressToUser, middleware.AuthMiddleware)
 			addToCardHandler(ctx, conn, TCPReq)
