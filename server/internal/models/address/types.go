@@ -33,11 +33,11 @@ type Coordinates struct {
 	Lng float64 `json:"lng"`
 }
 
-func (c *Coordinates) GormDataType() string {
+func (c Coordinates) GormDataType() string {
 	return "geography(POINT, 4326)"
 }
 
-func (c *Coordinates) Value() (driver.Value, error) {
+func (c Coordinates) Value() (driver.Value, error) {
 	return fmt.Sprintf("SRID=4326;POINT(%f %f)", c.Lng, c.Lat), nil
 }
 
