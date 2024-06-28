@@ -4,15 +4,17 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"server"
+	"server/api/tcp/middlewares"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
-	middleware "server/api/tcp/middlewares"
-	"server"
 )
+
 type AddressHandler struct {
 	addressService services.AddressService
 }
+
 func NewAddressHandler(addressService services.AddressService) *AddressHandler {
 	return &AddressHandler{addressService}
 }
@@ -24,13 +26,13 @@ func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Co
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	if err != nil{
-		fmt.Println("Error Can't Take Users ID",err)
-		tcp.Error(conn,tcp.StatusConflict,nil,err.Error())
+	if err != nil {
+		fmt.Println("Error Can't Take Users ID", err)
+		tcp.Error(conn, tcp.StatusConflict, nil, err.Error())
 		return
 	}
-	
-	createdAddress, err := h.addressService.Create(ctx,reqData.AddressLine,reqData.Cordinates,server.UserAddressType,reqData.City)
+
+	createdAddress, err := h.addressService.Create(ctx, reqData.AddressLine, reqData.Coordinates, server.UserAddressType, reqData.City)
 	response := tcp.AddressResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -38,7 +40,7 @@ func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Co
 	} else {
 		response = tcp.AddressResponse{
 			Message: fmt.Sprintf("address created."),
-			Address:   createdAddress ,
+			Address: createdAddress,
 		}
 	}
 	resData, err := tcp.EncodeAddAddressToUserResponse(response)
@@ -59,7 +61,7 @@ func (h *AddressHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tc
 			addToCardHandler(ctx, conn, TCPReq)
 			return
 		}
-	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
-	return
-}
+		tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
+		return
+	}
 }

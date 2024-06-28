@@ -61,25 +61,13 @@ func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 func EncodeLoginResponse(res LoginResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
-func DecodeLoginResponse(data []byte) (LoginResponse, error) {
-	var req LoginResponse
-	err := json.Unmarshal(data, &req)
-	return req, err
-}
 
 func DecodeAddAddressToUserRequest(data []byte) (AddressRequest, error) {
 	var req AddressRequest
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
-func EncodeAddAddressToUserRequest(res AddressRequest) ([]byte, error) {
-	return json.Marshal(res)
-}
-func DecodeAddAddressToUserResponse(data []byte) (AddressResponse, error) {
-	var req AddressResponse
-	err := json.Unmarshal(data, &req)
-	return req, err
-}
+
 func EncodeAddAddressToUserResponse(res AddressResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
@@ -133,4 +121,3 @@ func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, err
 func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
-

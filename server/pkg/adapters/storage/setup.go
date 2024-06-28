@@ -27,9 +27,7 @@ func Migrate(db *gorm.DB) error {
 		&entities.Menu{},
 		&entities.MenuItem{},
 		&entities.RestaurantCategory{},
-    	&entities.Address{},
-    	&entities.RestaurantAddress{},
-    	&entities.UserAddress{},
+		&entities.Address{},
 	)
 	if err != nil {
 		return err

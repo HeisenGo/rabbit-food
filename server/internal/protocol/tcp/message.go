@@ -63,11 +63,6 @@ type GetMenuItemsOfMenuRequest struct {
 	MenuID uint `json:"menu_id"`
 }
 
-type Coordinates struct {
-	X float64
-	Y float64
-}
-
 type DepositRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
@@ -76,10 +71,10 @@ type WithdrawRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
-type AddressRequest struct{
-	AddressLine string `json:"address_line"`
-	Cordinates [2]float64	`json:"cordinates"` //coordinates should be changed to the float 64 type`
-	City       string	`json:"city"`
+type AddressRequest struct {
+	AddressLine string              `json:"address_line"`
+	Coordinates address.Coordinates `json:"coordinates"` //coordinates should be changed to the float 64 type`
+	City        string              `json:"city"`
 }
 type AddCardToWalletResponse struct {
 	Message string
@@ -123,7 +118,7 @@ type WithdrawResponse struct {
 	Message string
 	Wallet  *wallet.Wallet
 }
-type AddressResponse struct{
-	Message string
-	Address *address.Address
+type AddressResponse struct {
+	Message string           `json:"message"`
+	Address *address.Address `json:"address"`
 }
