@@ -23,7 +23,7 @@ func NewMenu(name string) *Menu {
 }
 
 func (m *Menu) Display() {
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", m.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", m.Name))
 	for i, menuItem := range m.MenuItems {
 		fmt.Printf("\t%d. ", i+1)
 		fmt.Println(menuItem.GetName())
@@ -37,7 +37,7 @@ func (m *Menu) Execute(scanner *bufio.Scanner) {
 	for {
 		utils.ClearScreen()
 		m.Display()
-		utils.ColoredPrint(constants.Green, "\t Enter Choice: ")
+		utils.ColoredPrint(constants.Green, "\n\t Enter Choice: ")
 		scanner.Scan()
 		input := scanner.Text()
 

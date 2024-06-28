@@ -142,14 +142,6 @@ func (s *APIService) Login(req *tcp.LoginBody) (*models.Token, error) {
 	return token, nil
 }
 
-// TODO: now its mock data
-func (s *APIService) GetWallet(req *models.GetWalletReq) (*models.Wallet, error) {
-	return &models.Wallet{
-		ID:      req.ID,
-		Balance: 50000,
-	}, nil
-}
-
 func (s *APIService) AddCard(reqBody *tcp.AddCardBody) (*models.CreditCard, error) {
 	location := "wallets/cards"
 	header := make(map[string]string)
@@ -236,8 +228,117 @@ func (s *APIService) DisplayCards() ([]*models.CreditCard, error) {
 	if err != nil {
 		return nil, errors.ErrDecodingSuccessfulResponse
 	}
-	//cards, err := tcp.DecodeCards(getCardsResBody.Cards)
-	//
-
 	return getCardsResBody.Cards, nil
+}
+
+func (s *APIService) Deposit(data *tcp.DepositBody) error {
+	location := "wallets/deposit"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+	encodedWithdrawRepositReqBody, err := tcp.EncodeDepositReqBody(data)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedWithdrawRepositReqBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusOK {
+		return tcp_service.ResponseErrorProduction(response.Data)
+	}
+	return nil
+
+}
+
+func (s *APIService) Withdraw(data *tcp.WithdrawBody) error {
+	location := "wallets/withdraw"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+	encodedWithdrawRepositReqBody, err := tcp.EncodeWithdrawReqBody(data)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedWithdrawRepositReqBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusOK {
+		return tcp_service.ResponseErrorProduction(response.Data)
+	}
+	return nil
+}
+
+func (s *APIService) GetWallet() (*models.Wallet, error) {
+	location := "wallets"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodGet
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+
+	err = tcp.SendRequest(conn, location, header, nil)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
+	}
+
+	// Read the response from the server
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return nil, errors.ErrReadingResponse
+	}
+
+	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
+	}
+	wallet, err := tcp.DecodeTCPWalletResponse(tcpResponse.Data)
+
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return wallet.Wallet, nil
 }

@@ -31,7 +31,7 @@ func (mi *RegisterMenuItem) Display() {
 func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	var user models.User
 	user.Phone = utils.ReadInput(scanner, "Phone: ")
 	user.Email = utils.ReadInput(scanner, "Email: ")
@@ -39,11 +39,11 @@ func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
 	err := mi.Command.Execute(&user)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
-		utils.ReadInput(scanner, "Press any key to go back... ")
+		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
 		return
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tSuccessful Registration!\n")
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)

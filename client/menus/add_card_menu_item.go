@@ -31,17 +31,17 @@ func (mi *AddCardMenuItem) Display() {
 func (mi *AddCardMenuItem) Execute(scanner *bufio.Scanner) {
 	defer time.Sleep(time.Second)
 	utils.ClearScreen()
-	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n", mi.Name))
+	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	var addCardData tcp.AddCardBody
 	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
 	newCard, err := mi.Command.Execute(&addCardData)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
-		utils.ReadInput(scanner, "Press any key to go back... ")
+		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
 		return
 	} else {
 		utils.ColoredPrint(constants.Green, "\n\tCard "+newCard.Number+" Successfully added :)\n")
-		utils.ReadInput(scanner, "Press any key to continue... ")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {
 		mi.PostMenu.Execute(scanner)

@@ -77,33 +77,33 @@ type AddressRequest struct {
 	City        string              `json:"city"`
 }
 type AddCardToWalletResponse struct {
-	Message string
-	Card    *creditCard.CreditCard
+	Message string                 `json:"message"`
+	Card    *creditCard.CreditCard `json:"card"`
 }
 
 type CreateRestaurantResponse struct {
-	Message    string
-	Restaurant *restaurant.Restaurant
+	Message    string                 `json:"message"`
+	Restaurant *restaurant.Restaurant `json:"restaurant"`
 }
 
 type CreateMenuResponse struct {
-	Message string
-	Menu    *menu.Menu
+	Message string     `json:"message"`
+	Menu    *menu.Menu `json:"menu"`
 }
 
 type AddMenuItemToMenuResponse struct {
-	Message  string
-	MenuItem *menu.MenuItem
+	Message  string         `json:"message"`
+	MenuItem *menu.MenuItem `json:"menu_item"`
 }
 
 type GetMenuItemsOfMenuResponse struct {
-	Message   string
-	MenuItems []*menu.MenuItem
+	Message   string           `json:"message"`
+	MenuItems []*menu.MenuItem `json:"menu_items"`
 }
 
 type GetAllMenusResponse struct {
-	Message string
-	Menus   []*menu.Menu
+	Message string       `json:"message"`
+	Menus   []*menu.Menu `json:"menus"`
 }
 
 type GetUserWalletCardsResponse struct {
@@ -111,12 +111,17 @@ type GetUserWalletCardsResponse struct {
 	Cards   []*creditCard.CreditCard `json:"cards"`
 }
 type DepositResponse struct {
-	Message string
-	Wallet  *wallet.Wallet
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
 }
 type WithdrawResponse struct {
-	Message string
-	Wallet  *wallet.Wallet
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
+}
+
+type GetWalletResponse struct {
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
 }
 type AddressResponse struct {
 	Message string           `json:"message"`

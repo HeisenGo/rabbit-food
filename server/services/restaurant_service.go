@@ -7,7 +7,6 @@ import (
 )
 
 type RestaurantService struct {
-
 	restaurantOps *restaurant.Ops
 	menuOps       *menu.Ops
 }
