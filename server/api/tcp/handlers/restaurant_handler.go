@@ -23,7 +23,6 @@ func NewRestaurantHandler(restaurantService services.RestaurantService) *Restaur
 
 func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeCreateRestaurantRequest(req.Data)
-	fmt.Println(reqData.Address.Coordinates)
 	if err != nil {
 		//logger
 		fmt.Println("Error decoding create restaurant request:", err)
