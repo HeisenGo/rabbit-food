@@ -63,7 +63,6 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	if err != nil {
 		return nil, err
 	}
-
 	createdRestaurant := mappers.RestaurantEntityToDomain(newRestaurantEntity)
 
 	return createdRestaurant, nil
