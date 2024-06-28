@@ -35,7 +35,7 @@ func main() {
 	//_, err = conn.Write([]byte(`{"location":"restaurants/menus","header":{"method":"GET","Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk1Mjk4NjksIlVzZXJJRCI6MTksIklzQWRtaW4iOmZhbHNlfQ.M_8r5XeYn4HGbH2Xvo0KGxH-Ee1XMhO4sT46H2XbBFpiftLHpmsp-akZydZotxWsjoFeOfh0Dso52V72AF5a9w"}, "data":{"restaurant_id":3}}`))
 	//_, err = conn.Write([]byte(`{"location":"restaurants/menu-items","header":{"method":"POST","Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk1Mjk4NjksIlVzZXJJRCI6MTksIklzQWRtaW4iOmZhbHNlfQ.M_8r5XeYn4HGbH2Xvo0KGxH-Ee1XMhO4sT46H2XbBFpiftLHpmsp-akZydZotxWsjoFeOfh0Dso52V72AF5a9w"}, "data":{"menu_id":1, "price":200000, "name":"kabab koobide", "preparation_minutes": 40, "cancellation_penalty_percentage": 9}}`))
 	//_, err = conn.Write([]byte(`{"location":"restaurants/menu-items","header":{"method":"GET","Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk1Mjk4NjksIlVzZXJJRCI6MTksIklzQWRtaW4iOmZhbHNlfQ.M_8r5XeYn4HGbH2Xvo0KGxH-Ee1XMhO4sT46H2XbBFpiftLHpmsp-akZydZotxWsjoFeOfh0Dso52V72AF5a9w"}, "data":{"menu_id":1}}`))
-	_, err = conn.Write([]byte(`{"location":"wallets","header":{"method":"GET","Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk1Mjk4NjksIlVzZXJJRCI6MTksIklzQWRtaW4iOmZhbHNlfQ.M_8r5XeYn4HGbH2Xvo0KGxH-Ee1XMhO4sT46H2XbBFpiftLHpmsp-akZydZotxWsjoFeOfh0Dso52V72AF5a9w"}}`))
+	//_, err = conn.Write([]byte(`{"location":"wallets","header":{"method":"GET","Authorization": "Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTk1Mjk4NjksIlVzZXJJRCI6MTksIklzQWRtaW4iOmZhbHNlfQ.M_8r5XeYn4HGbH2Xvo0KGxH-Ee1XMhO4sT46H2XbBFpiftLHpmsp-akZydZotxWsjoFeOfh0Dso52V72AF5a9w"}}`))
 
 	fmt.Println("Data has been sent!")
 	if err != nil {
