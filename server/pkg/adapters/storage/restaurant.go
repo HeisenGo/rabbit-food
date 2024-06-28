@@ -74,20 +74,20 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 }
 
 func (r *restaurantRepo) GetRestaurantByID(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, error) {
-	var restautantEntity entities.Restaurant
-	err := r.db.WithContext(ctx).Model(&entities.Restaurant{}).Where("id = ?", restaurantID).First(&restautantEntity).Error
+	var restaurantEntity entities.Restaurant
+	err := r.db.WithContext(ctx).Model(&entities.Restaurant{}).Where("id = ?", restaurantID).First(&restaurantEntity).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, restaurants.ErrRestaurantNotFound
 		}
 		return nil, err
 	}
-	return mappers.RestaurantEntityToDomain(&restautantEntity), nil
+	return mappers.RestaurantEntityToDomain(&restaurantEntity), nil
 }
 
 func (r *restaurantRepo) CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx context.Context, restaurantID uint) (bool, error) {
-	var userrestautantEntity entities.UserRestaurant
-	err := r.db.WithContext(ctx).Model(&entities.UserRestaurant{}).Where("restaurant_id = ? AND role_type = ?", restaurantID, server.Owner).First(&userrestautantEntity).Error
+	var userRestaurantEntity entities.UserRestaurant
+	err := r.db.WithContext(ctx).Model(&entities.UserRestaurant{}).Where("restaurant_id = ? AND role_type = ?", restaurantID, server.Owner).First(&userRestaurantEntity).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -99,7 +99,7 @@ func (r *restaurantRepo) CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx context.
 	if err != nil {
 		return false, restaurants.ErrFailedRetrieveID
 	}
-	if userrestautantEntity.UserID != ownerID {
+	if userRestaurantEntity.UserID != ownerID {
 		return false, restaurants.ErrMismatchedOwner
 	}
 	return true, nil
@@ -117,7 +117,7 @@ func (r *restaurantRepo) GetByID(ctx context.Context, restaurantID uint) (*resta
 	return mappers.RestaurantEntityToDomain(&restaurantEntity), nil
 }
 
-func (r *restaurantRepo) AssignOperatorToRestarant(ctx context.Context, operator *user.User, restaurant restaurant.Restaurant) (*user.User, error) {
+func (r *restaurantRepo) AssignOperatorToRestaurant(ctx context.Context, operator *user.User, restaurant restaurant.Restaurant) (*user.User, error) {
 	userRestaurant := userRestaurant.NewUserRestaurant(operator.ID, restaurant.ID, server.Operator)
 	err := r.db.Create(&userRestaurant).Error
 	if err != nil {
@@ -126,7 +126,7 @@ func (r *restaurantRepo) AssignOperatorToRestarant(ctx context.Context, operator
 	return operator, nil
 }
 
-func (r *restaurantRepo) RemoveOperatorFromRestarant(ctx context.Context, operatorID uint, restaurantID uint) error {
+func (r *restaurantRepo) RemoveOperatorFromRestaurant(ctx context.Context, operatorID uint, restaurantID uint) error {
 	err := r.db.Where("role_type = ? AND restaurant_id=? AND user_id=?", server.Operator, restaurantID, operatorID).Delete(&entities.UserRestaurant{}).Error
 	if err != nil {
 		return restaurants.ErrRemoveOperatorFailed
@@ -224,13 +224,13 @@ func (r *restaurantRepo) GetAllOperators(ctx context.Context, restaurantID uint)
 
 	domainOperators := []*user.User{}
 	for _, user := range operators {
-		duser := mappers.UserEntityToDomain(user)
-		domainOperators = append(domainOperators, duser)
+		dUser := mappers.UserEntityToDomain(user)
+		domainOperators = append(domainOperators, dUser)
 	}
 	return domainOperators, nil
 }
 
-func (r *restaurantRepo) DoeseThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error) {
+func (r *restaurantRepo) DoesThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error) {
 	var restaurantUsers []*entities.User
 
 	err := r.db.WithContext(ctx).
@@ -266,7 +266,7 @@ func (r *restaurantRepo) GetOwnerInfo(ctx context.Context, restaurantID uint) (*
 	return mappers.UserEntityToDomain(&owner), nil
 }
 
-func (r *restaurantRepo) GetRestarantInfo(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, *user.User, []*user.User, []*motor.Motor, error) {
+func (r *restaurantRepo) GetRestaurantInfo(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, *user.User, []*user.User, []*motor.Motor, error) {
 	restaurant, err := r.GetByID(ctx, restaurantID)
 	if err != nil {
 		return nil, nil, nil, nil, err
@@ -353,7 +353,7 @@ func (r *restaurantRepo) GetRestaurantsOfAnOwner(ctx context.Context) ([]*restau
 
 	// err = r.db.Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurant.id").
 	// 	Joins("JOIN restaurants ON restaurant.id = ").Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", ownerID, server.Owner).
-	// 	Find(&restauarnts).Error
+	// 	Find(&restaurants).Error
 
 	if err != nil {
 		return nil, err
@@ -384,7 +384,7 @@ func (r *restaurantRepo) GetRestaurantsOfAnOperator(ctx context.Context) ([]*res
 
 	// err = r.db.Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurant.id").
 	// 	Joins("JOIN restaurants ON restaurant.id = ").Where("user_restaurants.restaurant_id = ? AND user_restaurants.role_type = ?", ownerID, server.Owner).
-	// 	Find(&restauarnts).Error
+	// 	Find(&restaurants).Error
 
 	if err != nil {
 		return nil, err

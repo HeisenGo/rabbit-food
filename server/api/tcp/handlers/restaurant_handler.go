@@ -14,16 +14,16 @@ import (
 )
 
 type RestaurantHandler struct {
-	restauarntService services.RestaurantService
+	restaurantService services.RestaurantService
 	userService       services.UserService
 }
 
-func NewRestaurantHandler(restauarntService services.RestaurantService, userService services.UserService) *RestaurantHandler {
+func NewRestaurantHandler(restaurantService services.RestaurantService, userService services.UserService) *RestaurantHandler {
 	return &RestaurantHandler{
-		restauarntService: restauarntService,
+		restaurantService: restaurantService,
 		userService:       userService,
 	}
-
+}
 
 func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeCreateRestaurantRequest(req.Data)
@@ -50,7 +50,7 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 	//}
 
 	resData, err := tcp.EncodeCreateRestaurantResponse(response)
-  if err != nil {
+	if err != nil {
 		//logger.Error("Error encoding register response:", err)
 		fmt.Println("Error encoding create restaurant response:", err)
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -58,9 +58,9 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 	}
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
-  
+
 func (h *RestaurantHandler) HandleGetOwnerRestaurants(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	restaurants, err := h.restauarntService.GetRestaurantsOfAnOwner(ctx)
+	restaurants, err := h.restaurantService.GetRestaurantsOfAnOwner(ctx)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
@@ -82,13 +82,13 @@ func (h *RestaurantHandler) HandleGetOwnerRestaurants(ctx context.Context, conn 
 
 func (h *RestaurantHandler) HandleEditRestaurantName(ctx context.Context, conn net.Conn, req *tcp.Request) {
 
-	reqData, err := tcp.DecodeEditRestarantNameRequest(req.Data)
+	reqData, err := tcp.DecodeEditRestaurantNameRequest(req.Data)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
 
-	isOwner, err := h.restauarntService.IsRestaurantOwner(ctx, reqData.RestaurantID)
+	isOwner, err := h.restaurantService.IsRestaurantOwner(ctx, reqData.RestaurantID)
 
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -99,18 +99,17 @@ func (h *RestaurantHandler) HandleEditRestaurantName(ctx context.Context, conn n
 		return
 	}
 
-	err = h.restauarntService.EditRestaurantName(ctx, reqData.RestaurantID, reqData.NewName)
+	err = h.restaurantService.EditRestaurantName(ctx, reqData.RestaurantID, reqData.NewName)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
 
-
 	// ** need implementaion
 }
 
 func (h *RestaurantHandler) HandleGetOperatorRestaurants(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	restaurants, err := h.restauarntService.GetRestaurantsOfAnOperator(ctx)
+	restaurants, err := h.restaurantService.GetRestaurantsOfAnOperator(ctx)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
@@ -131,7 +130,7 @@ func (h *RestaurantHandler) HandleGetOperatorRestaurants(ctx context.Context, co
 }
 
 func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	reqData, err := tcp.DecodeAddOperatorToRestarantRequest(req.Data)
+	reqData, err := tcp.DecodeAddOperatorToRestaurantRequest(req.Data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
 		fmt.Println("Error decoding register request:", err)
@@ -140,7 +139,7 @@ func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, c
 	}
 
 	// Is the owner of restaurant the requester?
-	isOwner, err := h.restauarntService.IsRestaurantOwner(ctx, reqData.RestaurantID)
+	isOwner, err := h.restaurantService.IsRestaurantOwner(ctx, reqData.RestaurantID)
 
 	if err != nil {
 		fmt.Println("Error encoding create restaurant response:", err)
@@ -154,7 +153,7 @@ func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, c
 
 	// getuser
 	introducedOperatorPhoneOrEmail := reqData.OperatorPhoneOrEmail
-	introducedOerator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
+	introducedOperator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
 
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -163,21 +162,21 @@ func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, c
 
 	restaurantId := reqData.RestaurantID
 	// getrestarant
-	restaurant, err := h.restauarntService.GetRestaurantByID(ctx, restaurantId)
+	restaurant, err := h.restaurantService.GetRestaurantByID(ctx, restaurantId)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
 
 	// assign
-	_, err = h.restauarntService.AssignOperatorToRestarant(ctx, introducedOerator, *restaurant)
+	_, err = h.restaurantService.AssignOperatorToRestaurant(ctx, introducedOperator, *restaurant)
 
 	if err != nil {
 		new_err := fmt.Errorf("failed to assign operator to the restaurant %s", restaurant.Name)
 		tcp.Error(conn, tcp.StatusBadRequest, nil, new_err.Error())
 		return
 	}
-	assignOperatorResponse := tcp.AssignOperatorResponse{OperatorPhoneOrEmaile: introducedOperatorPhoneOrEmail,
+	assignOperatorResponse := tcp.AssignOperatorResponse{OperatorPhoneOrEmail: introducedOperatorPhoneOrEmail,
 		RestaurantName: restaurant.Name}
 	response := tcp.AssignOperatorToRestaurantResponse{
 		Message:                fmt.Sprintf("operator %s card added to %s restaurant", introducedOperatorPhoneOrEmail, restaurant.Name),
@@ -194,11 +193,11 @@ func (h *RestaurantHandler) HandleAddOperatorToRestaurant(ctx context.Context, c
 }
 
 func (h *RestaurantHandler) HandleGetAllOperatorsOfRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	
+
 }
 
 func (h *RestaurantHandler) HandleRemoveOperatorFromRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	reqData, err := tcp.DecodeAddOperatorToRestarantRequest(req.Data)
+	reqData, err := tcp.DecodeAddOperatorToRestaurantRequest(req.Data)
 	if err != nil {
 		//logger.Error("Error decoding register request:", err)
 		fmt.Println("Error decoding register request:", err)
@@ -207,7 +206,7 @@ func (h *RestaurantHandler) HandleRemoveOperatorFromRestaurant(ctx context.Conte
 	}
 
 	// Is the owner of restaurant the requester?
-	isOwner, err := h.restauarntService.IsRestaurantOwner(ctx, reqData.RestaurantID)
+	isOwner, err := h.restaurantService.IsRestaurantOwner(ctx, reqData.RestaurantID)
 
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -218,9 +217,9 @@ func (h *RestaurantHandler) HandleRemoveOperatorFromRestaurant(ctx context.Conte
 		return
 	}
 
-	// getuser
+	// getUser
 	introducedOperatorPhoneOrEmail := reqData.OperatorPhoneOrEmail
-	introducedOerator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
+	introducedOperator, err := h.userService.GetUserByEmailOrPhone(ctx, introducedOperatorPhoneOrEmail)
 
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
@@ -228,20 +227,20 @@ func (h *RestaurantHandler) HandleRemoveOperatorFromRestaurant(ctx context.Conte
 	}
 
 	restaurantId := reqData.RestaurantID
-	// getrestarant
-	restaurant, err := h.restauarntService.GetRestaurantByID(ctx, restaurantId)
+	// getRestaurant
+	restaurant, err := h.restaurantService.GetRestaurantByID(ctx, restaurantId)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	_, err = h.restauarntService.AssignOperatorToRestarant(ctx, introducedOerator, *restaurant)
+	_, err = h.restaurantService.AssignOperatorToRestaurant(ctx, introducedOperator, *restaurant)
 
 	if err != nil {
 		new_err := fmt.Errorf("failed to assign operator to the restaurant %s", restaurant.Name)
 		tcp.Error(conn, tcp.StatusBadRequest, nil, new_err.Error())
 		return
 	}
-	assignOperatorResponse := tcp.AssignOperatorResponse{OperatorPhoneOrEmaile: introducedOperatorPhoneOrEmail,
+	assignOperatorResponse := tcp.AssignOperatorResponse{OperatorPhoneOrEmail: introducedOperatorPhoneOrEmail,
 		RestaurantName: restaurant.Name}
 	response := tcp.AssignOperatorToRestaurantResponse{
 		Message:                fmt.Sprintf("operator %s card added to %s restaurant", introducedOperatorPhoneOrEmail, restaurant.Name),
@@ -256,40 +255,37 @@ func (h *RestaurantHandler) HandleRemoveOperatorFromRestaurant(ctx context.Conte
 	}
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
-  
 
-
-func (h *RestaurantHandler) HandleGetRestaurantMenus(ctx context.Context, conn net.Conn, req *tcp.Request) {
-	reqData, err := tcp.DecodeGetRestaurantMenusRequest(req.Data)
+func (h *RestaurantHandler) HandleCreateMenu(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeCreateMenuRequest(req.Data)
 	if err != nil {
 		//logger
-		fmt.Println("Error decoding get menus request:", err)
+		fmt.Println("Error decoding create menu request:", err)
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	rest := restaurant.NewRestaurantByID(reqData.RestaurantID)
-	fetchedMenus, err := h.restaurantService.GetAllRestaurantMenus(ctx, rest)
+	newMenu := menu.NewMenu(reqData.Name, reqData.RestaurantID)
+	createdMenu, err := h.restaurantService.CreateMenuForRestaurant(ctx, newMenu)
 
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	response := tcp.GetAllMenusResponse{
-		Message: "menus successfully fetched",
-		Menus:   fetchedMenus,
+	response := tcp.CreateMenuResponse{
+		Message: "menu created",
+		Menu:    createdMenu,
 	}
 
-	resData, err := tcp.EncodeGetAllMenusResponse(response)
+	resData, err := tcp.EncodeCreateMenuResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)
-		fmt.Println("Error encoding create menus response:", err)
+		fmt.Println("Error encoding create menu response:", err)
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
-  
 func (h *RestaurantHandler) HandleGetRestaurantMenus(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeGetRestaurantMenusRequest(req.Data)
 	if err != nil {
@@ -421,7 +417,7 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 	case "operator":
 		// (post, get, delete)
 		if TCPReq.Header["method"] == tcp.MethodPost {
-			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
+			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperator, middleware.AuthMiddleware)
 			addOperatorHandler(ctx, conn, TCPReq)
 		}
 	case "delivery":

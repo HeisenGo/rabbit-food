@@ -16,14 +16,14 @@ func DecodeAddCardToWalletRequest(data []byte) (AddCardToWalletRequest, error) {
 	return req, err
 }
 
-func DecodeAddOperatorToRestarantRequest(data []byte) (AddOperatorToRestarantRequest, error) {
-	var req AddOperatorToRestarantRequest
+func DecodeAddOperatorToRestaurantRequest(data []byte) (AddOperatorToRestaurantRequest, error) {
+	var req AddOperatorToRestaurantRequest
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
 
-func DecodeGetAllOperatorsOFRestaurant(data []byte)(){
-	
+func DecodeGetAllOperatorsOFRestaurant(data []byte) {
+
 }
 
 func DecodeDepositRequest(data []byte) (DepositRequest, error) {
@@ -123,10 +123,11 @@ func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error
 	return json.Marshal(res)
 }
 
-func DecodeEditRestarantNameRequest(data []byte)(EditRestarantNameRequest, error){
-	var req EditRestarantNameRequest
+func DecodeEditRestaurantNameRequest(data []byte) (EditRestaurantNameRequest, error) {
+	var req EditRestaurantNameRequest
 	err := json.Unmarshal(data, &req)
 	return req, err
+}
 
 func EncodeCreateMenuResponse(res CreateMenuResponse) ([]byte, error) {
 	return json.Marshal(res)

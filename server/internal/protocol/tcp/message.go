@@ -34,7 +34,7 @@ type AddCardToWalletRequest struct {
 	CardNumber string `json:"card_number"`
 }
 
-type AddOperatorToRestarantRequest struct {
+type AddOperatorToRestaurantRequest struct {
 	OperatorPhoneOrEmail string `json:"phone"` //operator phone
 	RestaurantID         uint   `json:"restaurant_id"`
 }
@@ -90,7 +90,7 @@ type AssignOperatorToRestaurantResponse struct {
 }
 
 type AssignOperatorResponse struct {
-	OperatorPhoneOrEmaile string `json:"operator"`
+	OperatorPhoneOrEmail string `json:"operator"`
 	RestaurantName        string `json:"restaurant_name"`
 }
 
@@ -147,7 +147,7 @@ type AddressResponse struct {
 	Address *address.Address `json:"address"`
 }
 
-type EditRestarantNameRequest struct {
+type EditRestaurantNameRequest struct {
 	RestaurantID uint
 	NewName      string
 }

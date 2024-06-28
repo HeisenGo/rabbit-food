@@ -20,7 +20,6 @@ func NewRestaurantOps(db *gorm.DB, repo Repo) *Ops {
 	}
 }
 
-
 func (o *Ops) Create(ctx context.Context, restaurant *Restaurant) (*Restaurant, error) {
 	return o.repo.CreateRestaurantAndAssignOwner(ctx, restaurant)
 }
@@ -33,12 +32,12 @@ func (o *Ops) GetByID(ctx context.Context, restaurantID uint) (*Restaurant, erro
 	return o.repo.GetByID(ctx, restaurantID)
 }
 
-func (o *Ops) AssignOperatorToRestarant(ctx context.Context, operator *user.User, restaurant Restaurant) (*user.User, error) {
-	return o.repo.AssignOperatorToRestarant(ctx, operator, restaurant)
+func (o *Ops) AssignOperatorToRestaurant(ctx context.Context, operator *user.User, restaurant Restaurant) (*user.User, error) {
+	return o.repo.AssignOperatorToRestaurant(ctx, operator, restaurant)
 }
 
-func (o *Ops) RemoveOperatorFromRestarant(ctx context.Context, operatorID uint, restaurantID uint) error {
-	return o.repo.RemoveOperatorFromRestarant(ctx, operatorID, restaurantID)
+func (o *Ops) RemoveOperatorFromRestaurant(ctx context.Context, operatorID uint, restaurantID uint) error {
+	return o.repo.RemoveOperatorFromRestaurant(ctx, operatorID, restaurantID)
 }
 
 func (o *Ops) AddMotor(ctx context.Context, motor *motor.Motor, restaurantID uint) (*motor.Motor, error) {
@@ -59,29 +58,29 @@ func (o *Ops) GetAllMotors(ctx context.Context, restaurantID uint) ([]*motor.Mot
 func (o *Ops) GetAllOperators(ctx context.Context, restaurantID uint) ([]*user.User, error) {
 	return o.repo.GetAllOperators(ctx, restaurantID)
 }
-func (o *Ops) DoeseThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error) {
-	return o.repo.DoeseThisHaveARoleInRestaurant(ctx, restaurantID)
+func (o *Ops) DoesThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error) {
+	return o.repo.DoesThisHaveARoleInRestaurant(ctx, restaurantID)
 }
 func (o *Ops) GetOwnerInfo(ctx context.Context, restaurantID uint) (*user.User, error) {
 	return o.repo.GetOwnerInfo(ctx, restaurantID)
 }
-func (o *Ops) GetRestarantInfo(ctx context.Context, restaurantID uint) (*Restaurant,
+func (o *Ops) GetRestaurantInfo(ctx context.Context, restaurantID uint) (*Restaurant,
 	*user.User, []*user.User, []*motor.Motor, error) {
-	return o.repo.GetRestarantInfo(ctx, restaurantID)
+	return o.repo.GetRestaurantInfo(ctx, restaurantID)
 }
 
 func (o *Ops) RemoveRestaurant(ctx context.Context, restaurantID uint) error {
 	return o.repo.RemoveRestaurant(ctx, restaurantID)
 }
 
-func (o *Ops) GetRestaurantsOfAnOwner(ctx context.Context) ([]*Restaurant, error){
+func (o *Ops) GetRestaurantsOfAnOwner(ctx context.Context) ([]*Restaurant, error) {
 	return o.repo.GetRestaurantsOfAnOwner(ctx)
 }
-func (o *Ops) GetRestaurantsOfAnOperator(ctx context.Context) ([]*Restaurant, error){
+func (o *Ops) GetRestaurantsOfAnOperator(ctx context.Context) ([]*Restaurant, error) {
 	return o.repo.GetRestaurantsOfAnOperator(ctx)
 }
 
-func (o *Ops) EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error{
+func (o *Ops) EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error {
 
 	return o.repo.EditRestaurantName(ctx, restaurantID, newName)
 }
