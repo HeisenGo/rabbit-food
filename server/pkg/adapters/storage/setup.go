@@ -2,11 +2,10 @@ package storage
 
 import (
 	"fmt"
-	"server/config"
-	"server/pkg/adapters/storage/entities"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"server/config"
+	"server/pkg/adapters/storage/entities"
 )
 
 func NewPostgresGormConnection(dbConfig config.DB) (*gorm.DB, error) {
@@ -28,6 +27,8 @@ func Migrate(db *gorm.DB) error {
 		&entities.MenuItem{},
 		&entities.RestaurantCategory{},
 		&entities.Address{},
+		&entities.Order{},
+		&entities.OrderItem{},
 	)
 	if err != nil {
 		return err

@@ -63,6 +63,15 @@ type GetMenuItemsOfMenuRequest struct {
 	MenuID uint `json:"menu_id"`
 }
 
+type GetRestaurantCategoriesRequest struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type AddCategoryToRestaurantRequest struct {
+	RestaurantID uint   `json:"restaurant_id"`
+	CategoryIDs  []uint `json:"category_ids"`
+}
+
 type DepositRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
@@ -99,6 +108,16 @@ type AddMenuItemToMenuResponse struct {
 type GetMenuItemsOfMenuResponse struct {
 	Message   string           `json:"message"`
 	MenuItems []*menu.MenuItem `json:"menu_items"`
+}
+
+type AddCategoriesToRestaurantResponse struct {
+	Message    string                 `json:"message"`
+	Restaurant *restaurant.Restaurant `json:"restaurant"`
+}
+
+type GetRestaurantCategoriesResponse struct {
+	Message    string                           `json:"message"`
+	Categories []*restaurant.RestaurantCategory `json:"categories"`
 }
 
 type GetAllMenusResponse struct {

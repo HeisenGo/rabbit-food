@@ -7,9 +7,10 @@ import (
 
 func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restaurant {
 	return &restaurant.Restaurant{
-		ID:    entity.ID,
-		Name:  entity.Name,
-		Phone: entity.Phone,
+		ID:         entity.ID,
+		Name:       entity.Name,
+		Phone:      entity.Phone,
+		Categories: BatchRestaurantCategoryEntityToDomain(entity.Categories),
 	}
 }
 
@@ -18,4 +19,12 @@ func RestaurantDomainToEntity(domainRestaurant *restaurant.Restaurant) *entities
 		Name:  domainRestaurant.Name,
 		Phone: domainRestaurant.Phone,
 	}
+}
+
+func BatchRestaurantCategoryEntityToDomain(entities []*entities.RestaurantCategory) []*restaurant.RestaurantCategory {
+	var domainCategories []*restaurant.RestaurantCategory
+	for _, e := range entities {
+		domainCategories = append(domainCategories, &restaurant.RestaurantCategory{ID: e.ID, Name: e.Name})
+	}
+	return domainCategories
 }

@@ -101,6 +101,18 @@ func DecodeGetMenuItemsOfMenuRequest(data []byte) (GetMenuItemsOfMenuRequest, er
 	return req, err
 }
 
+func DecodeGetRestaurantCategoriesRequest(data []byte) (GetRestaurantCategoriesRequest, error) {
+	var req GetRestaurantCategoriesRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeAddCategoriesToRestaurantRequest(data []byte) (AddCategoryToRestaurantRequest, error) {
+	var req AddCategoryToRestaurantRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
 func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
@@ -118,5 +130,13 @@ func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, err
 }
 
 func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeAddCategoriesToRestaurantResponse(res AddCategoriesToRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetRestaurantCategoriesResponse(res GetRestaurantCategoriesResponse) ([]byte, error) {
 	return json.Marshal(res)
 }

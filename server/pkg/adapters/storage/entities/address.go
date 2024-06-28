@@ -12,7 +12,7 @@ type Address struct {
 	Types        string              `gorm:"size:255;not null"`
 	City         string              `gorm:"size:255;not null"`
 	UserID       *uint               `gorm:"index"`
-	User         *User               `gorm:"UserID:RestaurantID;"`
+	User         *User               `gorm:"foreignkey:RestaurantID;"`
 	RestaurantID *uint
 	Restaurant   *Restaurant `gorm:"foreignkey:RestaurantID;"`
 }
