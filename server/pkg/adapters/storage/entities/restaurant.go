@@ -6,8 +6,9 @@ import (
 
 type Restaurant struct {
 	gorm.Model
-	Name  string `gorm:"index"`
-	Phone string
+	Name    string `gorm:"index"`
+	Phone   string
+	Address *Address `gorm:"foreignKey:RestaurantID"`
 	//Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
 }
 
