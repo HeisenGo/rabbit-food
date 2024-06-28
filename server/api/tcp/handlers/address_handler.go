@@ -52,8 +52,8 @@ func (h *AddressHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tc
 	switch firstRoute {
 	case "addresses":
 		if TCPReq.Header["method"] == tcp.MethodPost {
-			addToCardHandler := middleware.ApplyMiddlewares(h.HandleAddAddressToUser, middleware.AuthMiddleware)
-			addToCardHandler(ctx, conn, TCPReq)
+			addAddressHandler := middleware.ApplyMiddlewares(h.HandleAddAddressToUser, middleware.AuthMiddleware)
+			addAddressHandler(ctx, conn, TCPReq)
 			return
 		}
 		tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
