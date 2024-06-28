@@ -80,3 +80,13 @@ func DecodeTCPWalletResponse(data []byte) (GetWalletBodyResponse, error) {
 	err := json.Unmarshal(data, &res)
 	return res, err
 }
+
+func EncodeCreateRestaurantRequest(req CreateRestaurantBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func DecodeCreateRestaurantResponse(data []byte) (CreateRestaurantResponse, error) {
+	var res CreateRestaurantResponse
+	err := json.Unmarshal(data, &res)
+	return res, err
+}
