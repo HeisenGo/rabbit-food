@@ -1,6 +1,7 @@
 package tcp
 
 import (
+	"server/internal/models/address"
 	"server/internal/models/auth"
 	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
@@ -62,11 +63,6 @@ type GetMenuItemsOfMenuRequest struct {
 	MenuID uint `json:"menu_id"`
 }
 
-type Coordinates struct {
-	X float64
-	Y float64
-}
-
 type DepositRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
@@ -75,7 +71,11 @@ type WithdrawRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
-
+type AddressRequest struct {
+	AddressLine string              `json:"address_line"`
+	Coordinates address.Coordinates `json:"coordinates"` //coordinates should be changed to the float 64 type`
+	City        string              `json:"city"`
+}
 type AddCardToWalletResponse struct {
 	Message string                 `json:"message"`
 	Card    *creditCard.CreditCard `json:"card"`
@@ -122,4 +122,8 @@ type WithdrawResponse struct {
 type GetWalletResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
+}
+type AddressResponse struct {
+	Message string           `json:"message"`
+	Address *address.Address `json:"address"`
 }

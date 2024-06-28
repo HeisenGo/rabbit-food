@@ -33,6 +33,9 @@ func (r *creditCardRepo) CreateCardAndAddToWallet(ctx context.Context, creditCar
 
 	var userWalletEntity *entities.Wallet
 	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	if err = tx.Where("user_id = ?", userID).First(&userWalletEntity).Error; err != nil {
 		tx.Rollback()
 		return nil, err

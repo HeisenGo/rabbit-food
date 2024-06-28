@@ -61,6 +61,16 @@ func EncodeLoginResponse(res LoginResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
+func DecodeAddAddressToUserRequest(data []byte) (AddressRequest, error) {
+	var req AddressRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeAddAddressToUserResponse(res AddressResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
 func DecodeCreateRestaurantRequest(data []byte) (CreateRestaurantRequest, error) {
 	var req CreateRestaurantRequest
 	err := json.Unmarshal(data, &req)
