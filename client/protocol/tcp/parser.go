@@ -90,9 +90,3 @@ func DecodeCreateRestaurantResponse(data []byte) (CreateRestaurantResponse, erro
 	err := json.Unmarshal(data, &res)
 	return res, err
 }
-
-func DecodeGetRestaurantsBodyResponse(data []byte) (GetRestaurantsBodyResponse, error) {
-	var resBody GetRestaurantsBodyResponse
-	err := json.Unmarshal(data, &resBody)
-	return resBody, err
-}

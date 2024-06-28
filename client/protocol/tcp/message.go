@@ -59,6 +59,12 @@ type CreateRestaurantBody struct {
 	Address *models.Address `json:"address"`
 }
 
+type CreateRestaurantBody struct {
+	Name    string          `json:"name"`
+	Phone   string          `json:"phone"`
+	Address *models.Address `json:"address"`
+}
+
 type GetCardsBodyResponse struct {
 	Message string               `json:"message"`
 	Cards   []*models.CreditCard `json:"cards"`
@@ -75,14 +81,10 @@ type CreateRestaurantRequest struct {
 	Address *models.Address `json:"address"`
 }
 
-type CreateRestaurantResponse struct {
-	Message    string             `json:"message"`
-	Restaurant *models.Restaurant `json:"restaurant"`
-}
 
-type GetRestaurantsBodyResponse struct {
-	Message     string               `json:"message"`
-	Restaurants []*models.Restaurant `json:"restaurants"`
+type CreateRestaurantResponse struct {
+	Message string          `json:"message"`
+	Restaurant *models.Restaurant `json:"restaurant"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {
