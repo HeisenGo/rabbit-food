@@ -23,7 +23,7 @@ func (r *addressRepo) Create(ctx context.Context, address *address.Address) (*ad
 	if err != nil {
 		return nil, err
 	}
-	newAddress.UserID = userID
+	newAddress.UserID = &userID
 	err = r.db.Create(&newAddress).Error
 	if err != nil {
 		return nil, err
