@@ -1,7 +1,9 @@
 package tcp
 
 import (
+	"server/internal/models/address"
 	"server/internal/models/auth"
+	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
@@ -40,14 +42,28 @@ type AddOperatorToRestarantRequest struct {
 type CreateRestaurantRequest struct {
 	Name        string `json:"name"`
 	Phone       string `json:"phone"`
-	City        string `json:"city"`
-	Address     string `json:"address"`
-	Coordinates string `json:"coordiantes"`
+	Address *address.Address `json:"address"`
 }
 
-type Coordinates struct {
-	X float64
-	Y float64
+type CreateMenuRequest struct {
+	RestaurantID uint   `json:"restaurant_id"`
+	Name         string `json:"name"`
+}
+
+type GetRestaurantMenusRequest struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type AddMenuItemToMenuRequest struct {
+	MenuID                        uint   `json:"menu_id"`
+	Name                          string `json:"name"`
+	Price                         uint   `json:"price"`
+	PreparationMinutes            uint   `json:"preparation_minutes"`
+	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
+}
+
+type GetMenuItemsOfMenuRequest struct {
+	MenuID uint `json:"menu_id"`
 }
 
 type DepositRequest struct {
@@ -58,10 +74,14 @@ type WithdrawRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
-
+type AddressRequest struct {
+	AddressLine string              `json:"address_line"`
+	Coordinates address.Coordinates `json:"coordinates"` //coordinates should be changed to the float 64 type`
+	City        string              `json:"city"`
+}
 type AddCardToWalletResponse struct {
-	Message string
-	Card    *creditCard.CreditCard
+	Message string                 `json:"message"`
+	Card    *creditCard.CreditCard `json:"card"`
 }
 
 type AssignOperatorToRestaurantResponse struct {
@@ -75,13 +95,33 @@ type AssignOperatorResponse struct {
 }
 
 type CreateRestaurantResponse struct {
-	Message    string
-	Restaurant *restaurant.Restaurant
+	Message    string                 `json:"message"`
+	Restaurant *restaurant.Restaurant `json:"restaurant"`
+}
+
+type CreateMenuResponse struct {
+	Message string     `json:"message"`
+	Menu    *menu.Menu `json:"menu"`
+}
+
+type AddMenuItemToMenuResponse struct {
+	Message  string         `json:"message"`
+	MenuItem *menu.MenuItem `json:"menu_item"`
+}
+
+type GetMenuItemsOfMenuResponse struct {
+	Message   string           `json:"message"`
+	MenuItems []*menu.MenuItem `json:"menu_items"`
+}
+
+type GetAllMenusResponse struct {
+	Message string       `json:"message"`
+	Menus   []*menu.Menu `json:"menus"`
 }
 
 type GetUserWalletCardsResponse struct {
-	Message string
-	Cards   []*creditCard.CreditCard
+	Message string                   `json:"message"`
+	Cards   []*creditCard.CreditCard `json:"cards"`
 }
 
 type GetOwnerOperatorRestaurantsResponse struct {
@@ -90,12 +130,21 @@ type GetOwnerOperatorRestaurantsResponse struct {
 }
 
 type DepositResponse struct {
-	Message string
-	Wallet  *wallet.Wallet
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
 }
 type WithdrawResponse struct {
-	Message string
-	Wallet  *wallet.Wallet
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
+}
+
+type GetWalletResponse struct {
+	Message string         `json:"message"`
+	Wallet  *wallet.Wallet `json:"wallet"`
+}
+type AddressResponse struct {
+	Message string           `json:"message"`
+	Address *address.Address `json:"address"`
 }
 
 type EditRestarantNameRequest struct {

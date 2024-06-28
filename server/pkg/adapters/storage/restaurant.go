@@ -27,7 +27,7 @@ func NewRestaurantRepo(db *gorm.DB) restaurant.Repo {
 	}
 }
 
-func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, restauran *restaurant.Restaurant) (*restaurant.Restaurant, error) {
+func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, restaurant *restaurant.Restaurant) (*restaurant.Restaurant, error) {
 	tx := r.db.Begin()
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -45,7 +45,7 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 		return nil, restaurants.ErrFailedRetrieveID
 	}
 	// Create the new restaurant
-	newRestaurantEntity := mappers.RestaurantDomainToEntity(restauran)
+	newRestaurantEntity := mappers.RestaurantDomainToEntity(restaurant)
 	err = tx.Create(newRestaurantEntity).Error
 	if err != nil {
 		tx.Rollback()
@@ -56,8 +56,8 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	}
 
 	// Create the UserRestaurant association with role 'owner'
-	userRestaurant := userRestaurant.NewUserRestaurant(ownerID, newRestaurantEntity.ID, server.Owner)
-	err = tx.Create(userRestaurant).Error
+	userRest := userRestaurant.NewUserRestaurant(ownerID, newRestaurantEntity.ID, server.Owner)
+	err = tx.Create(userRest).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -68,21 +68,9 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	if err != nil {
 		return nil, err
 	}
-
 	createdRestaurant := mappers.RestaurantEntityToDomain(newRestaurantEntity)
 
 	return createdRestaurant, nil
-
-	// newRestaurant := mappers.RestaurantDomainToEntity(restaurant)
-	// err := r.db.Create(&newRestaurant).Error
-	// if err != nil {
-	// 	if errors.Is(err, gorm.ErrDuplicatedKey) {
-	// 		return nil, users.ErrUserExists
-	// 	}
-	// 	return nil, err
-	// }
-	// createdRestaurant := mappers.RestaurantEntityToDomain(newRestaurant)
-	// return createdRestaurant, nil
 }
 
 func (r *restaurantRepo) GetRestaurantByID(ctx context.Context, restaurantID uint) (*restaurant.Restaurant, error) {

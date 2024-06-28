@@ -4,19 +4,14 @@ import (
 	"context"
 	"server/internal/models/restaurant/motor"
 	"server/internal/models/user"
+	"server/internal/models/address"
 )
 
 type Restaurant struct {
-	ID          uint
-	Name        string
-	Phone       string
-	City        string
-	Address     string
-	Coordinates string // To do
-	//RelatedUserID uint
-	//UserRole      server.RoleType
-	//UserID uint
-	//Users []user.User
+	ID      uint             `json:"id"`
+	Name    string           `json:"name"`
+	Phone   string           `json:"phone"`
+	Address *address.Address `json:"address"`
 }
 type Repo interface {
 	CreateRestaurantAndAssignOwner(ctx context.Context, restauran *Restaurant) (*Restaurant, error)
@@ -38,15 +33,18 @@ type Repo interface {
 	EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error
 }
 
-func NewRestaurant(name string, phone string, city string, address string, coordiantes string) *Restaurant {
-	//users := []User
-	//users = append(users, user)
+func NewRestaurant(name string, phone string, address address.Address) *Restaurant {
 	restaurant := &Restaurant{
-		Name:        name,
-		Phone:       phone,
-		City:        city,
-		Address:     address,
-		Coordinates: coordiantes,
+		Name:    name,
+		Phone:   phone,
+		Address: &address,
+	}
+	return restaurant
+}
+
+func NewRestaurantByID(id uint) *Restaurant {
+	restaurant := &Restaurant{
+		ID: id,
 	}
 	return restaurant
 }

@@ -20,8 +20,9 @@ func NewRestaurantOps(db *gorm.DB, repo Repo) *Ops {
 	}
 }
 
-func (o *Ops) Create(ctx context.Context, restauarnt *Restaurant) (*Restaurant, error) {
-	return o.repo.CreateRestaurantAndAssignOwner(ctx, restauarnt)
+
+func (o *Ops) Create(ctx context.Context, restaurant *Restaurant) (*Restaurant, error) {
+	return o.repo.CreateRestaurantAndAssignOwner(ctx, restaurant)
 }
 
 func (o *Ops) IsRestaurantOwner(ctx context.Context, restaurantID uint) (bool, error) {

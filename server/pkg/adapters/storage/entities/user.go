@@ -16,5 +16,7 @@ type User struct {
 	BirthDate   time.Time
 	IsAdmin     bool          `gorm:"default:false"`
 	Wallet      *Wallet       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Restaurants []*Restaurant `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
+	Addresses   []*Address    `gorm:"foreignKey:UserID"`
+  Restaurants []*Restaurant `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
+
 }
