@@ -6,12 +6,10 @@ import (
 )
 
 type Restaurant struct {
-	ID         uint                  `json:"id"`
-	Name       string                `json:"name"`
-	Phone      string                `json:"phone"`
-	City       string                `json:"city"`
-	Address    address.Address       `json:"address"`
-	Categories []*RestaurantCategory `json:"categories"`
+	ID      uint             `json:"id"`
+	Name    string           `json:"name"`
+	Phone   string           `json:"phone"`
+	Address *address.Address `json:"address"`
 }
 
 type RestaurantCategory struct {
@@ -25,12 +23,11 @@ type Repo interface {
 	GetRestaurantCategories(ctx context.Context, restaurantID uint) ([]*RestaurantCategory, error)
 }
 
-func NewRestaurant(name string, phone string, city string, address address.Address) *Restaurant {
+func NewRestaurant(name string, phone string, address address.Address) *Restaurant {
 	restaurant := &Restaurant{
 		Name:    name,
 		Phone:   phone,
-		City:    city,
-		Address: address,
+		Address: &address,
 	}
 	return restaurant
 }

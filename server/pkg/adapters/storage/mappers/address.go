@@ -23,3 +23,13 @@ func AddressDomainToEntity(domainAddress *address.Address) *entities.Address {
 		City:        domainAddress.City,
 	}
 }
+
+func RestaurantAddressEntityToDomain(entity *entities.Address) *address.Address {
+	return &address.Address{
+		RestaurantID: *entity.RestaurantID,
+		AddressLine:  entity.AddressLine,
+		Coordinates:  entity.Coordinates,
+		Types:        entity.Types,
+		City:         entity.City,
+	}
+}

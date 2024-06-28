@@ -1,23 +1,27 @@
 package mappers
 
 import (
+	"fmt"
 	"server/internal/models/restaurant/restaurant"
 	"server/pkg/adapters/storage/entities"
 )
 
 func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restaurant {
+  	domainAddress := RestaurantAddressEntityToDomain(entity.Address)
 	return &restaurant.Restaurant{
 		ID:         entity.ID,
 		Name:       entity.Name,
 		Phone:      entity.Phone,
+    Address:    domainAddress,
 		Categories: BatchRestaurantCategoryEntityToDomain(entity.Categories),
-	}
 }
 
 func RestaurantDomainToEntity(domainRestaurant *restaurant.Restaurant) *entities.Restaurant {
+	entAddress := AddressDomainToEntity(domainRestaurant.Address)
 	return &entities.Restaurant{
-		Name:  domainRestaurant.Name,
-		Phone: domainRestaurant.Phone,
+		Name:    domainRestaurant.Name,
+		Phone:   domainRestaurant.Phone,
+		Address: entAddress,
 	}
 }
 

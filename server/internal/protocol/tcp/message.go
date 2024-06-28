@@ -37,9 +37,7 @@ type AddCardToWalletRequest struct {
 type CreateRestaurantRequest struct {
 	Name        string `json:"name"`
 	Phone       string `json:"phone"`
-	City        string `json:"city"`
-	Address     string `json:"address"`
-	Coordinates string `json:"coordinates"`
+	Address *address.Address `json:"address"`
 }
 
 type CreateMenuRequest struct {

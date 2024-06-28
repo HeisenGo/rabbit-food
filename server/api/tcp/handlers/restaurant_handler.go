@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"server"
 	middleware "server/api/tcp/middlewares"
 	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
@@ -20,38 +21,40 @@ func NewRestaurantHandler(restaurantService services.RestaurantService) *Restaur
 	return &RestaurantHandler{restaurantService}
 }
 
-//func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
-//	reqData, err := tcp.DecodeCreateRestaurantRequest(req.Data)
-//	if err != nil {
-//		//logger
-//		fmt.Println("Error decoding create restaurant request:", err)
-//		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-//		return
-//	}
-//	newRestaurant := restaurant.NewRestaurant(reqData.Name, reqData.Phone, reqData.City, reqData.Address, reqData.Coordinates)
-//	createdRestaurant, err := h.restaurantService.CreateRestaurantForOwner(ctx, newRestaurant)
-//
-//	///response := tcp.CreateRestaurantResponse{}
-//
-//	if err != nil {
-//		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-//		return
-//	} //else {
-//	response := tcp.CreateRestaurantResponse{
-//		Message:    "restaurant created :)",
-//		Restaurant: createdRestaurant,
-//	}
-//	//}
-//
-//	resData, err := tcp.EncodeCreateRestaurantResponse(response)
-//	if err != nil {
-//		//logger.Error("Error encoding register response:", err)
-//		fmt.Println("Error encoding create restaurant response:", err)
-//		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-//		return
-//	}
-//	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
-//}
+
+func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeCreateRestaurantRequest(req.Data)
+	if err != nil {
+		//logger
+		fmt.Println("Error decoding create restaurant request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	reqData.Address.Types = server.RestaurantAddressType
+	newRestaurant := restaurant.NewRestaurant(reqData.Name, reqData.Phone, *reqData.Address)
+	createdRestaurant, err := h.restaurantService.CreateRestaurantForOwner(ctx, newRestaurant)
+
+	///response := tcp.CreateRestaurantResponse{}
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	} //else {
+	response := tcp.CreateRestaurantResponse{
+		Message:    "restaurant created :)",
+		Restaurant: createdRestaurant,
+	}
+	//}
+
+	resData, err := tcp.EncodeCreateRestaurantResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding create restaurant response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
+}
 
 func (h *RestaurantHandler) HandleCreateMenu(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeCreateMenuRequest(req.Data)

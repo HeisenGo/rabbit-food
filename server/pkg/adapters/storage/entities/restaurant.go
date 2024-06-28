@@ -9,6 +9,7 @@ type Restaurant struct {
 	Name       string `gorm:"index"`
 	Phone      string
 	Categories []*RestaurantCategory `gorm:"many2many:restaurant_restaurant_categories;constraint:OnDelete:CASCADE;"`
+  Address *Address `gorm:"foreignKey:RestaurantID"`
 	//Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
 }
 
