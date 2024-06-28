@@ -35,7 +35,7 @@ type MenuItem struct {
 	CancellationPenaltyPercentage uint
 	MenuID                        uint
 	Menu                          *Menu `gorm:"foreignKey:MenuID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	IsAvailable                   bool
+	IsAvailable                   bool  `gorm:"default:true"`
 }
 
 type RestaurantCategory struct {
