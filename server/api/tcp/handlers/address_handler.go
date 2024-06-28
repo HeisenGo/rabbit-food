@@ -26,11 +26,6 @@ func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Co
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	if err != nil {
-		fmt.Println("Error Can't Take Users ID", err)
-		tcp.Error(conn, tcp.StatusConflict, nil, err.Error())
-		return
-	}
 
 	createdAddress, err := h.addressService.Create(ctx, reqData.AddressLine, reqData.Coordinates, server.UserAddressType, reqData.City)
 	response := tcp.AddressResponse{}
