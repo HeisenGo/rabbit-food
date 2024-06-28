@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"server"
 	middleware "server/api/tcp/middlewares"
 	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
@@ -28,7 +29,8 @@ func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
-	newRestaurant := restaurant.NewRestaurant(reqData.Name, reqData.Phone, reqData.City, reqData.Address, reqData.Coordinates)
+	reqData.Address.Types = server.RestaurantAddressType
+	newRestaurant := restaurant.NewRestaurant(reqData.Name, reqData.Phone, *reqData.Address)
 	createdRestaurant, err := h.restaurantService.CreateRestaurantForOwner(ctx, newRestaurant)
 
 	///response := tcp.CreateRestaurantResponse{}
