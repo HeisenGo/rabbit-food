@@ -10,7 +10,6 @@ import (
 )
 
 func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restaurant {
-	fmt.Println(entity)
 	var domainAddress *address.Address
 	if entity.Address == nil {
 		domainAddress = address.NewAddress("", address.Coordinates{}, server.RestaurantAddressType, "")
