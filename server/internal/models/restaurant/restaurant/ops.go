@@ -84,3 +84,5 @@ func (o *Ops) EditRestaurantName(ctx context.Context, restaurantID uint, newName
 
 	return o.repo.EditRestaurantName(ctx, restaurantID, newName)
 }
+
+GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*restaurant.Restaurant, error)

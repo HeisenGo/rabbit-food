@@ -376,9 +376,6 @@ func (h *RestaurantHandler) HandleGetMenuItemsOfMenu(ctx context.Context, conn n
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
 
-func (h *RestaurantHandler) HandleAddOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
-}
-
 func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {

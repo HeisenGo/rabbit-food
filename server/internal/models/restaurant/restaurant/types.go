@@ -2,9 +2,9 @@ package restaurant
 
 import (
 	"context"
+	"server/internal/models/address"
 	"server/internal/models/restaurant/motor"
 	"server/internal/models/user"
-	"server/internal/models/address"
 )
 
 type Restaurant struct {
@@ -31,6 +31,7 @@ type Repo interface {
 	GetRestaurantsOfAnOwner(ctx context.Context) ([]*Restaurant, error)
 	GetRestaurantsOfAnOperator(ctx context.Context) ([]*Restaurant, error)
 	EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error
+	GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*Restaurant, error)
 }
 
 func NewRestaurant(name string, phone string, address address.Address) *Restaurant {
