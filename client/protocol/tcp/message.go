@@ -44,8 +44,8 @@ type DepositBody struct {
 	Amount uint   `json:"amount"`
 }
 
-type RestaurantCategoryBody struct{
-	RestaurantID uint `json:"restaurant_id"`
+type RestaurantCategoryBody struct {
+	RestaurantID uint   `json:"restaurant_id"`
 	Category_ids []uint `json:"category_ids"`
 }
 
@@ -57,7 +57,6 @@ type WithdrawBody struct {
 type AddCardBody struct {
 	CardNumber string `json:"card_number"`
 }
-
 
 type CreateRestaurantBody struct {
 	Name    string          `json:"name"`
@@ -89,6 +88,20 @@ type CreateRestaurantResponse struct {
 type GetRestaurantsBodyResponse struct {
 	Message     string               `json:"message"`
 	Restaurants []*models.Restaurant `json:"restaurants"`
+}
+
+type GetRestaurantsCategoriesBody struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type GetCategoriesRestaurantBodyResponse struct {
+	Message    string                       `json:"message"`
+	Categories []*models.RestaurantCategory `json:"restaurants"`
+}
+
+type RestaurantMenuBody struct {
+	RestaurantID uint   `json:"restaurant_id"`
+	Name         string `json:"name"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {

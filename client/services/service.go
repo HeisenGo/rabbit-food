@@ -17,4 +17,6 @@ type Service interface {
 	CreateRestaurant(newRestaurant *models.Restaurant) (*models.Restaurant, error)
 	GetRestaurantsIHaveRoleIn() ([]*models.Restaurant, error)
 	AddCategoryToRestaurant(*tcp.RestaurantCategoryBody)error
+	GetCategoriesOfRestaurant(restaurantID uint)([]*models.RestaurantCategory, error)
+	AddMenuToRestaurant(menuBody *tcp.RestaurantMenuBody) error
 }

@@ -34,7 +34,16 @@ var (
 	createRestaurantMenuItem         MenuComponent
 	showMyFunctionalRestaurants      MenuComponent
 	addCategoryToRestaurantsMenuItem MenuComponent
+	addMenuToRestaurantMenuItem      MenuComponent
+	addFoodToRestaurantMenuItem      MenuComponent
 )
+
+func getAddMenuToRestaurantMenuItem(service services.Service) MenuComponent {
+	if addMenuToRestaurantMenuItem == nil {
+		addMenuToRestaurantMenuItem = NewAddMenuToRestaurantMenuItem("Add Menu", commands.NewAddMenuToRestaurantCommand(service), commands.NewGetRestaurantsIHaveARoleCommand(service), commands.NewGetCategoriesOfRestaurantCommand(service), getRestaurantManagementMenu(service))
+	}
+	return addMenuToRestaurantMenuItem
+}
 
 func getShowMyFunctionalRestaurants(service services.Service) MenuComponent {
 	if showMyFunctionalRestaurants == nil {
@@ -101,6 +110,7 @@ func getWalletManagementMenu(service services.Service) MenuComponent {
 		walletManagementMenu.Add(getDepositMenuItem(service))
 		walletManagementMenu.Add(getWithDrawMenu(service))
 		walletManagementMenu.Add(getLogoutMenuItem(service))
+
 	}
 	return walletManagementMenu
 }
@@ -141,6 +151,7 @@ func getRestaurantManagementMenu(service services.Service) MenuComponent {
 		restaurantManagementMenu = NewMenu("Restaurant Management Menu")
 		restaurantManagementMenu.Add(getCreateRestaurantMenuItem(service))
 		restaurantManagementMenu.Add(getAddCategoryToRestaurantsMenuItem(service))
+		restaurantManagementMenu.Add(getAddMenuToRestaurantMenuItem(service))
 		restaurantManagementMenu.Add(getShowMyFunctionalRestaurants(service))
 		restaurantManagementMenu.Add(getLogoutMenuItem(service))
 	}

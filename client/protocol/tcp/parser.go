@@ -100,3 +100,18 @@ func DecodeGetRestaurantsBodyResponse(data []byte) (GetRestaurantsBodyResponse, 
 func EncodeAddCategoryReqBody(req *RestaurantCategoryBody) ([]byte, error) {
 	return json.Marshal(req)
 }
+
+
+func EncodeGetCategoriesOfRestaurantReqBody(req *GetRestaurantsCategoriesBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func DecodeGetCategoriesRestaurantsBodyResponse(data []byte) (GetCategoriesRestaurantBodyResponse, error) {
+	var resBody GetCategoriesRestaurantBodyResponse
+	err := json.Unmarshal(data, &resBody)
+	return resBody, err
+}
+
+func EncodeAddMenuReqBody(req *RestaurantMenuBody) ([]byte, error) {
+	return json.Marshal(req)
+}
