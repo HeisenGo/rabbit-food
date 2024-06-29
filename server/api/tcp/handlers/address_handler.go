@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 	"server"
-	"server/api/tcp/middlewares"
+	middleware "server/api/tcp/middlewares"
 	"server/internal/protocol/tcp"
 	"server/pkg/utils"
 	"server/services"
@@ -28,16 +28,15 @@ func (h *AddressHandler) HandleAddAddressToUser(ctx context.Context, conn net.Co
 	}
 
 	createdAddress, err := h.addressService.Create(ctx, reqData.AddressLine, reqData.Coordinates, server.UserAddressType, reqData.City)
-	response := tcp.AddressResponse{}
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
-	} else {
-		response = tcp.AddressResponse{
-			Message: fmt.Sprintf("address created."),
-			Address: createdAddress,
-		}
 	}
+	response := tcp.AddressResponse{
+		Message: "address created.",
+		Address: createdAddress,
+	}
+
 	resData, err := tcp.EncodeAddAddressToUserResponse(response)
 	if err != nil {
 		//logger.Error("Error encoding register response:", err)

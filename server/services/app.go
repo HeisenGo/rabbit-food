@@ -19,6 +19,7 @@ type AppContainer struct {
 	AuthService       *AuthService
 	WalletService     *WalletService
 	RestaurantService *RestaurantService
+	UserService       *UserService
   AddressService    *AddressService
 }
 
@@ -37,6 +38,7 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 	app.setWalletService()
 	app.setAddressService()
 	app.setRestaurantService()
+	app.setUserService()
 	return app, nil
 }
 
@@ -82,3 +84,10 @@ func (a *AppContainer) setRestaurantService() {
 	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)), menu.NewMenuOps(a.dbConn, storage.NewMenuRepo(a.dbConn)))
 }
 
+func (a *AppContainer) setUserService() {
+	if a.UserService != nil {
+		return
+	}
+	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
+	// hint: ** probably food or menu should be added or category
+}
