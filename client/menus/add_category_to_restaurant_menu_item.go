@@ -13,11 +13,11 @@ import (
 type AddCategoryToRestaurantMenuItem struct {
 	Name     string
 	Command  *commands.AddCategoryToRestaurantCommand
-	GetRestaurantsIHaveARoleCommand   commands.GetRestaurantsIHaveARoleCommand
+	GetRestaurantsIHaveARoleCommand   *commands.GetRestaurantsIHaveARoleCommand
 	PostMenu MenuComponent
 }
 
-func NewAddCategoryToRestaurantMenuItem(name string, command *commands.AddCategoryToRestaurantCommand, getRestaurantsIHaveARoleCommand   commands.GetRestaurantsIHaveARoleCommand, postMenu MenuComponent) *AddCategoryToRestaurantMenuItem {
+func NewAddCategoryToRestaurantMenuItem(name string, command *commands.AddCategoryToRestaurantCommand, getRestaurantsIHaveARoleCommand   *commands.GetRestaurantsIHaveARoleCommand, postMenu MenuComponent) *AddCategoryToRestaurantMenuItem {
 	return &AddCategoryToRestaurantMenuItem{
 		Name:     name,
 		Command:  command,
