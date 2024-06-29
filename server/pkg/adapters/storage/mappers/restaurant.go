@@ -1,14 +1,22 @@
 package mappers
 
 import (
-	"server/internal/models/restaurant/motor"
 	"fmt"
+	"server"
+	"server/internal/models/address"
+	"server/internal/models/restaurant/motor"
 	"server/internal/models/restaurant/restaurant"
 	"server/pkg/adapters/storage/entities"
 )
 
 func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restaurant {
-	domainAddress := RestaurantAddressEntityToDomain(entity.Address)
+	fmt.Println(entity)
+	var domainAddress *address.Address
+	if entity.Address == nil {
+		domainAddress = address.NewAddress("", address.Coordinates{}, server.RestaurantAddressType, "")
+	} else {
+		domainAddress = RestaurantAddressEntityToDomain(entity.Address)
+	}
 	r := &restaurant.Restaurant{
 		ID:      entity.ID,
 		Name:    entity.Name,
@@ -16,6 +24,22 @@ func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restauran
 		Address: domainAddress,
 	}
 	fmt.Print(r)
+	return r
+}
+
+func RestaurantEntityAddressNameLineToDomain(entity *entities.Restaurant) *restaurant.Restaurant {
+	var domainAddress *address.Address
+	if entity.Address == nil {
+		domainAddress = address.NewAddress("", address.Coordinates{}, server.RestaurantAddressType, "")
+	} else {
+		domainAddress = RestaurantAddressNameLineEntityToDomain(entity.Address)
+	}
+	r := &restaurant.Restaurant{
+		ID:      entity.ID,
+		Name:    entity.Name,
+		Phone:   entity.Phone,
+		Address: domainAddress,
+	}
 	return r
 }
 
@@ -28,17 +52,17 @@ func RestaurantDomainToEntity(domainRestaurant *restaurant.Restaurant) *entities
 	}
 }
 
-func MotorDomainToEntity(domianMotor *motor.Motor) *entities.Motor {
+func MotorDomainToEntity(domainMotor *motor.Motor) *entities.Motor {
 	return &entities.Motor{
-		Name:  domianMotor.Name,
-		Speed: domianMotor.Speed,
+		Name:  domainMotor.Name,
+		Speed: domainMotor.Speed,
 	}
 }
 
-func MotorEntityToDomain(entiryMotor *entities.Motor) *motor.Motor {
+func MotorEntityToDomain(entityMotor *entities.Motor) *motor.Motor {
 	return &motor.Motor{
-		Name:         entiryMotor.Name,
-		Speed:        entiryMotor.Speed,
-		RestaurantID: entiryMotor.RestaurantID,
+		Name:         entityMotor.Name,
+		Speed:        entityMotor.Speed,
+		RestaurantID: entityMotor.RestaurantID,
 	}
 }

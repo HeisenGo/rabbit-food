@@ -245,10 +245,15 @@ func (r *restaurantRepo) GetRestaurantsToAddCategoryMenuFood(ctx context.Context
 	if err != nil {
 		return nil, errors.New("internal error")
 	}
-
 	domainRestaurants := []*restaurant.Restaurant{}
 	for _, rest := range restaurants {
-		dRest := mappers.RestaurantEntityToDomain(&rest)
+		//var address entities.FunctionalAddress
+		sqlStr := "SELECT city, address_line FROM addresses WHERE restaurant_id = ?"
+		err = r.db.WithContext(ctx).Raw(sqlStr, rest.ID).Scan(&rest.Address).Error
+		if err != nil {
+			fmt.Println("Error retrieving restaurant:", err)
+		}
+		dRest := mappers.RestaurantEntityAddressNameLineToDomain(&rest)
 		domainRestaurants = append(domainRestaurants, dRest)
 	}
 	return domainRestaurants, nil

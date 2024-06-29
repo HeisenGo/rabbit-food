@@ -54,3 +54,9 @@ type Motor struct {
 	RestaurantID uint       `gorm:"index"`                                          // Foreign key for the restaurant
 	Restaurant   Restaurant `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // Relationship to the restaurant
 }
+
+
+type FunctionalAddress struct{
+	City string
+	AddressLine string
+}

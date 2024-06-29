@@ -33,3 +33,10 @@ func RestaurantAddressEntityToDomain(entity *entities.Address) *address.Address 
 		City:         entity.City,
 	}
 }
+
+func RestaurantAddressNameLineEntityToDomain(entity *entities.Address) *address.Address {
+	return &address.Address{
+		AddressLine: entity.AddressLine,
+		City:        entity.City,
+	}
+}
