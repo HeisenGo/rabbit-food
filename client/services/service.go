@@ -16,4 +16,5 @@ type Service interface {
 	Withdraw(data *tcp.WithdrawBody) error
 	CreateRestaurant(newRestaurant *models.Restaurant) (*models.Restaurant, error)
 	GetRestaurantsIHaveRoleIn() ([]*models.Restaurant, error)
+	AddCategoryToRestaurant(*tcp.RestaurantCategoryBody)error
 }

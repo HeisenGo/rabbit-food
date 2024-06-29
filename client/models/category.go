@@ -1,5 +1,6 @@
 package models
 
-type Category struct{
-	
+type RestaurantCategory struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
 }

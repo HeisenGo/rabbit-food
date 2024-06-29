@@ -428,3 +428,41 @@ func (s *APIService) GetRestaurantsIHaveRoleIn() ([]*models.Restaurant, error) {
 	}
 	return getRestaurantsResBody.Restaurants, nil
 }
+
+func (s *APIService) AddCategoryToRestaurant(addCategoryData *tcp.RestaurantCategoryBody) error {
+	location := "restaurants/categories"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+	tcp_service.SetAuthorizationHeader(header)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+
+	encodedAddCategoryBody, err := tcp.EncodeAddCategoryReqBody(addCategoryData)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedAddCategoryBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusCreated {
+		return tcp_service.ResponseErrorProduction(response.Data)
+	}
+
+	return nil
+}
