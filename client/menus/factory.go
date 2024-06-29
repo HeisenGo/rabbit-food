@@ -14,7 +14,7 @@ var (
 	profileManagementMenu    *Menu
 	walletManagementMenu     *Menu
 	foodOrderMenu            MenuComponent
-	restaurantManagementMenu MenuComponent
+	restaurantManagementMenu *Menu
 	logoutMenuItem           MenuComponent
 	//////       Profile ManagementMeu /////
 	///// Info to display and last updated address to display
@@ -30,7 +30,24 @@ var (
 	AddCreditCardMenuItem   MenuComponent
 	depositMenuItem         MenuComponent
 	withDrawMenuItem        MenuComponent
+	// restaurant management
+	createRestaurantMenuItem         MenuComponent
+	addCategoryToRestaurantsMenuItem MenuComponent
 )
+
+func getAddCategoryToRestaurantsMenuItem(service services.Service) MenuComponent {
+	if addCategoryToRestaurantsMenuItem == nil {
+		addCategoryToRestaurantsMenuItem = NewAddCategoryToRestaurantMenuItem("Add Category to Restaurant", commands.NewAddCategoryToRestaurantCommand(service), *commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
+	}
+	return addCategoryToRestaurantsMenuItem
+}
+
+func getCreateRestaurantMenuItem(service services.Service) MenuComponent {
+	if createRestaurantMenuItem == nil {
+		createRestaurantMenuItem = NewCreateRestaurantMenuItem("Create Restaurant", commands.NewCreateRestaurantCommand(service), getRestaurantManagementMenu(service))
+	}
+	return createRestaurantMenuItem
+}
 
 func getDisplayCardsMenuItem(service services.Service) MenuComponent {
 	if displayCardsMenuItem == nil {
@@ -75,6 +92,7 @@ func getWalletManagementMenu(service services.Service) MenuComponent {
 		walletManagementMenu.Add(getAddCardMenuItem(service))
 		walletManagementMenu.Add(getDepositMenuItem(service))
 		walletManagementMenu.Add(getWithDrawMenu(service))
+		walletManagementMenu.Add(getLogoutMenuItem(service))
 	}
 	return walletManagementMenu
 }
@@ -98,6 +116,7 @@ func getProfileManagementMenu(service services.Service) MenuComponent {
 		profileManagementMenu = NewMenu("Profile Management Menu")
 		profileManagementMenu.Add(getEditInfoMenu(service))
 		profileManagementMenu.Add(getManageAddressesMenu(service))
+		profileManagementMenu.Add(getLogoutMenuItem(service))
 	}
 	return profileManagementMenu
 }
@@ -112,6 +131,9 @@ func getFoodOrderMenu(service services.Service) MenuComponent {
 func getRestaurantManagementMenu(service services.Service) MenuComponent {
 	if restaurantManagementMenu == nil {
 		restaurantManagementMenu = NewMenu("Restaurant Management Menu")
+		restaurantManagementMenu.Add(getCreateRestaurantMenuItem(service))
+		restaurantManagementMenu.Add(getAddCategoryToRestaurantsMenuItem(service))
+		restaurantManagementMenu.Add(getLogoutMenuItem(service))
 	}
 	return restaurantManagementMenu
 }

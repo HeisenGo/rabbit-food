@@ -35,8 +35,14 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	cards, err := mi.DisplayCardsCommand.Execute()
+
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		return
+	}
+	if len(cards) == 0 {
+		utils.ColoredPrint(constants.Red, "\n\t", "You have added no cards!")
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 		return
 	}
@@ -47,30 +53,51 @@ func (mi *DepositMenuItem) Execute(scanner *bufio.Scanner) {
 	fmt.Println("\n\n\t")
 
 	var depositBody tcp.DepositBody
-	cardRow, err := strconv.Atoi(utils.ReadInput(scanner, "Choose Card Row to Deposit: "))
+	var cardRow int
+	var amount int
+	for {
+		input := utils.ReadInput(scanner, "Choose Card Row to Deposit(Enter q to return): ")
 
-	if err != nil {
-		utils.ColoredPrint(constants.Red, "\t", errors.ErrDataType.Message)
-		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
-		return
-	}
-	if cardRow > len(cards) {
-		utils.ColoredPrint(constants.Red, "\tInvalid number")
-		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
-		return
+		if input == "q" {
+			return
+		}
+		cardRow, err = strconv.Atoi(input)
+
+		if err != nil {
+			utils.ColoredPrint(constants.Red, "\t", errors.ErrDataType.Message, "\n")
+			continue
+		}
+		if cardRow > len(cards) {
+			utils.ColoredPrint(constants.Red, "\tInvalid number\n")
+			continue
+		}
+		if cardRow <= len(cards) {
+			break
+		}
 	}
 	depositBody.Number = cards[cardRow-1].Number
-	amount, err := strconv.Atoi(utils.ReadInput(scanner, "Amount: "))
-	if err != nil {
-		utils.ColoredPrint(constants.Red, "\n\t", errors.ErrDataType.Message)
-		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
-		return
+
+	for {
+		input := utils.ReadInput(scanner, "Amount (q to exit process): ")
+
+		if input == "q" {
+			return
+		}
+		amount, err = strconv.Atoi(input)
+
+		if err != nil {
+			utils.ColoredPrint(constants.Red, "\t", errors.ErrDataType.Message, "\n")
+			continue
+		}
+		if amount <= 0 {
+			utils.ColoredPrint(constants.Red, "\n\t", "Entered Amount should be positive\n")
+			continue
+		}
+		if amount >= 0 {
+			break
+		}
 	}
-	if amount <= 0 {
-		utils.ColoredPrint(constants.Red, "\n\t", "Entered Amount should be positive")
-		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
-		return
-	}
+
 	depositBody.Amount = uint(amount)
 
 	err = mi.DepositCommand.Execute(&depositBody)
