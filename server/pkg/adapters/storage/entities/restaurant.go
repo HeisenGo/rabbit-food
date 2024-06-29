@@ -4,13 +4,16 @@ import (
 	"gorm.io/gorm"
 )
 
+
+
 type Restaurant struct {
 	gorm.Model
-	Name       string `gorm:"index"`
-	Phone      string
-	Categories []*RestaurantCategory `gorm:"many2many:restaurant_restaurant_categories;constraint:OnDelete:CASCADE;"`
-  Address *Address `gorm:"foreignKey:RestaurantID"`
-	//Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
+	Name    string `gorm:"index"`
+	Phone   string
+	Address *Address `gorm:"foreignKey:RestaurantID"`
+  Motors []Motor `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // One-to-many relationship with Motor
+  Categories []*RestaurantCategory `gorm:"many2many:restaurant_restaurant_categories;constraint:OnDelete:CASCADE;"`
+  //Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
 }
 
 type UserRestaurant struct {
@@ -44,4 +47,18 @@ type RestaurantCategory struct {
 	gorm.Model
 	Name        string        `gorm:"index"`
 	Restaurants []*Restaurant `gorm:"many2many:restaurant_restaurant_categories;constraint:OnDelete:CASCADE;"`
+}
+
+type Motor struct {
+	gorm.Model
+	Name         string
+	Speed        int        `gorm:"index"`                                          // Speed of the motorcycle
+	RestaurantID uint       `gorm:"index"`                                          // Foreign key for the restaurant
+	Restaurant   Restaurant `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // Relationship to the restaurant
+}
+
+
+type FunctionalAddress struct{
+	City string
+	AddressLine string
 }

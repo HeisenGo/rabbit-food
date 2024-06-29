@@ -16,6 +16,16 @@ func DecodeAddCardToWalletRequest(data []byte) (AddCardToWalletRequest, error) {
 	return req, err
 }
 
+func DecodeAddOperatorToRestaurantRequest(data []byte) (AddOperatorToRestaurantRequest, error) {
+	var req AddOperatorToRestaurantRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeGetAllOperatorsOFRestaurant(data []byte) {
+
+}
+
 func DecodeDepositRequest(data []byte) (DepositRequest, error) {
 	var req DepositRequest
 	err := json.Unmarshal(data, &req)
@@ -32,7 +42,15 @@ func EncodeAddCardToWalletResponse(res AddCardToWalletResponse) ([]byte, error) 
 	return json.Marshal(res)
 }
 
+func EncodeAssignOperatorResponse(res AssignOperatorToRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
 func EncodeGetUserWalletCardsResponse(res GetUserWalletCardsResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetOwnerOperatorRestaurantsResponse(res GetOwnerOperatorRestaurantsResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
@@ -117,6 +135,12 @@ func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error
 	return json.Marshal(res)
 }
 
+func DecodeEditRestaurantNameRequest(data []byte) (EditRestaurantNameRequest, error) {
+	var req EditRestaurantNameRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
 func EncodeCreateMenuResponse(res CreateMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
@@ -132,7 +156,14 @@ func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, err
 func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
-
+func DecodeRestaurantToAddCategoryMenuFoodResponse(data []byte)(RestaurantToAddCategoryMenuFoodResponse,error){
+	var req RestaurantToAddCategoryMenuFoodResponse
+	err := json.Unmarshal(data,&req)
+	return req,err
+}
+func EncodeGetRestaurantToAddCategoryMenuFoodResponse(res RestaurantToAddCategoryMenuFoodResponse)([]byte, error){
+	return json.Marshal(res)
+}
 func EncodeAddCategoriesToRestaurantResponse(res AddCategoriesToRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
 }

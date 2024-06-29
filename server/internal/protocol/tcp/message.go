@@ -34,6 +34,11 @@ type AddCardToWalletRequest struct {
 	CardNumber string `json:"card_number"`
 }
 
+type AddOperatorToRestaurantRequest struct {
+	OperatorPhoneOrEmail string `json:"phone"` //operator phone
+	RestaurantID         uint   `json:"restaurant_id"`
+}
+
 type CreateRestaurantRequest struct {
 	Name        string `json:"name"`
 	Phone       string `json:"phone"`
@@ -80,12 +85,22 @@ type WithdrawRequest struct {
 }
 type AddressRequest struct {
 	AddressLine string              `json:"address_line"`
-	Coordinates address.Coordinates `json:"coordinates"` //coordinates should be changed to the float 64 type`
+	Coordinates address.Coordinates `json:"coordinates"` 
 	City        string              `json:"city"`
 }
 type AddCardToWalletResponse struct {
 	Message string                 `json:"message"`
 	Card    *creditCard.CreditCard `json:"card"`
+}
+
+type AssignOperatorToRestaurantResponse struct {
+	Message                string
+	AssignOperatorResponse *AssignOperatorResponse
+}
+
+type AssignOperatorResponse struct {
+	OperatorPhoneOrEmail string `json:"operator"`
+	RestaurantName        string `json:"restaurant_name"`
 }
 
 type CreateRestaurantResponse struct {
@@ -127,6 +142,12 @@ type GetUserWalletCardsResponse struct {
 	Message string                   `json:"message"`
 	Cards   []*creditCard.CreditCard `json:"cards"`
 }
+
+type GetOwnerOperatorRestaurantsResponse struct {
+	Message     string
+	Restaurants []*restaurant.Restaurant
+}
+
 type DepositResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
@@ -143,4 +164,14 @@ type GetWalletResponse struct {
 type AddressResponse struct {
 	Message string           `json:"message"`
 	Address *address.Address `json:"address"`
+}
+
+type EditRestaurantNameRequest struct {
+	RestaurantID uint
+	NewName      string
+}
+
+type RestaurantToAddCategoryMenuFoodResponse struct {
+	Message		string
+	Restaurants []*restaurant.Restaurant
 }

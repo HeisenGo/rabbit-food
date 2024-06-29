@@ -2,9 +2,10 @@ package user
 
 import (
 	"context"
-	"gorm.io/gorm"
 	userErrors "server/internal/errors/users"
 	"server/pkg/utils/users"
+
+	"gorm.io/gorm"
 )
 
 type Ops struct {
@@ -50,6 +51,25 @@ func (o *Ops) GetUser(ctx context.Context, phoneOrEmail, password string) (*User
 
 	if err := users.CheckPasswordHash(password, user.Password); err != nil {
 		return nil, userErrors.ErrUserPassDoesNotMatch
+	}
+	return user, nil
+}
+
+func (o *Ops) GetOperatorUser(ctx context.Context, phoneOrEmail string) (*User, error) {
+	var user *User
+	if users.ValidatePhone(phoneOrEmail) != nil {
+		if users.ValidateEmail(phoneOrEmail) != nil {
+			return nil, userErrors.ErrUserNotFound
+		}
+		email := phoneOrEmail
+		user, _ = o.repo.GetByEmail(ctx, email)
+	} else {
+		phone := phoneOrEmail
+		user, _ = o.repo.GetByPhone(ctx, phone)
+	}
+
+	if user == nil {
+		return user, userErrors.ErrUserNotFound
 	}
 	return user, nil
 }

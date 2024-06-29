@@ -342,3 +342,89 @@ func (s *APIService) GetWallet() (*models.Wallet, error) {
 	}
 	return wallet.Wallet, nil
 }
+
+func (s *APIService) CreateRestaurant(newRestaurant *models.Restaurant) (*models.Restaurant, error) {
+	location := "restaurants"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+	tcp_service.SetAuthorizationHeader(header)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	// Send the message to the server
+	createRestaurantRequestBody := tcp.CreateRestaurantBody{
+		Name:    newRestaurant.Name,
+		Phone:   newRestaurant.Phone,
+		Address: newRestaurant.Address,
+	}
+	encodedCreateRestaurantRequestBody, err := tcp.EncodeCreateRestaurantRequest(createRestaurantRequestBody)
+	if err != nil {
+		return nil, errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedCreateRestaurantRequestBody)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
+	}
+	// Read the response from the server
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return nil, errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusCreated {
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
+	}
+
+	var responseData tcp.CreateRestaurantResponse
+	responseData, err = tcp.DecodeCreateRestaurantResponse(response.Data)
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return responseData.Restaurant, nil
+}
+
+func (s *APIService) GetRestaurantsIHaveRoleIn() ([]*models.Restaurant, error) {
+	location := "restaurants"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodGet
+	tcp_service.SetMethodHeader(header, methodHeader)
+	tcp_service.SetAuthorizationHeader(header)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+
+	err = tcp.SendRequest(conn, location, header, nil)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
+	}
+
+	// Read the response from the server
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return nil, errors.ErrReadingResponse
+	}
+
+	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
+	}
+	getRestaurantsResBody, err := tcp.DecodeGetRestaurantsBodyResponse(tcpResponse.Data)
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return getRestaurantsResBody.Restaurants, nil
+}
