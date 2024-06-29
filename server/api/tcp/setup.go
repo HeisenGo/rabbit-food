@@ -13,6 +13,7 @@ import (
 func Run(cfg config.Server, app *services.AppContainer) {
 	authHandler := handlers.NewAuthHandler(*app.AuthService)
 	walletHandler := handlers.NewWalletHandler(*app.WalletService)
+	addressHandler := handlers.NewAddressHandler(*app.AddressService)
 	restaurantHandler := handlers.NewRestaurantHandler(*app.RestaurantService)
 	userProfileHandler := handlers.NewUserProfileHandler(*app.UserProfileService)
 	newServer := server.NewServer(authHandler, walletHandler, restaurantHandler, userProfileHandler)

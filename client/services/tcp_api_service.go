@@ -1,9 +1,10 @@
 package services
 
 import (
+	"client/errors"
 	"client/models"
 	"client/protocol/tcp"
-	"encoding/json"
+	"client/services/tcp_service"
 	"fmt"
 	"net"
 	"sync"
@@ -30,14 +31,29 @@ func GetAPIService(host, port string) *APIService {
 	return apiServiceInstance
 }
 
-func (s *APIService) Register(userData *models.User) (tcp.Token, error) {
-	// API call here
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+func (s *APIService) MakeNewTCPConnection() (net.Conn, error) {
+	// Validate host and port
+	if s.host == "" || s.port == "" {
+		return nil, fmt.Errorf("host or port is empty")
+	}
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%s", s.host, s.port), 5*time.Second)
 	if err != nil {
-		return tcp.Token{}, fmt.Errorf("error connecting to server: %v", err)
+		return nil, fmt.Errorf("error connecting to server: %w", err)
+	}
+	return conn, nil
+}
+
+func (s *APIService) Register(userData *models.User) (*models.Token, error) {
+	location := "auth/register"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
 	}
 	defer conn.Close()
-
 	// Send the message to the server
 	registerReq := tcp.RegisterRequest{
 		Email:    &userData.Email,
@@ -46,188 +62,285 @@ func (s *APIService) Register(userData *models.User) (tcp.Token, error) {
 	}
 	encodedRegisterRequest, err := tcp.EncodeRegisterRequest(registerReq)
 	if err != nil {
-		fmt.Println("Encoding Problem") //:To Do
-		time.Sleep(time.Second * 2)
-		return tcp.Token{}, err
+		return nil, errors.ErrEncodingRequest
 	}
-
-	//data :=
-	// fmt.Sprintf("1{\"phone\": \"%s\", \"email\": \"%s\", \"password\": \"%s\"}", userData.Phone, userData.Email, userData.Password)
-	//_, err = conn.Write([]byte(data))
-	err = tcp.SendRequest(conn, "auth/register", map[string]string{}, encodedRegisterRequest)
-	//fmt.Println("Data has been sent!")
+	err = tcp.SendRequest(conn, location, header, encodedRegisterRequest)
 	if err != nil {
-		fmt.Println("Error writing to server:", err)
-		time.Sleep(time.Second * 2)
-
-		return tcp.Token{}, err
+		return nil, errors.ErrWritingToServer
 	}
-
 	// Read the response from the server
-	buffer := make([]byte, 4096)
-	n, err := conn.Read(buffer)
-	// _, err = bufio.NewReader(conn).ReadString(' ')
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
-		fmt.Println("Error reading from server:", err)
-		time.Sleep(time.Second * 2)
-
-		return tcp.Token{}, err
+		return nil, errors.ErrReadingResponse
 	}
-	buffer = buffer[:n]
+
 	response, err := tcp.DecodeTCPResponse(buffer)
 	if err != nil {
-		fmt.Println("Error decoding response", response)
-		//time.Sleep(time.Second * 2)
-
-		return tcp.Token{}, err
+		return nil, errors.ErrDecodingResponse
 	}
-	if response.StatusCode != uint(201) {
-		//var responseData tcp.ResponseError
-		fmt.Println(string(response.Data))
-		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
-		if err != nil {
-			fmt.Println("error in decoding server error")
-			//time.Sleep(time.Minute * 2)
-
-			return tcp.Token{}, err
-		}
-		fmt.Println("Error creating", responseErr.Message)
-		//time.Sleep(time.Second * 2)
-
-		return tcp.Token{}, fmt.Errorf(responseErr.Message)
+	if response.StatusCode != tcp.StatusCreated {
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
 	}
+
 	var responseData tcp.RegisterResponse
-	fmt.Println(string(response.Data))
-
-	err = json.Unmarshal(response.Data, &responseData)
+	responseData, err = tcp.DecodeRegisterResponse(response.Data)
 	if err != nil {
-		fmt.Println("Error in decoding a successful response", err)
-		// time.Sleep(time.Second * 2)
-		// time.Sleep(time.Minute * 1)
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
 
-		return tcp.Token{}, err
-	}
-	var token tcp.Token
-	err = json.Unmarshal(responseData.Token, &token)
+	var token *models.Token
+	token, err = tcp.DecodeToken(responseData.Token)
+
 	if err != nil {
-		fmt.Println("Error in decoding the token part of data")
-		return tcp.Token{}, err
+		return nil, errors.ErrDecodingToken
 	}
-	fmt.Println("Register:", token)
-	//fmt.Printf("Server response: %s", response)
 	return token, nil
 }
 
-// TODO: now its mock data
-func (s *APIService) GetWallet(req *models.GetWalletReq) (*models.Wallet, error) {
-	return &models.Wallet{
-		ID:      req.ID,
-		Balance: 50000,
-	}, nil
-}
+func (s *APIService) Login(req *tcp.LoginBody) (*models.Token, error) {
+	location := "auth/login"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
 
-func (s *APIService) Login(req *models.LoginUserReq) (*tcp.Token, error) {
-	// API call here
-	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%s", s.host, s.port))
+	conn, err := s.MakeNewTCPConnection()
 	if err != nil {
-		//return tcp.Token{}, fmt.Errorf("error connecting to server: %v", err)
-		return nil, fmt.Errorf("error connecting to server: %v", err)
+		return nil, errors.ErrConnectionFailed
 	}
 	defer conn.Close()
 
-	// Send the message to the server
-	LoginReq := tcp.LoginRequest{
-		PhoneOrEmail: req.PhoneOrEmail,
-		Password:     req.Password,
-	}
-	encodedLoginRequest, err := tcp.EncodeLoginRequest(LoginReq)
+	encodedLoginRequest, err := tcp.EncodeLoginReqBody(req)
 	if err != nil {
-		fmt.Println("Encoding Problem") //:To Do
-		time.Sleep(time.Second * 2)
-		//return tcp.Token{}, err
-		return nil, err
+		return nil, errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedLoginRequest)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
 	}
 
-	//data :=
-	// fmt.Sprintf("1{\"phone\": \"%s\", \"email\": \"%s\", \"password\": \"%s\"}", userData.Phone, userData.Email, userData.Password)
-	//_, err = conn.Write([]byte(data))
-	err = tcp.SendRequest(conn, "auth/login", map[string]string{}, encodedLoginRequest)
-	//fmt.Println("Data has been sent!")
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
-		fmt.Println("Error writing to server:", err)
-		time.Sleep(time.Second * 2)
+		return nil, errors.ErrReadingResponse
+	}
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
+	}
+	responseData, err := tcp.DecodeLoginResponse(response.Data)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	var token *models.Token
+	token, err = tcp.DecodeToken(responseData.AuthToken)
 
-		//return tcp.Token{}, err
-		return nil, err
+	if err != nil {
+		return nil, errors.ErrDecodingToken
+	}
+	return token, nil
+}
+
+func (s *APIService) AddCard(reqBody *tcp.AddCardBody) (*models.CreditCard, error) {
+	location := "wallets/cards"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+
+	tcp_service.SetAuthorizationHeader(header)
+	addCardReqBody := tcp.NewAddCardBody(reqBody.CardNumber)
+	encodedAddCardReqBody, err := tcp.EncodeAddCardReqBody(addCardReqBody)
+	if err != nil {
+		return nil, errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedAddCardReqBody)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return nil, errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusCreated {
+		return nil, tcp_service.ResponseErrorProduction(response.Data)
+	}
+	var addCardResBody *tcp.AddCardResponse
+	addCardResBody, err = tcp.DecodeAddCardResponse(response.Data)
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	newCard, err := tcp.DecodeCreditCard(addCardResBody.Card)
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return newCard, nil
+}
+
+func (s *APIService) Logout(req *tcp.LogoutUserReq) error {
+	//TODO implement me
+	return nil
+}
+
+func (s *APIService) DisplayCards() ([]*models.CreditCard, error) {
+	location := "wallets/cards"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodGet
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+	err = tcp.SendRequest(conn, location, header, nil)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
 	}
 
 	// Read the response from the server
-	buffer := make([]byte, 4096)
-	n, err := conn.Read(buffer)
-	// _, err = bufio.NewReader(conn).ReadString(' ')
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
 	if err != nil {
-		fmt.Println("Error reading from server:", err)
-		time.Sleep(time.Second * 2)
-
-		//return tcp.Token{}, err
-		return nil, err
+		return nil, errors.ErrReadingResponse
 	}
-	buffer = buffer[:n]
-	fmt.Println(string(buffer))
+
+	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
+	}
+	getCardsResBody, err := tcp.DecodeGetCardsBodyResponse(tcpResponse.Data)
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return getCardsResBody.Cards, nil
+}
+
+func (s *APIService) Deposit(data *tcp.DepositBody) error {
+	location := "wallets/deposit"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+	encodedWithdrawRepositReqBody, err := tcp.EncodeDepositReqBody(data)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedWithdrawRepositReqBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
 	response, err := tcp.DecodeTCPResponse(buffer)
-	fmt.Println(response)
 	if err != nil {
-		fmt.Println("Error decoding response", response)
-		//time.Sleep(time.Second * 2)
-
-		//return tcp.Token{}, err
-		return nil, err
+		return errors.ErrDecodingResponse
 	}
-	if response.StatusCode != uint(200) {
-		//var responseData tcp.ResponseError
-		fmt.Println(string(response.Data))
-		responseErr, err := tcp.DecodeTCPResponseError(response.Data)
-		if err != nil {
-			fmt.Println("error in decoding server error")
-			//time.Sleep(time.Minute * 2)
-
-			//return tcp.Token{}, err
-			return nil, err
-		}
-		fmt.Println("Error creating", responseErr.Message)
-		//time.Sleep(time.Second * 2)
-
-		//return tcp.Token{}, fmt.Errorf(responseErr.Message)
-		return nil, fmt.Errorf(responseErr.Message)
+	if response.StatusCode != tcp.StatusOK {
+		return tcp_service.ResponseErrorProduction(response.Data)
 	}
-	var responseData tcp.LoginResponse
-	fmt.Println(string(response.Data))
-
-	err = json.Unmarshal(response.Data, &responseData)
-	if err != nil {
-		fmt.Println("Error in decoding a successful response", err)
-		// time.Sleep(time.Second * 2)
-		// time.Sleep(time.Minute * 1)
-
-		//return tcp.Token{}, err
-		return nil, err
-	}
-	var token tcp.Token
-	err = json.Unmarshal(responseData.AuthToken, &token)
-	if err != nil {
-		fmt.Println("Error in decoding the token part of data")
-		//return tcp.Token{}, err
-		return nil, err
-	}
-	fmt.Println("Login:", token)
-	//fmt.Printf("Server response: %s", response)
-	return &token, nil
+	return nil
 
 }
 
-func (s *APIService) Logout(req *models.LogoutUserReq) error {
-	//TODO implement me
+func (s *APIService) Withdraw(data *tcp.WithdrawBody) error {
+	location := "wallets/withdraw"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+	encodedWithdrawRepositReqBody, err := tcp.EncodeWithdrawReqBody(data)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedWithdrawRepositReqBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusOK {
+		return tcp_service.ResponseErrorProduction(response.Data)
+	}
 	return nil
+}
+
+func (s *APIService) GetWallet() (*models.Wallet, error) {
+	location := "wallets"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodGet
+	tcp_service.SetMethodHeader(header, methodHeader)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+	tcp_service.SetAuthorizationHeader(header)
+
+	err = tcp.SendRequest(conn, location, header, nil)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
+	}
+
+	// Read the response from the server
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return nil, errors.ErrReadingResponse
+	}
+
+	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
+	}
+	wallet, err := tcp.DecodeTCPWalletResponse(tcpResponse.Data)
+
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return wallet.Wallet, nil
 }
 
 func (s *APIService) DisplayProfile(userID uint) (*models.User, error) {

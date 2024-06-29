@@ -3,22 +3,24 @@ package services
 import (
 	"log"
 	"server/config"
+	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
-
+	"server/internal/models/address"
 	"gorm.io/gorm"
 )
 
 type AppContainer struct {
-	cfg                config.Config
-	dbConn             *gorm.DB
-	AuthService        *AuthService
-	WalletService      *WalletService
-	RestaurantService  *RestaurantService
-	UserProfileService *UserProfileService
+	cfg               config.Config
+	dbConn            *gorm.DB
+	AuthService       *AuthService
+	WalletService     *WalletService
+	RestaurantService *RestaurantService
+  AddressService    *AddressService
+  UserProfileService *UserProfileService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -34,9 +36,10 @@ func NewAppContainer(cfg config.Config) (*AppContainer, error) {
 
 	app.setAuthService([]byte(cfg.Server.TokenSecret), uint(cfg.Server.TokenExpMinutes), uint(cfg.Server.RefreshTokenExpMinutes))
 	app.setWalletService()
+	app.setAddressService()
 	app.setRestaurantService()
-	app.setUserProfileService()
-
+  app.setUserProfileService()
+  
 	return app, nil
 }
 
@@ -68,11 +71,17 @@ func (a *AppContainer) setWalletService() {
 	a.WalletService = NewWalletService(wallet.NewWalletOps(a.dbConn, storage.NewWalletRepo(a.dbConn)), creditCard.NewCreditCardOps(a.dbConn, storage.NewCreditCardRepo(a.dbConn)))
 }
 
+func (a *AppContainer) setAddressService() {
+	if a.AddressService != nil {
+		return
+	}
+	a.AddressService = NewAddressService(address.NewAddressOps(a.dbConn, storage.NewAddressRepo(a.dbConn)))
+}
+
 func (a *AppContainer) setRestaurantService() {
 	if a.RestaurantService != nil {
 		return
 	}
-	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)))
 }
 
 func (a *AppContainer) setUserProfileService() {
@@ -80,4 +89,6 @@ func (a *AppContainer) setUserProfileService() {
 		return
 	}
 	a.UserProfileService = NewUserProfileService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
+	a.RestaurantService = NewRestaurantService(restaurant.NewRestaurantOps(a.dbConn, storage.NewRestaurantRepo(a.dbConn)), menu.NewMenuOps(a.dbConn, storage.NewMenuRepo(a.dbConn)))
 }
+

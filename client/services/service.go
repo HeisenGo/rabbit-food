@@ -6,10 +6,14 @@ import (
 )
 
 type Service interface {
-	Register(*models.User) (tcp.Token, error)
-	Login(req *models.LoginUserReq) (*tcp.Token, error)
-	Logout(req *models.LogoutUserReq) error
-	GetWallet(req *models.GetWalletReq) (*models.Wallet, error)
-	DisplayProfile(userID uint) (*models.User, error)
+	Register(*models.User) (*models.Token, error)
+	Login(resq *tcp.LoginBody) (*models.Token, error)
+	Logout(req *tcp.LogoutUserReq) error
+	GetWallet() (*models.Wallet, error)
+	AddCard(req *tcp.AddCardBody) (*models.CreditCard, error)
+	DisplayCards() ([]*models.CreditCard, error)
+	Deposit(data *tcp.DepositBody) error
+	Withdraw(data *tcp.WithdrawBody) error
+  DisplayProfile(userID uint) (*models.User, error)
 	EditProfile(user *models.User) (*models.User, error)
 }

@@ -1,5 +1,11 @@
 package models
 
+type Token struct {
+	AuthorizationToken string `json:"auth_token"`
+	RefreshToken       string `json:"refresh_token"`
+	ExpiresAt          int64  `json:"expires_at"`
+}
+
 type User struct {
 	ID        uint
 	Phone     string
@@ -7,13 +13,4 @@ type User struct {
 	Password  string
 	FirstName string
 	LastName  string
-}
-
-type LoginUserReq struct {
-	PhoneOrEmail string
-	Password     string
-}
-
-type LogoutUserReq struct {
-	// TODO
 }

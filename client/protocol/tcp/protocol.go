@@ -20,20 +20,6 @@ func SendRequest(conn net.Conn, location string, header map[string]string, data 
 	return err
 }
 
-// func Error(conn net.Conn, statusCode uint, header map[string]string, message string) {
-// 	errData := NewResponseError(message)
-// 	encodedErrData, _ := encodeErrData(errData)
-// 	tcpResponse := NewTCPResponse(statusCode, header, encodedErrData)
-// 	encodeResponse, _ := encodeTCPResponse(tcpResponse)
-// 	conn.Write(encodeResponse)
-// }
-
-type Token struct {
-	AuthorizationToken string `json:"AuthorizationToken"`
-	RefreshToken       string `json:"RefreshToken"`
-	ExpiresAt          int64  `json:"ExpiresAt"`
-}
-
 type Request struct {
 	Location string            `json:"location"`
 	Header   map[string]string `json:"header"`

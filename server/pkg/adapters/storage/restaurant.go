@@ -22,7 +22,7 @@ func NewRestaurantRepo(db *gorm.DB) restaurant.Repo {
 	}
 }
 
-func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, restauran *restaurant.Restaurant) (*restaurant.Restaurant, error) {
+func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, restaurant *restaurant.Restaurant) (*restaurant.Restaurant, error) {
 	tx := r.db.Begin()
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -40,7 +40,7 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 		return nil, err
 	}
 	// Create the new restaurant
-	newRestaurantEntity := mappers.RestaurantDomainToEntity(restauran)
+	newRestaurantEntity := mappers.RestaurantDomainToEntity(restaurant)
 	err = tx.Create(newRestaurantEntity).Error
 	if err != nil {
 		tx.Rollback()
@@ -51,8 +51,8 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	}
 
 	// Create the UserRestaurant association with role 'owner'
-	userRestaurant := userRestaurant.NewUserRestaurant(ownerID, newRestaurantEntity.ID, server.Owner)
-	err = tx.Create(userRestaurant).Error
+	userRest := userRestaurant.NewUserRestaurant(ownerID, newRestaurantEntity.ID, server.Owner)
+	err = tx.Create(userRest).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err
@@ -63,39 +63,7 @@ func (r *restaurantRepo) CreateRestaurantAndAssignOwner(ctx context.Context, res
 	if err != nil {
 		return nil, err
 	}
-
 	createdRestaurant := mappers.RestaurantEntityToDomain(newRestaurantEntity)
 
 	return createdRestaurant, nil
-
-	// newRestaurant := mappers.RestaurantDomainToEntity(restaurant)
-	// err := r.db.Create(&newRestaurant).Error
-	// if err != nil {
-	// 	if errors.Is(err, gorm.ErrDuplicatedKey) {
-	// 		return nil, users.ErrUserExists
-	// 	}
-	// 	return nil, err
-	// }
-	// createdRestaurant := mappers.RestaurantEntityToDomain(newRestaurant)
-	// return createdRestaurant, nil
 }
-
-// func (r *creditCardRepo) GetUserWalletCards(ctx context.Context) ([]*creditCard.CreditCard, error) {
-// 	userID, err := utils.GetUserIDFromContext(ctx)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	var creditCardEntities []*entities.CreditCard
-
-// 	err = r.db.Joins("JOIN wallet_credit_cards ON wallet_credit_cards.credit_card_id = credit_cards.id").
-// 		Joins("JOIN wallets ON wallets.id = wallet_credit_cards.wallet_id").
-// 		Where("wallets.user_id = ?", userID).
-// 		Find(&creditCardEntities).Error
-
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	allDomainCards := mappers.BatchCreditCardEntityToDomain(creditCardEntities)
-// 	return allDomainCards, nil
-// }

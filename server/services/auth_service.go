@@ -40,8 +40,8 @@ func (s *AuthService) CreateUser(ctx context.Context, user *user.User) (*user.Us
 	if err != nil {
 		return nil, nil, err
 	}
-
-	refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, refreshExp))
+	
+  refreshToken, err := jwt.CreateToken(s.secret, s.userClaims(createdUser, refreshExp))
 	if err != nil {
 		return nil, nil, err
 	}

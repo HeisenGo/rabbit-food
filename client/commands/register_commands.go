@@ -1,10 +1,10 @@
 package commands
 
 import (
+	"client/errors"
 	"client/models"
 	"client/services"
-	"errors"
-	"fmt"
+	"client/services/tcp_service"
 )
 
 type RegisterCommand struct {
@@ -14,16 +14,14 @@ type RegisterCommand struct {
 func (c *RegisterCommand) Execute(userData any) error {
 	user, ok := userData.(*models.User)
 	if !ok {
-		return errors.New("data type isn't user")
+		return errors.ErrDataType
 	}
 	token, err := c.service.Register(user)
-	fmt.Println("New: ", token)
-	fmt.Println("token: ", token.AuthorizationToken,
-		"\nReferesh:", token.RefreshToken,
-		"\nexpire: ", token.ExpiresAt)
-	//time.Sleep(time.Minute * 2)
-
-	return err
+	if err != nil {
+		return err
+	}
+	tcp_service.SetToken(token.AuthorizationToken)
+	return nil
 }
 
 func NewRegisterCommand(service services.Service) *RegisterCommand {

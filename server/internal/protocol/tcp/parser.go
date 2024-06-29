@@ -44,15 +44,14 @@ func EncodeWithdrawResponse(res WithdrawResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
+func EncodeGetWalletResponse(res GetWalletResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
 func EncodeRegisterResponse(res RegisterResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
-func DecodeRegisterResponse(data []byte) (RegisterResponse, error) {
-	var res RegisterResponse
-	err := json.Unmarshal(data, &res)
-	return res, err
-}
 func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 	var req LoginRequest
 	err := json.Unmarshal(data, &req)
@@ -61,10 +60,15 @@ func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 func EncodeLoginResponse(res LoginResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
-func DecodeLoginResponse(data []byte) (LoginResponse, error) {
-	var req LoginResponse
+
+func DecodeAddAddressToUserRequest(data []byte) (AddressRequest, error) {
+	var req AddressRequest
 	err := json.Unmarshal(data, &req)
 	return req, err
+}
+
+func EncodeAddAddressToUserResponse(res AddressResponse) ([]byte, error) {
+	return json.Marshal(res)
 }
 
 func DecodeCreateRestaurantRequest(data []byte) (CreateRestaurantRequest, error) {
@@ -73,6 +77,46 @@ func DecodeCreateRestaurantRequest(data []byte) (CreateRestaurantRequest, error)
 	return req, err
 }
 
+func DecodeCreateMenuRequest(data []byte) (CreateMenuRequest, error) {
+	var req CreateMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeGetRestaurantMenusRequest(data []byte) (GetRestaurantMenusRequest, error) {
+	var req GetRestaurantMenusRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeAddMenuItemToMenuRequest(data []byte) (AddMenuItemToMenuRequest, error) {
+	var req AddMenuItemToMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func DecodeGetMenuItemsOfMenuRequest(data []byte) (GetMenuItemsOfMenuRequest, error) {
+	var req GetMenuItemsOfMenuRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
 func EncodeCreateRestaurantResponse(res CreateRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeCreateMenuResponse(res CreateMenuResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetAllMenusResponse(res GetAllMenusResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
