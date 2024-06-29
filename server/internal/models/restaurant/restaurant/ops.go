@@ -93,3 +93,4 @@ func (o *Ops) AddCategoriesToRestaurant(ctx context.Context, rest *Restaurant, c
 
 func (o *Ops) GetRestaurantCategories(ctx context.Context, restaurantID uint) ([]*RestaurantCategory, error) {
 	return o.repo.GetRestaurantCategories(ctx, restaurantID)
+}

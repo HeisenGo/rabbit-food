@@ -25,7 +25,6 @@ func NewRestaurantHandler(restaurantService services.RestaurantService, userServ
 	}
 }
 
-
 func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeCreateRestaurantRequest(req.Data)
 	if err != nil {
@@ -376,15 +375,15 @@ func (h *RestaurantHandler) HandleGetMenuItemsOfMenu(ctx context.Context, conn n
 	}
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
-func (h *RestaurantHandler)GetRestaurantsToAddCategoryMenuFood(ctx context.Context,conn net.Conn,req *tcp.Request){
+func (h *RestaurantHandler) GetRestaurantsToAddCategoryMenuFood(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	fetchedRestaurants, err := h.restaurantService.GetRestaurantsToAddCategoryMenuFood(ctx)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
 	}
 	response := tcp.RestaurantToAddCategoryMenuFoodResponse{
-		Message:   "restaurants items successfully fetched",
-		Restaurants:fetchedRestaurants,
+		Message:     "restaurants items successfully fetched",
+		Restaurants: fetchedRestaurants,
 	}
 
 	resData, err := tcp.EncodeGetRestaurantToAddCategoryMenuFoodResponse(response)
@@ -395,72 +394,6 @@ func (h *RestaurantHandler)GetRestaurantsToAddCategoryMenuFood(ctx context.Conte
 		return
 	}
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
-}
-func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
-	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
-	switch firstRoute {
-	//case "":
-	//	if TCPReq.Header["method"] == tcp.MethodPost {
-	//		createRestaurantHandler := middleware.ApplyMiddlewares(h.HandleCreateRestaurant, middleware.AuthMiddleware)
-	//		createRestaurantHandler(ctx, conn, TCPReq)
-	//		return
-	//	}
-	case "categories":
-		if TCPReq.Header["method"] == tcp.MethodPost {
-			addCategoriesToRestaurantHandler := middleware.ApplyMiddlewares(h.HandleAddCategoriesToRestaurant, middleware.AuthMiddleware)
-			addCategoriesToRestaurantHandler(ctx, conn, TCPReq)
-			return
-		}
-		if TCPReq.Header["method"] == tcp.MethodGet {
-			getRestaurantCategoriesHandler := h.HandleGetRestaurantCategories
-			getRestaurantCategoriesHandler(ctx, conn, TCPReq)
-			return
-		}
-		if TCPReq.Header["method"] == tcp.MethodGet {
-			createRestaurantHandler := middleware.ApplyMiddlewares(h.GetRestaurantsToAddCategoryMenuFood,middleware.AuthMiddleware)
-			createRestaurantHandler(ctx,conn,TCPReq)
-			return
-		}
-	case "menus":
-		if TCPReq.Header["method"] == tcp.MethodPost {
-			createMenuHandler := middleware.ApplyMiddlewares(h.HandleCreateMenu, middleware.AuthMiddleware)
-			createMenuHandler(ctx, conn, TCPReq)
-			return
-		}
-		if TCPReq.Header["method"] == tcp.MethodGet {
-			getRestaurantMenus := h.HandleGetRestaurantMenus
-			getRestaurantMenus(ctx, conn, TCPReq)
-			return
-		}
-	case "menu-items":
-		if TCPReq.Header["method"] == tcp.MethodPost {
-			addMenuItemToMenuHandler := middleware.ApplyMiddlewares(h.HandleAddMenuItemToMenu, middleware.AuthMiddleware)
-			addMenuItemToMenuHandler(ctx, conn, TCPReq)
-			return
-		}
-		if TCPReq.Header["method"] == tcp.MethodGet {
-			getMenuItemsOfMenuHandler := h.HandleGetMenuItemsOfMenu
-			getMenuItemsOfMenuHandler(ctx, conn, TCPReq)
-			return
-		}
-	case "withdraw":
-		//withdraw_ownership
-		fmt.Println("not implemented")
-
-	case "operator":
-		// (post, get, delete)
-		if TCPReq.Header["method"] == tcp.MethodPost {
-			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
-			addOperatorHandler(ctx, conn, TCPReq)
-		}
-	case "delivery":
-		// add/remove delivery (post, get, delete)
-		fmt.Println("not implemented")
-
-	default:
-		fmt.Println("bad request")
-	}
-	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
 }
 
 func (h *RestaurantHandler) HandleGetRestaurantCategories(ctx context.Context, conn net.Conn, req *tcp.Request) {
@@ -522,5 +455,58 @@ func (h *RestaurantHandler) HandleAddCategoriesToRestaurant(ctx context.Context,
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
-func (h *RestaurantHandler) HandleAddOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
+func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
+	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
+	switch firstRoute {
+	case "":
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			createRestaurantHandler := middleware.ApplyMiddlewares(h.HandleCreateRestaurant, middleware.AuthMiddleware)
+			createRestaurantHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			createRestaurantHandler := middleware.ApplyMiddlewares(h.GetRestaurantsToAddCategoryMenuFood, middleware.AuthMiddleware)
+			createRestaurantHandler(ctx, conn, TCPReq)
+			return
+		}
+	case "menus":
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			createMenuHandler := middleware.ApplyMiddlewares(h.HandleCreateMenu, middleware.AuthMiddleware)
+			createMenuHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			getRestaurantMenus := h.HandleGetRestaurantMenus
+			getRestaurantMenus(ctx, conn, TCPReq)
+			return
+		}
+	case "menu-items":
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			addMenuItemToMenuHandler := middleware.ApplyMiddlewares(h.HandleAddMenuItemToMenu, middleware.AuthMiddleware)
+			addMenuItemToMenuHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			getMenuItemsOfMenuHandler := h.HandleGetMenuItemsOfMenu
+			getMenuItemsOfMenuHandler(ctx, conn, TCPReq)
+			return
+		}
+	case "withdraw":
+		//withdraw_ownership
+		fmt.Println("not implemented")
+
+	case "operator":
+		// (post, get, delete)
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
+			addOperatorHandler(ctx, conn, TCPReq)
+		}
+	case "delivery":
+		// add/remove delivery (post, get, delete)
+		fmt.Println("not implemented")
+
+	default:
+		fmt.Println("bad request")
+	}
+	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
 }
