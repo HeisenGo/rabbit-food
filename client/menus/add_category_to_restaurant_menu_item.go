@@ -79,7 +79,7 @@ func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 	// etch categories with getCategoriesCommand
 	// separate them with "," 
 	// add category ids to body
-	categories:=
+	//categories:=
 	var addCardData tcp.AddCardBody
 	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
 	newCard, err := mi.Command.Execute(&addCardData)
