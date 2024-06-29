@@ -15,4 +15,5 @@ type Service interface {
 	Deposit(data *tcp.DepositBody) error
 	Withdraw(data *tcp.WithdrawBody) error
 	CreateRestaurant(newRestaurant *models.Restaurant) (*models.Restaurant, error)
+	GetRestaurantsIHaveRoleIn() ([]*models.Restaurant, error)
 }
