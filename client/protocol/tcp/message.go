@@ -75,10 +75,14 @@ type CreateRestaurantRequest struct {
 	Address *models.Address `json:"address"`
 }
 
-
 type CreateRestaurantResponse struct {
-	Message string          `json:"message"`
+	Message    string             `json:"message"`
 	Restaurant *models.Restaurant `json:"restaurant"`
+}
+
+type GetRestaurantsBodyResponse struct {
+	Message     string               `json:"message"`
+	Restaurants []*models.Restaurant `json:"restaurants"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {
