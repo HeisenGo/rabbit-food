@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"client/errors"
-	"client/models"
 	"client/protocol/tcp"
 	"client/services"
 )
@@ -11,16 +9,13 @@ type AddCategoryToRestaurantCommand struct {
 	service services.Service
 }
 
-func (c *AddCategoryToRestaurantCommand) Execute(addCardData any) (*models.CreditCard, error) {
-	addCardBody, ok := addCardData.(*tcp.AddCardBody)
-	if !ok {
-		return nil, errors.ErrDataType
-	}
-	addedCard, err := c.service.AddCard(addCardBody)
+func (c *AddCategoryToRestaurantCommand) Execute(addCategoryData tcp.RestaurantCategoryBody) error {
+
+	err := c.service.AddCategoryToRestaurant(&addCategoryData)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return addedCard, nil
+	return nil
 }
 
 func NewAddCategoryToRestaurantCommand(service services.Service) *AddCategoryToRestaurantCommand {

@@ -6,10 +6,12 @@ import (
 	"client/constants"
 	"client/errors"
 	"client/menus/functions"
+	"client/models"
 	"client/protocol/tcp"
 	"client/utils"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 type AddCategoryToRestaurantMenuItem struct {
@@ -77,18 +79,54 @@ func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 
 	restaurantCategoryBody.RestaurantID = restaurants[restaurantRow-1].ID
 	// etch categories with getCategoriesCommand
-	// separate them with "," 
+	// separate them with ","
 	// add category ids to body
-	//categories:=
-	var addCardData tcp.AddCardBody
-	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
-	newCard, err := mi.Command.Execute(&addCardData)
+	categories := []models.RestaurantCategory{}
+	categories[0] = models.RestaurantCategory{
+		ID:   1,
+		Name: "Irani",
+	}
+	categories[1] = models.RestaurantCategory{
+		ID:   2,
+		Name: "Fast Food",
+	}
+	entered_category_ids := []uint{}
+	for {
+		input := utils.ReadInput(scanner, "\nPlease insert row numbers of your restaurant Categories like: 1, 2, 3  (q to exit):")
+		if input == "q" {
+			return
+		}
+		entered_categories := strings.Split(input, ",")
+		if len(entered_categories) == 0 {
+			continue
+		} else {
+			ok := true
+			for i := 0; i < len(entered_categories); i++ {
+				a, err := strconv.Atoi(entered_categories[i])
+				if err != nil || a > len(categories) {
+					fmt.Println("\n\t Incorrect format")
+					ok = false
+					break
+				}
+				entered_category_ids = append(entered_category_ids, categories[a-1].ID)
+			}
+			if ok {
+				break
+			}
+		}
+	}
+	if len(entered_category_ids) == 0 {
+		return
+	}
+	restaurantCategoryBody.Category_ids = entered_category_ids
+
+	err = mi.Command.Execute(restaurantCategoryBody)
 	if err != nil {
 		utils.ColoredPrint(constants.Red, "\n\t", err, "\n")
 		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tCard "+newCard.Number+" Successfully added :)\n")
+		utils.ColoredPrint(constants.Green, "\n\tCategories Successfully added :)\n")
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {

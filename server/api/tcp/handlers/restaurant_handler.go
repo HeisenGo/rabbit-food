@@ -469,6 +469,17 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 			createRestaurantHandler(ctx, conn, TCPReq)
 			return
 		}
+	case "categories":
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			addCategoriesToRestaurantHandler := middleware.ApplyMiddlewares(h.HandleAddCategoriesToRestaurant, middleware.AuthMiddleware)
+			addCategoriesToRestaurantHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			getRestaurantCategoriesHandler := h.HandleGetRestaurantCategories
+			getRestaurantCategoriesHandler(ctx, conn, TCPReq)
+			return
+		}
 	case "menus":
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			createMenuHandler := middleware.ApplyMiddlewares(h.HandleCreateMenu, middleware.AuthMiddleware)

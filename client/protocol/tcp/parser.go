@@ -96,3 +96,7 @@ func DecodeGetRestaurantsBodyResponse(data []byte) (GetRestaurantsBodyResponse, 
 	err := json.Unmarshal(data, &resBody)
 	return resBody, err
 }
+
+func EncodeAddCategoryReqBody(req *RestaurantCategoryBody) ([]byte, error) {
+	return json.Marshal(req)
+}
