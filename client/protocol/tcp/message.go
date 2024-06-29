@@ -53,6 +53,7 @@ type AddCardBody struct {
 	CardNumber string `json:"card_number"`
 }
 
+
 type CreateRestaurantBody struct {
 	Name    string          `json:"name"`
 	Phone   string          `json:"phone"`

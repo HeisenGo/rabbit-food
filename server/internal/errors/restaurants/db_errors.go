@@ -22,4 +22,5 @@ var (
 	ErrOperatorAssignFailed = newError("restaurant", "assigning operator failed")
 	ErrRemoveOperatorFailed = newError("restaurant", "removing operator failed")
 	ErrMotorAdditionFailed  = newError("motor", "motor did not add to restaurant")
+	ErrRetrievingRestaurantAddress  = newError("restaurant", "retrieving restaurant address")
 )
