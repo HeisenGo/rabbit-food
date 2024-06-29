@@ -22,7 +22,6 @@ func NewRestaurantOps(db *gorm.DB, repo Repo) *Ops {
 func (o *Ops) Create(ctx context.Context, restaurant *Restaurant) (*Restaurant, error) {
 	return o.repo.CreateRestaurantAndAssignOwner(ctx, restaurant)
 }
-
 func (o *Ops) IsRestaurantOwner(ctx context.Context, restaurantID uint) (bool, error) {
 	return o.repo.CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx, restaurantID)
 }
@@ -87,3 +86,10 @@ func (o *Ops) EditRestaurantName(ctx context.Context, restaurantID uint, newName
 func (o *Ops)GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*Restaurant, error){
 	return o.repo.GetRestaurantsToAddCategoryMenuFood(ctx)
 }
+
+func (o *Ops) AddCategoriesToRestaurant(ctx context.Context, rest *Restaurant, categoryIDs []uint) (*Restaurant, error) {
+	return o.repo.AddCategoriesToRestaurant(ctx, rest, categoryIDs)
+}
+
+func (o *Ops) GetRestaurantCategories(ctx context.Context, restaurantID uint) ([]*RestaurantCategory, error) {
+	return o.repo.GetRestaurantCategories(ctx, restaurantID)

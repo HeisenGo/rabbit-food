@@ -13,6 +13,12 @@ type Restaurant struct {
 	Phone   string           `json:"phone"`
 	Address *address.Address `json:"address"`
 }
+
+type RestaurantCategory struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+}
+
 type Repo interface {
 	CreateRestaurantAndAssignOwner(ctx context.Context, restauran *Restaurant) (*Restaurant, error)
 	CheckMatchedRestaurantsOwnerIdAndClaimedID(ctx context.Context, restaurantID uint) (bool, error)
@@ -32,6 +38,8 @@ type Repo interface {
 	GetRestaurantsOfAnOperator(ctx context.Context) ([]*Restaurant, error)
 	EditRestaurantName(ctx context.Context, restaurantID uint, newName string) error
 	GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*Restaurant, error)
+  AddCategoriesToRestaurant(ctx context.Context, rest *Restaurant, categoryIDs []uint) (*Restaurant, error)
+	GetRestaurantCategories(ctx context.Context, restaurantID uint) ([]*RestaurantCategory, error)
 }
 
 func NewRestaurant(name string, phone string, address address.Address) *Restaurant {

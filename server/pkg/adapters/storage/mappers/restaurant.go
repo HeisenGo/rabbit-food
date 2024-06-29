@@ -10,6 +10,12 @@ import (
 )
 
 func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restaurant {
+  	domainAddress := RestaurantAddressEntityToDomain(entity.Address)
+	return &restaurant.Restaurant{
+		ID:         entity.ID,
+		Name:       entity.Name,
+		Phone:      entity.Phone,
+    Address:    domainAddress,
 	var domainAddress *address.Address
 	if entity.Address == nil {
 		domainAddress = address.NewAddress("", address.Coordinates{}, server.RestaurantAddressType, "")
@@ -21,6 +27,7 @@ func RestaurantEntityToDomain(entity *entities.Restaurant) *restaurant.Restauran
 		Name:    entity.Name,
 		Phone:   entity.Phone,
 		Address: domainAddress,
+    Categories: BatchRestaurantCategoryEntityToDomain(entity.Categories),
 	}
 	fmt.Print(r)
 	return r
@@ -64,4 +71,10 @@ func MotorEntityToDomain(entityMotor *entities.Motor) *motor.Motor {
 		Speed:        entityMotor.Speed,
 		RestaurantID: entityMotor.RestaurantID,
 	}
+ func BatchRestaurantCategoryEntityToDomain(entities []*entities.RestaurantCategory) []*restaurant.RestaurantCategory {
+	var domainCategories []*restaurant.RestaurantCategory
+	for _, e := range entities {
+		domainCategories = append(domainCategories, &restaurant.RestaurantCategory{ID: e.ID, Name: e.Name})
+	}
+	return domainCategories
 }

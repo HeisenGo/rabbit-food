@@ -12,7 +12,8 @@ type Restaurant struct {
 	Phone   string
 	Address *Address `gorm:"foreignKey:RestaurantID"`
   Motors []Motor `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"` // One-to-many relationship with Motor
-	//Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
+  Categories []*RestaurantCategory `gorm:"many2many:restaurant_restaurant_categories;constraint:OnDelete:CASCADE;"`
+  //Users []User `gorm:"many2many:user_restaurants;constraint:OnDelete:CASCADE;"` // Many-to-many relationship with roles
 }
 
 type UserRestaurant struct {
@@ -39,6 +40,7 @@ type MenuItem struct {
 	CancellationPenaltyPercentage uint
 	MenuID                        uint
 	Menu                          *Menu `gorm:"foreignKey:MenuID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	IsAvailable                   bool  `gorm:"default:true"`
 }
 
 type RestaurantCategory struct {

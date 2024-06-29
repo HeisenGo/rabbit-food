@@ -167,6 +167,22 @@ func (s *RestaurantService) GetMenuItemsOfMenu(ctx context.Context, menu *menu.M
 	}
 	return fetchedMenuItems, nil
 }
+
+func (s *RestaurantService) AddCategoriesToRestaurant(ctx context.Context, rest *restaurant.Restaurant, categoryIDs []uint) (*restaurant.Restaurant, error) {
+	updatedRestaurant, err := s.restaurantOps.AddCategoriesToRestaurant(ctx, rest, categoryIDs)
+	if err != nil {
+		return nil, err
+	}
+	return updatedRestaurant, nil
+}
+
+func (s *RestaurantService) GetRestaurantCategories(ctx context.Context, restaurantID uint) ([]*restaurant.RestaurantCategory, error) {
+	categories, err := s.restaurantOps.GetRestaurantCategories(ctx, restaurantID)
+	if err != nil {
+		return nil, err
+	}
+	return categories, nil
+}
 func (s *RestaurantService) GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*restaurant.Restaurant, error) {
 	return s.restaurantOps.GetRestaurantsToAddCategoryMenuFood(ctx)
 }

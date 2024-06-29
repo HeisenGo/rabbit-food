@@ -9,6 +9,7 @@ import (
 	"server/internal/models/restaurant/motor"
 	"server/internal/models/restaurant/restaurant"
 	userRestaurant "server/internal/models/restaurant/user_restaurant"
+
 	"server/internal/models/user"
 	"server/pkg/adapters/storage/entities"
 	"server/pkg/adapters/storage/mappers"
@@ -172,6 +173,60 @@ func (r *restaurantRepo) WithdrawRestaurant(ctx context.Context, newOwnerID uint
 		return err
 	}
 	return nil
+}
+func (r *restaurantRepo) AddCategoriesToRestaurant(ctx context.Context, rest *restaurant.Restaurant, categoryIDs []uint) (*restaurant.Restaurant, error) {
+	tx := r.db.Begin()
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	defer func() {
+		if rv := recover(); rv != nil {
+			tx.Rollback()
+		}
+	}()
+	var restaurantEntity *entities.Restaurant
+	err := tx.First(&restaurantEntity, rest.ID).Error
+	if err != nil {
+		tx.Rollback()
+		return nil, fmt.Errorf("restaurant not found: %w", err)
+	}
+
+	for _, categoryID := range categoryIDs {
+		restaurantCategory := entities.RestaurantCategory{
+			Model: gorm.Model{ID: categoryID},
+		}
+		err = tx.Model(&restaurantEntity).Association("Categories").Append(&restaurantCategory)
+		if err != nil {
+			tx.Rollback()
+			return nil, fmt.Errorf("failed to associate category ID %d with restaurant: %w", categoryID, err)
+		}
+	}
+
+	err = tx.Commit().Error
+	if err != nil {
+		return nil, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+	updatedRestaurant := mappers.RestaurantEntityToDomain(restaurantEntity)
+	return updatedRestaurant, nil
+}
+
+func (r *restaurantRepo) GetRestaurantCategories(ctx context.Context, restaurantID uint) ([]*restaurant.RestaurantCategory, error) {
+	var categoryEntities []*restaurant.RestaurantCategory
+	if restaurantID == 0 {
+		err := r.db.Find(&categoryEntities).Error
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		err := r.db.Joins("JOIN restaurant_restaurant_categories ON restaurant_restaurant_categories.restaurant_category_id = restaurant_categories.id").
+			Where("restaurant_restaurant_categories.restaurant_id = ?", restaurantID).
+			Find(&categoryEntities).Error
+		if err != nil {
+			return nil, err
+		}
+	}
+	return categoryEntities, nil
 }
 
 func (r *restaurantRepo) AddMotor(ctx context.Context, motor *motor.Motor, restaurantID uint) (*motor.Motor, error) {

@@ -25,6 +25,7 @@ func NewRestaurantHandler(restaurantService services.RestaurantService, userServ
 	}
 }
 
+
 func (h *RestaurantHandler) HandleCreateRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	reqData, err := tcp.DecodeCreateRestaurantRequest(req.Data)
 	if err != nil {
@@ -376,9 +377,7 @@ func (h *RestaurantHandler) HandleGetMenuItemsOfMenu(ctx context.Context, conn n
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
 func (h *RestaurantHandler)GetRestaurantsToAddCategoryMenuFood(ctx context.Context,conn net.Conn,req *tcp.Request){
-
 	fetchedRestaurants, err := h.restaurantService.GetRestaurantsToAddCategoryMenuFood(ctx)
-
 	if err != nil {
 		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
 		return
@@ -400,10 +399,21 @@ func (h *RestaurantHandler)GetRestaurantsToAddCategoryMenuFood(ctx context.Conte
 func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
-	case "":
+	//case "":
+	//	if TCPReq.Header["method"] == tcp.MethodPost {
+	//		createRestaurantHandler := middleware.ApplyMiddlewares(h.HandleCreateRestaurant, middleware.AuthMiddleware)
+	//		createRestaurantHandler(ctx, conn, TCPReq)
+	//		return
+	//	}
+	case "categories":
 		if TCPReq.Header["method"] == tcp.MethodPost {
-			createRestaurantHandler := middleware.ApplyMiddlewares(h.HandleCreateRestaurant, middleware.AuthMiddleware)
-			createRestaurantHandler(ctx, conn, TCPReq)
+			addCategoriesToRestaurantHandler := middleware.ApplyMiddlewares(h.HandleAddCategoriesToRestaurant, middleware.AuthMiddleware)
+			addCategoriesToRestaurantHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			getRestaurantCategoriesHandler := h.HandleGetRestaurantCategories
+			getRestaurantCategoriesHandler(ctx, conn, TCPReq)
 			return
 		}
 		if TCPReq.Header["method"] == tcp.MethodGet {
@@ -451,4 +461,66 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 		fmt.Println("bad request")
 	}
 	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
+}
+
+func (h *RestaurantHandler) HandleGetRestaurantCategories(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeGetRestaurantCategoriesRequest(req.Data)
+	if err != nil {
+		//logger
+		fmt.Println("Error decoding get restaurant categories request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	categories, err := h.restaurantService.GetRestaurantCategories(ctx, reqData.RestaurantID)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.GetRestaurantCategoriesResponse{
+		Message:    "restaurant categories successfully fetched.",
+		Categories: categories,
+	}
+
+	resData, err := tcp.EncodeGetRestaurantCategoriesResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding categories response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
+
+func (h *RestaurantHandler) HandleAddCategoriesToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	reqData, err := tcp.DecodeAddCategoriesToRestaurantRequest(req.Data)
+	if err != nil {
+		//logger
+		fmt.Println("Error decoding add categories request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	chosenRest := restaurant.NewRestaurantByID(reqData.RestaurantID)
+	updatedRestaurant, err := h.restaurantService.AddCategoriesToRestaurant(ctx, chosenRest, reqData.CategoryIDs)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.AddCategoriesToRestaurantResponse{
+		Message:    "restaurant categories successfully updated.",
+		Restaurant: updatedRestaurant,
+	}
+
+	resData, err := tcp.EncodeAddCategoriesToRestaurantResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding menu item response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
+}
+
+func (h *RestaurantHandler) HandleAddOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
 }
