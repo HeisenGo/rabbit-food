@@ -1,0 +1,39 @@
+# Use the official Golang image as a builder
+FROM golang:1.22.4-alpine AS builder
+
+# Set the current working directory inside the container
+WORKDIR /app
+
+# Copy go.mod and go.sum files to the workspace
+COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+RUN go mod download
+
+# Copy the rest of the application code to the workspace
+COPY . .
+
+# Set environment variable for specifying .env file path
+ENV ENV_PATH=".env"
+
+# Build the Go app
+RUN go build -o /app/exe -ldflags "-X main.envPath=${ENV_PATH}" ./cmd/api
+
+
+# Use a minimal base image to reduce the size of the final image
+FROM alpine:latest
+
+# Set the current working directory inside the container
+WORKDIR /app
+
+# Copy the executable from the builder stage to the final image
+COPY --from=builder /app/exe /app/exe
+
+# Copy the .env file into the container (assuming it's in the root directory of your project)
+COPY .env .
+
+# Expose the port the application runs on (if your application listens on a specific port)
+EXPOSE 8080 5432
+
+# Command to run the executable
+CMD ["/app/exe", "--envpath", ".env"]

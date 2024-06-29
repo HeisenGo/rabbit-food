@@ -77,7 +77,6 @@ node_modules/
 
 # Configuration files
 *.yaml
-*.yml
 *.json
 
 # Coverages
@@ -92,8 +91,7 @@ testresult/
 *.temp
 
 # Docker
-Dockerfile
-docker-compose.yml
+
 
 # personal files
 nedi.go
