@@ -230,8 +230,33 @@ func (r *restaurantRepo) GetAllOperators(ctx context.Context, restaurantID uint)
 	return domainOperators, nil
 }
 
+func (r *restaurantRepo) GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*restaurant.Restaurant, error) {
+	var restaurants []entities.Restaurant
+	workingUserID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		return nil, errors.New("failed to recognize the working user")
+	}
+	err = r.db.WithContext(ctx).
+		Joins("JOIN user_restaurants ON user_restaurants.restaurant_id = restaurants.id").
+		Where("user_restaurants.user_id = ? AND user_restaurants.role_type IN ?", workingUserID, []string{string(server.Owner), string(server.Operator)}).
+		Distinct("restaurants.id, restaurants.name, restaurants.phone").
+		Find(&restaurants).Error
+
+	if err != nil {
+		return nil, errors.New("internal error")
+	}
+
+	domainRestaurants := []*restaurant.Restaurant{}
+	for _, rest := range restaurants {
+		dRest := mappers.RestaurantEntityToDomain(&rest)
+		domainRestaurants = append(domainRestaurants, dRest)
+	}
+	return domainRestaurants, nil
+
+}
+
 func (r *restaurantRepo) DoesThisHaveARoleInRestaurant(ctx context.Context, restaurantID uint) (bool, error) {
-	var restaurantUsers []*entities.User
+	var restaurantUsers []*entities.UserRestaurant
 
 	err := r.db.WithContext(ctx).
 		Joins("JOIN user_restaurants ON user_restaurants.user_id = users.id").
