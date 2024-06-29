@@ -31,8 +31,16 @@ var (
 	depositMenuItem         MenuComponent
 	withDrawMenuItem        MenuComponent
 	// restaurant management
-	createRestaurantMenuItem MenuComponent
+	createRestaurantMenuItem         MenuComponent
+	addCategoryToRestaurantsMenuItem MenuComponent
 )
+
+func getAddCategoryToRestaurantsMenuItem(service services.Service) MenuComponent {
+	if addCategoryToRestaurantsMenuItem == nil {
+		addCategoryToRestaurantsMenuItem = NewAddCategoryToRestaurantMenuItem("Add Category to Restaurant", commands.NewAddCategoryToRestaurantCommand(service), *commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
+	}
+	return addCategoryToRestaurantsMenuItem
+}
 
 func getCreateRestaurantMenuItem(service services.Service) MenuComponent {
 	if createRestaurantMenuItem == nil {
@@ -124,6 +132,7 @@ func getRestaurantManagementMenu(service services.Service) MenuComponent {
 	if restaurantManagementMenu == nil {
 		restaurantManagementMenu = NewMenu("Restaurant Management Menu")
 		restaurantManagementMenu.Add(getCreateRestaurantMenuItem(service))
+		restaurantManagementMenu.Add(getAddCategoryToRestaurantsMenuItem(service))
 		restaurantManagementMenu.Add(getLogoutMenuItem(service))
 	}
 	return restaurantManagementMenu
