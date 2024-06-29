@@ -7,9 +7,10 @@ import (
 )
 
 func DisplayRestaurantsWithAddress(restaurants []*models.Restaurant) {
-	for _, rest := range restaurants {
+	for i, rest := range restaurants {
 		strSlice := []string{rest.Name, rest.Phone, rest.Address.City, rest.Address.AddressLine}
 		str := strings.Join(strSlice, " ")
-		fmt.Println(str)
+		fmt.Printf("\n\t%d. %s", i+1, str)
+		fmt.Println("\n\t--------------------------------------------------------------")
 	}
 }

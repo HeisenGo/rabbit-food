@@ -4,25 +4,27 @@ import (
 	"bufio"
 	"client/commands"
 	"client/constants"
+	"client/errors"
+	"client/menus/functions"
 	"client/protocol/tcp"
 	"client/utils"
 	"fmt"
-	"time"
+	"strconv"
 )
 
 type AddCategoryToRestaurantMenuItem struct {
-	Name     string
-	Command  *commands.AddCategoryToRestaurantCommand
-	GetRestaurantsIHaveARoleCommand   *commands.GetRestaurantsIHaveARoleCommand
-	PostMenu MenuComponent
+	Name                            string
+	Command                         *commands.AddCategoryToRestaurantCommand
+	GetRestaurantsIHaveARoleCommand *commands.GetRestaurantsIHaveARoleCommand
+	PostMenu                        MenuComponent
 }
 
-func NewAddCategoryToRestaurantMenuItem(name string, command *commands.AddCategoryToRestaurantCommand, getRestaurantsIHaveARoleCommand   *commands.GetRestaurantsIHaveARoleCommand, postMenu MenuComponent) *AddCategoryToRestaurantMenuItem {
+func NewAddCategoryToRestaurantMenuItem(name string, command *commands.AddCategoryToRestaurantCommand, getRestaurantsIHaveARoleCommand *commands.GetRestaurantsIHaveARoleCommand, postMenu MenuComponent) *AddCategoryToRestaurantMenuItem {
 	return &AddCategoryToRestaurantMenuItem{
-		Name:     name,
-		Command:  command,
+		Name:                            name,
+		Command:                         command,
 		GetRestaurantsIHaveARoleCommand: getRestaurantsIHaveARoleCommand,
-		PostMenu: postMenu,
+		PostMenu:                        postMenu,
 	}
 }
 
@@ -31,9 +33,53 @@ func (mi *AddCategoryToRestaurantMenuItem) Display() {
 }
 
 func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
-	defer time.Sleep(time.Second)
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
+	restaurants, err := mi.GetRestaurantsIHaveARoleCommand.Execute()
+
+	if err != nil {
+		utils.ColoredPrint(constants.Red, "\n\t", err)
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		return
+	}
+	if len(restaurants) == 0 {
+		utils.ColoredPrint(constants.Red, "\n\t", "You have role in any restaurants")
+		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		return
+	}
+
+	utils.ColoredPrint(constants.Green, "\n\tRestaurants You can add Category: \n")
+	functions.DisplayRestaurantsWithAddress(restaurants)
+	fmt.Println("\n\n\t")
+
+	var restaurantCategoryBody tcp.RestaurantCategoryBody
+	var restaurantRow int
+	for {
+		input := utils.ReadInput(scanner, "Choose Restaurant Row to Add Category(Enter q to return): ")
+
+		if input == "q" {
+			return
+		}
+		restaurantRow, err = strconv.Atoi(input)
+
+		if err != nil {
+			utils.ColoredPrint(constants.Red, "\t", errors.ErrDataType.Message, "\n")
+			continue
+		}
+		if restaurantRow > len(restaurants) {
+			utils.ColoredPrint(constants.Red, "\tInvalid number\n")
+			continue
+		}
+		if restaurantRow <= len(restaurants) {
+			break
+		}
+	}
+
+	restaurantCategoryBody.RestaurantID = restaurants[restaurantRow-1].ID
+	// etch categories with getCategoriesCommand
+	// separate them with "," 
+	// add category ids to body
+	//categories:=
 	var addCardData tcp.AddCardBody
 	addCardData.CardNumber = utils.ReadInput(scanner, "Card Number: ")
 	newCard, err := mi.Command.Execute(&addCardData)
