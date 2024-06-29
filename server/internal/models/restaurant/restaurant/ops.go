@@ -4,7 +4,6 @@ import (
 	"context"
 	"server/internal/models/restaurant/motor"
 	"server/internal/models/user"
-
 	"gorm.io/gorm"
 )
 
@@ -85,4 +84,6 @@ func (o *Ops) EditRestaurantName(ctx context.Context, restaurantID uint, newName
 	return o.repo.EditRestaurantName(ctx, restaurantID, newName)
 }
 
-GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*restaurant.Restaurant, error)
+func (o *Ops)GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*Restaurant, error){
+	return o.repo.GetRestaurantsToAddCategoryMenuFood(ctx)
+}

@@ -375,7 +375,28 @@ func (h *RestaurantHandler) HandleGetMenuItemsOfMenu(ctx context.Context, conn n
 	}
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
+func (h *RestaurantHandler)GetRestaurantsToAddCategoryMenuFood(ctx context.Context,conn net.Conn,req *tcp.Request){
 
+	fetchedRestaurants, err := h.restaurantService.GetRestaurantsToAddCategoryMenuFood(ctx)
+
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.RestaurantToAddCategoryMenuFoodResponse{
+		Message:   "restaurants items successfully fetched",
+		Restaurants:fetchedRestaurants,
+	}
+
+	resData, err := tcp.EncodeGetRestaurantToAddCategoryMenuFoodResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding menu item response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
 func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
@@ -383,6 +404,11 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			createRestaurantHandler := middleware.ApplyMiddlewares(h.HandleCreateRestaurant, middleware.AuthMiddleware)
 			createRestaurantHandler(ctx, conn, TCPReq)
+			return
+		}
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			createRestaurantHandler := middleware.ApplyMiddlewares(h.GetRestaurantsToAddCategoryMenuFood,middleware.AuthMiddleware)
+			createRestaurantHandler(ctx,conn,TCPReq)
 			return
 		}
 	case "menus":
@@ -414,7 +440,7 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 	case "operator":
 		// (post, get, delete)
 		if TCPReq.Header["method"] == tcp.MethodPost {
-			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperator, middleware.AuthMiddleware)
+			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
 			addOperatorHandler(ctx, conn, TCPReq)
 		}
 	case "delivery":

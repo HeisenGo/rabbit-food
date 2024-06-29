@@ -167,3 +167,6 @@ func (s *RestaurantService) GetMenuItemsOfMenu(ctx context.Context, menu *menu.M
 	}
 	return fetchedMenuItems, nil
 }
+func (s *RestaurantService)GetRestaurantsToAddCategoryMenuFood(ctx context.Context) ([]*restaurant.Restaurant, error){
+	return s.restaurantOps.GetRestaurantsToAddCategoryMenuFood(ctx)
+}

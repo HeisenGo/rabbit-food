@@ -76,7 +76,7 @@ type WithdrawRequest struct {
 }
 type AddressRequest struct {
 	AddressLine string              `json:"address_line"`
-	Coordinates address.Coordinates `json:"coordinates"` //coordinates should be changed to the float 64 type`
+	Coordinates address.Coordinates `json:"coordinates"` 
 	City        string              `json:"city"`
 }
 type AddCardToWalletResponse struct {
@@ -150,4 +150,9 @@ type AddressResponse struct {
 type EditRestaurantNameRequest struct {
 	RestaurantID uint
 	NewName      string
+}
+
+type RestaurantToAddCategoryMenuFoodResponse struct {
+	Message		string
+	Restaurants []*restaurant.Restaurant
 }
