@@ -44,6 +44,11 @@ type DepositBody struct {
 	Amount uint   `json:"amount"`
 }
 
+type RestaurantCategoryBody struct{
+	RestaurantID uint `json:"restaurant_id"`
+	Category_ids []uint `json:"categories"`
+}
+
 type WithdrawBody struct {
 	Number string `json:"card_number"`
 	Amount uint   `json:"amount"`
