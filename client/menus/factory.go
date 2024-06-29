@@ -32,12 +32,20 @@ var (
 	withDrawMenuItem        MenuComponent
 	// restaurant management
 	createRestaurantMenuItem         MenuComponent
+	showMyFunctionalRestaurants      MenuComponent
 	addCategoryToRestaurantsMenuItem MenuComponent
 )
 
+func getShowMyFunctionalRestaurants(service services.Service) MenuComponent {
+	if showMyFunctionalRestaurants == nil {
+		showMyFunctionalRestaurants = NewGetRestaurantsIHaveARoleInitMenuItem("Restaurant With a role", commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
+	}
+	return showMyFunctionalRestaurants
+}
+
 func getAddCategoryToRestaurantsMenuItem(service services.Service) MenuComponent {
 	if addCategoryToRestaurantsMenuItem == nil {
-		addCategoryToRestaurantsMenuItem = NewAddCategoryToRestaurantMenuItem("Add Category to Restaurant", commands.NewAddCategoryToRestaurantCommand(service), *commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
+		addCategoryToRestaurantsMenuItem = NewAddCategoryToRestaurantMenuItem("Add Category to Restaurant", commands.NewAddCategoryToRestaurantCommand(service), commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
 	}
 	return addCategoryToRestaurantsMenuItem
 }
@@ -133,6 +141,7 @@ func getRestaurantManagementMenu(service services.Service) MenuComponent {
 		restaurantManagementMenu = NewMenu("Restaurant Management Menu")
 		restaurantManagementMenu.Add(getCreateRestaurantMenuItem(service))
 		restaurantManagementMenu.Add(getAddCategoryToRestaurantsMenuItem(service))
+		restaurantManagementMenu.Add(getShowMyFunctionalRestaurants(service))
 		restaurantManagementMenu.Add(getLogoutMenuItem(service))
 	}
 	return restaurantManagementMenu
