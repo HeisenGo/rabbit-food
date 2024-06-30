@@ -584,7 +584,7 @@ func (s *APIService) GetMenusOfRestaurant(restaurantID uint) ([]*models.Restaura
 	if tcpResponse.StatusCode != tcp.StatusOK {
 		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
 	}
-	fmt.Println(string(tcpResponse.Data))
+	//fmt.Println(string(tcpResponse.Data))
 	getRestaurantMenusResBody, err := tcp.DecodeGetRestaurantMenusBodyResponse(tcpResponse.Data)
 	if err != nil {
 		return nil, errors.ErrDecodingSuccessfulResponse
