@@ -81,7 +81,7 @@ func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 	// etch categories with getCategoriesCommand
 	// separate them with ","
 	// add category ids to body
-	categories := []models.RestaurantCategory{}
+	categories := make([]models.RestaurantCategory, 2)
 	categories[0] = models.RestaurantCategory{
 		ID:   1,
 		Name: "Irani",
@@ -89,6 +89,12 @@ func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 	categories[1] = models.RestaurantCategory{
 		ID:   2,
 		Name: "Fast Food",
+	}
+
+	fmt.Println("\n\tCategories:")
+
+	for _, c := range categories{
+		fmt.Println("\t",c.Name)
 	}
 	entered_category_ids := []uint{}
 	for {

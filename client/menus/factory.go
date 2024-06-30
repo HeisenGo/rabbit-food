@@ -45,7 +45,7 @@ func getAddOperatorToRestaurantMenuItem(service services.Service) MenuComponent 
 		addOperatorToRestaurantMenuItem = NewAddOperatorToRestaurantMenuItem("Add Operator",
 			commands.NewAddOperatorToRestaurantCommand(service), commands.NewGetRestaurantsIOwnCommand(service), getRestaurantManagementMenu(service))
 	}
-	return addItemToMenuMenuItem
+	return addOperatorToRestaurantMenuItem
 }
 
 func getAddMotorToRestaurantMenuItem(service services.Service) MenuComponent {
@@ -53,7 +53,7 @@ func getAddMotorToRestaurantMenuItem(service services.Service) MenuComponent {
 		addMotorToRestaurantMenuItem = NewAddMotorToRestaurantMenuItem("Add Motor",
 			commands.NewAddMotorToRestaurantCommand(service), commands.NewGetRestaurantsIOwnCommand(service), getRestaurantManagementMenu(service))
 	}
-	return addItemToMenuMenuItem
+	return addMotorToRestaurantMenuItem
 }
 
 func getAddItemToMenuMenuItem(service services.Service) MenuComponent {
@@ -73,7 +73,7 @@ func getAddMenuToRestaurantMenuItem(service services.Service) MenuComponent {
 
 func getShowMyFunctionalRestaurants(service services.Service) MenuComponent {
 	if showMyFunctionalRestaurants == nil {
-		showMyFunctionalRestaurants = NewGetRestaurantsIHaveARoleInitMenuItem("Restaurant With a role", commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
+		showMyFunctionalRestaurants = NewGetRestaurantsIHaveARoleInitMenuItem("Display Restaurant I have Or Operate", commands.NewGetRestaurantsIHaveARoleCommand(service), getRestaurantManagementMenu(service))
 	}
 	return showMyFunctionalRestaurants
 }
@@ -176,10 +176,10 @@ func getRestaurantManagementMenu(service services.Service) MenuComponent {
 	if restaurantManagementMenu == nil {
 		restaurantManagementMenu = NewMenu("Restaurant Management Menu")
 		restaurantManagementMenu.Add(getCreateRestaurantMenuItem(service))
+		restaurantManagementMenu.Add(getShowMyFunctionalRestaurants(service))
 		restaurantManagementMenu.Add(getAddCategoryToRestaurantsMenuItem(service))
 		restaurantManagementMenu.Add(getAddMenuToRestaurantMenuItem(service))
 		restaurantManagementMenu.Add(getAddItemToMenuMenuItem(service))
-		restaurantManagementMenu.Add(getShowMyFunctionalRestaurants(service))
 		restaurantManagementMenu.Add(getAddOperatorToRestaurantMenuItem(service))
 		restaurantManagementMenu.Add(getAddMotorToRestaurantMenuItem(service))
 		restaurantManagementMenu.Add(getLogoutMenuItem(service))

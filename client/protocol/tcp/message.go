@@ -110,7 +110,7 @@ type GetRestaurantMenusBody struct {
 
 type GetRestaurantMenusBodyResponse struct {
 	Message string                   `json:"message"`
-	Menus   []*models.RestaurantMenu `json:"restaurant_menus"`
+	Menus   []*models.RestaurantMenu `json:"menus"`
 }
 
 type AddItemToMenuReqBody struct {
