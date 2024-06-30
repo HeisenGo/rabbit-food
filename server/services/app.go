@@ -3,13 +3,14 @@ package services
 import (
 	"log"
 	"server/config"
+	"server/internal/models/address"
 	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
 	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 	"server/pkg/adapters/storage"
-	"server/internal/models/address"
+
 	"gorm.io/gorm"
 )
 
@@ -20,7 +21,7 @@ type AppContainer struct {
 	WalletService     *WalletService
 	RestaurantService *RestaurantService
 	UserService       *UserService
-  AddressService    *AddressService
+	AddressService    *AddressService
 }
 
 func NewAppContainer(cfg config.Config) (*AppContainer, error) {
@@ -88,6 +89,5 @@ func (a *AppContainer) setUserService() {
 	if a.UserService != nil {
 		return
 	}
-	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)))
-	// hint: ** probably food or menu should be added or category
+	a.UserService = NewUserService(user.NewUserOps(a.dbConn, storage.NewUserRepo(a.dbConn)), address.NewAddressOps(a.dbConn, storage.NewAddressRepo(a.dbConn)))
 }

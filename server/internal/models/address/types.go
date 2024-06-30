@@ -9,6 +9,9 @@ import (
 
 type Repo interface {
 	Create(ctx context.Context, address *Address) (*Address, error)
+	Delete(ctx context.Context, addressID uint) error
+	GetByID(ctx context.Context, addressID uint) (*Address, error)
+	Update(ctx context.Context, address *Address) (*Address, error)
 }
 
 type Address struct {

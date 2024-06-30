@@ -6,6 +6,7 @@ import (
 	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/motor"
 	"server/internal/models/restaurant/restaurant"
+	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 )
@@ -36,7 +37,7 @@ type AddCardToWalletRequest struct {
 }
 
 type AddOperatorToRestaurantRequest struct {
-	OperatorPhoneOrEmail string `json:"phone"` //operator phone
+	OperatorPhoneOrEmail string `json:"phone"` // operator phone
 	RestaurantID         uint   `json:"restaurant_id"`
 }
 
@@ -80,15 +81,18 @@ type DepositRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
+
 type WithdrawRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
+
 type AddressRequest struct {
 	AddressLine string              `json:"address_line"`
 	Coordinates address.Coordinates `json:"coordinates"`
 	City        string              `json:"city"`
 }
+
 type AddCardToWalletResponse struct {
 	Message string                 `json:"message"`
 	Card    *creditCard.CreditCard `json:"card"`
@@ -153,6 +157,7 @@ type DepositResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
 }
+
 type WithdrawResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
@@ -162,14 +167,15 @@ type GetWalletResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
 }
+
 type AddressResponse struct {
 	Message string           `json:"message"`
 	Address *address.Address `json:"address"`
 }
 
 type EditRestaurantNameRequest struct {
-	RestaurantID uint
-	NewName      string
+	RestaurantID uint   `json:"restaurant_id"`
+	NewName      string `json:"new_name"`
 }
 
 type RestaurantToAddCategoryMenuFoodResponse struct {
@@ -177,11 +183,79 @@ type RestaurantToAddCategoryMenuFoodResponse struct {
 	Restaurants []*restaurant.Restaurant
 }
 
+// User Profile Update Requests and Responses
+
+type UpdateFirstNameRequest struct {
+	FirstName string `json:"first_name"`
+}
+
+type UpdateFirstNameResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdateLastNameRequest struct {
+	LastName string `json:"last_name"`
+}
+
+type UpdateLastNameResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdateEmailRequest struct {
+	Email string `json:"email"`
+}
+
+type UpdateEmailResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdatePhoneRequest struct {
+	Phone string `json:"phone"`
+}
+
+type UpdatePhoneResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdatePasswordRequest struct {
+	Password string `json:"password"`
+}
+
+type UpdatePasswordResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type DeleteAddressRequest struct {
+	AddressID uint `json:"address_id"`
+}
+
+type DeleteAddressResponse struct {
+	Message string `json:"message"`
+}
+
+type AddAddressRequest struct {
+	AddressLine string              `json:"address_line"`
+	Coordinates address.Coordinates `json:"coordinates"`
+	Types       string              `json:"types"`
+	City        string              `json:"city"`
+}
+
+type AddAddressResponse struct {
+	Message string           `json:"message"`
+	Address *address.Address `json:"address"`
+}
+
 type AddMotorToRestaurantRequest struct {
 	Message      string       `json:"message"`
 	RestaurantID uint         `json:"restaurant_id"`
 	Motor        *motor.Motor `json:"motor"`
 }
+
 type AddMotorToRestaurantResponse struct {
 	Message      string       `json:"message"`
 	Motor        *motor.Motor `json:"motor"`

@@ -2,16 +2,20 @@ package services
 
 import (
 	"context"
+	"server/internal/models/address"
 	"server/internal/models/user"
+	"server/pkg/utils/users"
 )
 
 type UserService struct {
-	userOps *user.Ops
+	userOps    *user.Ops
+	addressOps *address.AddressOps
 }
 
-func NewUserService(userOps *user.Ops) *UserService {
+func NewUserService(userOps *user.Ops, addressOps *address.AddressOps) *UserService {
 	return &UserService{
-		userOps: userOps,
+		userOps:    userOps,
+		addressOps: addressOps,
 	}
 }
 
@@ -23,18 +27,39 @@ func (s *UserService) GetUserByEmailOrPhone(ctx context.Context, phoneOrEmail st
 	return user, nil
 }
 
-// func (s *UserService) CreateUser(ctx context.Context, user *user.User) (*user.User, error) {
-// 	return s.userOps.Create(ctx, user)
-// }
+func (s *UserService) GetUserByID(ctx context.Context, id uint) (*user.User, error) {
+	return s.userOps.GetByID(ctx, id)
+}
 
-// func (s *UserService) GetUserByID(ctx context.Context, id uint) (*user.User, error) {
-// 	return s.userOps.GetUserByID(ctx, id)
-// }
+func (s *UserService) UpdateUserFirstName(ctx context.Context, id uint, firstName string) (*user.User, error) {
+	return s.userOps.UpdateField(ctx, id, "first_name", firstName)
+}
 
-// func (s *UserService) UpdateUser(ctx context.Context, user *user.User) (*user.User, error) {
-// 	return s.userOps.Update(ctx, user)
-// }
+func (s *UserService) UpdateUserLastName(ctx context.Context, id uint, lastName string) (*user.User, error) {
+	return s.userOps.UpdateField(ctx, id, "last_name", lastName)
+}
 
-// func (s *UserService) DeleteUser(ctx context.Context, id uint) error {
-// 	return s.userOps.Delete(ctx, id)
-// }
+func (s *UserService) UpdateUserEmail(ctx context.Context, id uint, email string) (*user.User, error) {
+	return s.userOps.UpdateField(ctx, id, "email", email)
+}
+
+func (s *UserService) UpdateUserPhone(ctx context.Context, id uint, phone string) (*user.User, error) {
+	return s.userOps.UpdateField(ctx, id, "phone", phone)
+}
+
+func (s *UserService) UpdateUserPassword(ctx context.Context, id uint, password string) (*user.User, error) {
+	hashedPass, err := users.HashPassword(password)
+	if err != nil {
+		return nil, err
+	}
+	return s.userOps.UpdateField(ctx, id, "password", hashedPass)
+}
+
+func (s *UserService) DeleteUserAddress(ctx context.Context, userID, addressID uint) error {
+	return s.addressOps.Delete(ctx, addressID)
+}
+
+func (s *UserService) AddUserAddress(ctx context.Context, userID uint, addr *address.Address) (*address.Address, error) {
+	addr.UserID = userID
+	return s.addressOps.Create(ctx, addr)
+}

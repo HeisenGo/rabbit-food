@@ -10,15 +10,13 @@ import (
 )
 
 type Server struct {
-
-	authHandler   *handlers.AuthHandler
-	walletHandler *handlers.WalletHandler
+	authHandler       *handlers.AuthHandler
+	walletHandler     *handlers.WalletHandler
 	restaurantHandler *handlers.RestaurantHandler
-  addressHandler *handlers.AddressHandler
+	addressHandler    *handlers.AddressHandler
 }
 
-
-func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler, restaurantHandler *handlers.RestaurantHandler,addressHandler *handlers.AddressHandler) *Server {
+func NewServer(authHandler *handlers.AuthHandler, walletHandler *handlers.WalletHandler, restaurantHandler *handlers.RestaurantHandler, addressHandler *handlers.AddressHandler, userHandler *handlers.UserHandler) *Server {
 	return &Server{authHandler, walletHandler, restaurantHandler, addressHandler}
 
 }
@@ -51,7 +49,7 @@ func (s *Server) HandleConnection(ctx context.Context, conn net.Conn) {
 		case "wallets":
 			s.walletHandler.ServeTCP(ctx, conn, requestData)
 		case "users":
-			s.addressHandler.ServeTCP(ctx,conn,requestData)
+			s.addressHandler.ServeTCP(ctx, conn, requestData)
 		case "restaurants":
 			s.restaurantHandler.ServeTCP(ctx, conn, requestData)
 		default:
