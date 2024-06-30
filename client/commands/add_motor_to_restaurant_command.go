@@ -11,7 +11,7 @@ type AddMotorToRestaurantCommand struct {
 
 func (c *AddMotorToRestaurantCommand) Execute(addMotorData tcp.RestaurantMotorReqBody) error {
 
-	err := c.service.AddMotorToRestaurant(addMotorData)
+	err := c.service.AddMotorToRestaurant(&addMotorData)
 	if err != nil {
 		return err
 	}

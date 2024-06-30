@@ -22,7 +22,7 @@ type Service interface {
 	GetMenusOfRestaurant(restaurantID uint) ([]*models.RestaurantMenu, error)
 	AddItemToMenu(reqData *tcp.AddItemToMenuReqBody) error
 	GetItemsOfMenu(menuID uint) ([]*models.MenuItem, error)
-	AddMotorToRestaurant(addMotorData tcp.RestaurantMotorReqBody) error
+	AddMotorToRestaurant(addMotorData *tcp.RestaurantMotorReqBody) error
 	AddOperatorToRestaurant(addOperatorData *tcp.RestaurantAddOperatorReqBody) error
 	GetRestaurantsIOwn() ([]*models.Restaurant, error)
 }
