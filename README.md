@@ -94,6 +94,12 @@ Communication between the server and clients is facilitated through TCP connecti
 ## Getting Started
 To get started with **Rabbit Food**, follow the instructions in the following. The guide will walk you through the process of setting up the project, configuring the necessary dependencies, and running the server and client components.
 
+## How TO Run The Project
+1- Run Docker
+2- Create Postgis Database rabbit_food
+3- to run server: Fill .env file using sample.env then go run cmd/api/main.go --envpath .env
+4- to run client:  Fill .env file using sample.env then go run cmd/main.go --envpath .env
+
 
 The project's database schema is represented by an *Entity Relationship Diagram (ERD)*. You can view the **ERD** **[HERE](https://drive.google.com/file/d/1gNUd9nl6XqafS7znTZN26XCL0raL7jAb/view?usp=sharing)**.
 
