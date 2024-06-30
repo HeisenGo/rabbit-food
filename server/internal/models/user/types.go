@@ -10,6 +10,8 @@ type Repo interface {
 	Create(ctx context.Context, user *User) (*User, error)
 	GetByPhone(ctx context.Context, phone string) (*User, error)
 	GetByEmail(ctx context.Context, email string) (*User, error)
+	GetByID(ctx context.Context, id uint) (*User, error)
+	Update(ctx context.Context, user *User) (*User, error)
 }
 
 type User struct {
