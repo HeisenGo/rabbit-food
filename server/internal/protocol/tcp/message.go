@@ -4,6 +4,7 @@ import (
 	"server/internal/models/address"
 	"server/internal/models/auth"
 	"server/internal/models/restaurant/menu"
+	"server/internal/models/restaurant/motor"
 	"server/internal/models/restaurant/restaurant"
 	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
@@ -36,7 +37,7 @@ type AddCardToWalletRequest struct {
 }
 
 type AddOperatorToRestaurantRequest struct {
-	OperatorPhoneOrEmail string `json:"phone"` //operator phone
+	OperatorPhoneOrEmail string `json:"phone"` // operator phone
 	RestaurantID         uint   `json:"restaurant_id"`
 }
 
@@ -185,7 +186,6 @@ type RestaurantToAddCategoryMenuFoodResponse struct {
 // User Profile Update Requests and Responses
 
 type UpdateFirstNameRequest struct {
-	UserID    uint   `json:"user_id"`
 	FirstName string `json:"first_name"`
 }
 
@@ -195,7 +195,6 @@ type UpdateFirstNameResponse struct {
 }
 
 type UpdateLastNameRequest struct {
-	UserID   uint   `json:"user_id"`
 	LastName string `json:"last_name"`
 }
 
@@ -205,8 +204,7 @@ type UpdateLastNameResponse struct {
 }
 
 type UpdateEmailRequest struct {
-	UserID uint   `json:"user_id"`
-	Email  string `json:"email"`
+	Email string `json:"email"`
 }
 
 type UpdateEmailResponse struct {
@@ -215,8 +213,7 @@ type UpdateEmailResponse struct {
 }
 
 type UpdatePhoneRequest struct {
-	UserID uint   `json:"user_id"`
-	Phone  string `json:"phone"`
+	Phone string `json:"phone"`
 }
 
 type UpdatePhoneResponse struct {
@@ -225,7 +222,6 @@ type UpdatePhoneResponse struct {
 }
 
 type UpdatePasswordRequest struct {
-	UserID   uint   `json:"user_id"`
 	Password string `json:"password"`
 }
 
@@ -235,7 +231,6 @@ type UpdatePasswordResponse struct {
 }
 
 type DeleteAddressRequest struct {
-	UserID    uint `json:"user_id"`
 	AddressID uint `json:"address_id"`
 }
 
@@ -244,7 +239,6 @@ type DeleteAddressResponse struct {
 }
 
 type AddAddressRequest struct {
-	UserID      uint                `json:"user_id"`
 	AddressLine string              `json:"address_line"`
 	Coordinates address.Coordinates `json:"coordinates"`
 	Types       string              `json:"types"`
@@ -254,4 +248,15 @@ type AddAddressRequest struct {
 type AddAddressResponse struct {
 	Message string           `json:"message"`
 	Address *address.Address `json:"address"`
+}
+
+type AddMotorToRestaurantRequest struct {
+	Message      string       `json:"message"`
+	RestaurantID uint         `json:"restaurant_id"`
+	Motor        *motor.Motor `json:"motor"`
+}
+
+type AddMotorToRestaurantResponse struct {
+	Message      string       `json:"message"`
+	Motor        *motor.Motor `json:"motor"`
 }
