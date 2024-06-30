@@ -75,6 +75,7 @@ func DecodeLoginRequest(data []byte) (LoginRequest, error) {
 	err := json.Unmarshal(data, &req)
 	return req, err
 }
+
 func EncodeLoginResponse(res LoginResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
@@ -156,18 +157,91 @@ func EncodeAddMenuItemToMenuResponse(res AddMenuItemToMenuResponse) ([]byte, err
 func EncodeGetMenuItemsOfMenuResponse(res GetMenuItemsOfMenuResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
-func DecodeRestaurantToAddCategoryMenuFoodResponse(data []byte)(RestaurantToAddCategoryMenuFoodResponse,error){
+
+func DecodeRestaurantToAddCategoryMenuFoodResponse(data []byte) (RestaurantToAddCategoryMenuFoodResponse, error) {
 	var req RestaurantToAddCategoryMenuFoodResponse
-	err := json.Unmarshal(data,&req)
-	return req,err
+	err := json.Unmarshal(data, &req)
+	return req, err
 }
-func EncodeGetRestaurantToAddCategoryMenuFoodResponse(res RestaurantToAddCategoryMenuFoodResponse)([]byte, error){
+
+func EncodeGetRestaurantToAddCategoryMenuFoodResponse(res RestaurantToAddCategoryMenuFoodResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
+
 func EncodeAddCategoriesToRestaurantResponse(res AddCategoriesToRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
 
 func EncodeGetRestaurantCategoriesResponse(res GetRestaurantCategoriesResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeUpdateFirstNameRequest(data []byte) (UpdateFirstNameRequest, error) {
+	var req UpdateFirstNameRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeUpdateFirstNameResponse(res UpdateFirstNameResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeUpdateLastNameRequest(data []byte) (UpdateLastNameRequest, error) {
+	var req UpdateLastNameRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeUpdateLastNameResponse(res UpdateLastNameResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeUpdateEmailRequest(data []byte) (UpdateEmailRequest, error) {
+	var req UpdateEmailRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeUpdateEmailResponse(res UpdateEmailResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeUpdatePhoneRequest(data []byte) (UpdatePhoneRequest, error) {
+	var req UpdatePhoneRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeUpdatePhoneResponse(res UpdatePhoneResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeUpdatePasswordRequest(data []byte) (UpdatePasswordRequest, error) {
+	var req UpdatePasswordRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeUpdatePasswordResponse(res UpdatePasswordResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeDeleteAddressRequest(data []byte) (DeleteAddressRequest, error) {
+	var req DeleteAddressRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeDeleteAddressResponse(res DeleteAddressResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeAddAddressRequest(data []byte) (AddAddressRequest, error) {
+	var req AddAddressRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeAddAddressResponse(res AddAddressResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
