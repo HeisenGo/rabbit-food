@@ -455,6 +455,27 @@ func (h *RestaurantHandler) HandleAddCategoriesToRestaurant(ctx context.Context,
 	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
 
+func (h *RestaurantHandler) HandleGetRestaurantsToAddMotorOperator(ctx context.Context, conn net.Conn, req *tcp.Request) {
+	fetchedRestaurants, err := h.restaurantService.GetRestaurantsOfAnOwner(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.RestaurantToAddCategoryMenuFoodResponse{
+		Message:     "restaurants successfully fetched",
+		Restaurants: fetchedRestaurants,
+	}
+
+	resData, err := tcp.EncodeGetRestaurantToAddCategoryMenuFoodResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding menu item response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
+}
+
 func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
@@ -468,6 +489,11 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 			createRestaurantHandler := middleware.ApplyMiddlewares(h.GetRestaurantsToAddCategoryMenuFood, middleware.AuthMiddleware)
 			createRestaurantHandler(ctx, conn, TCPReq)
 			return
+		}
+	case "own":
+		if TCPReq.Header["method"] == tcp.MethodGet {
+			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleGetRestaurantsToAddMotorOperator, middleware.AuthMiddleware)
+			addOperatorHandler(ctx, conn, TCPReq)
 		}
 	case "categories":
 		if TCPReq.Header["method"] == tcp.MethodPost {
@@ -505,60 +531,23 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 	case "withdraw":
 		//withdraw_ownership
 		fmt.Println("not implemented")
-	case "operator":
+	case "operators":
 		// (post, get, delete)
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
 			addOperatorHandler(ctx, conn, TCPReq)
 		}
-	case "motor":
+	case "motors":
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			addMotorHandler := middleware.ApplyMiddlewares(h.HandleAddMotorToRestaurant,middleware.AuthMiddleware)
 			addMotorHandler(ctx,conn,TCPReq)
 		}
+
 	default:
 		fmt.Println("bad request")
 	}
 	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 func (h *RestaurantHandler)HandleAddMotorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request){
