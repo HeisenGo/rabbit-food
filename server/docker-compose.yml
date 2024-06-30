@@ -1,0 +1,30 @@
+services:
+  postgis:
+    image: postgis/postgis
+    container_name: rabbit-food-container
+    environment:
+      POSTGRES_HOST: ${DB_HOST}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}"
+
+  golang-app:
+    build: .
+    container_name: golang-app-container
+    ports:
+      - "${SERVER_PORT}"
+    depends_on:
+      - postgis
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASS}
+      DB_PORT : ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      SERVER_PORT: ${SERVER_PORT}
+      SERVER_HOST: ${SERVER_HOST}
+      TOKEN_EXP_MINUTES: ${TOKEN_EXP_MINUTES}
+      REFRESH_TOKEN_EXP_MINUTES: ${REFRESH_TOKEN_EXP_MINUTES}
+      TOKEN_SECRET: ${TOKEN_SECRET}
