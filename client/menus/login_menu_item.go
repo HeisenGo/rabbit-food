@@ -7,7 +7,6 @@ import (
 	"client/protocol/tcp"
 	"client/utils"
 	"fmt"
-	"time"
 )
 
 type LoginMenuItem struct {
@@ -29,7 +28,7 @@ func (mi *LoginMenuItem) Display() {
 }
 
 func (mi *LoginMenuItem) Execute(scanner *bufio.Scanner) {
-	defer time.Sleep(time.Second)
+	//defer time.Sleep(time.Second)
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	var userLoginData tcp.LoginBody

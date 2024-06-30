@@ -2,6 +2,7 @@ package wallet
 
 import (
 	"context"
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -18,6 +19,9 @@ func NewCreditCardOps(db *gorm.DB, repo Repo) *CreditCardOps {
 }
 
 func (o *CreditCardOps) CreateCardAndAddToWallet(ctx context.Context, creditCard *CreditCard) (*CreditCard, error) {
+	if !isValidCardNumber(creditCard.Number) {
+		return nil, errors.New("invalid card number")
+	}
 	return o.repo.CreateCardAndAddToWallet(ctx, creditCard)
 }
 

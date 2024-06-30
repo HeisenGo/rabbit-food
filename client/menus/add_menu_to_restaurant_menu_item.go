@@ -45,8 +45,8 @@ func (mi *AddMenuToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 		return
 	}
 	if len(restaurants) == 0 {
-		utils.ColoredPrint(constants.Red, "\n\t", "You have role in any restaurants")
-		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", "You don't have role in any restaurants")
+		utils.ReadInput(scanner, "\n\n\tPress any key to continue... ")
 		return
 	}
 

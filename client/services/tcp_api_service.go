@@ -606,7 +606,7 @@ func (s *APIService) AddItemToMenu(reqData *tcp.AddItemToMenuReqBody) error {
 	defer conn.Close()
 
 	encodedAddItemBody, err := tcp.EncodeAddItemToMenuReqBody(reqData)
-	fmt.Println(reqData)
+	//fmt.Println(reqData)
 	if err != nil {
 		return errors.ErrEncodingRequest
 	}

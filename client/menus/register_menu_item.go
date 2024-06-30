@@ -7,7 +7,6 @@ import (
 	"client/models"
 	"client/utils"
 	"fmt"
-	"time"
 )
 
 type RegisterMenuItem struct {
@@ -29,7 +28,7 @@ func (mi *RegisterMenuItem) Display() {
 }
 
 func (mi *RegisterMenuItem) Execute(scanner *bufio.Scanner) {
-	defer time.Sleep(time.Second)
+	//defer time.Sleep(time.Second)
 	utils.ClearScreen()
 	utils.ColoredPrint(constants.Blue, fmt.Sprintf("[------------ %s ------------] \n\n", mi.Name))
 	var user models.User
