@@ -6,20 +6,20 @@ import (
 	"net"
 	"server/internal/models/address"
 	"server/internal/protocol/tcp"
+	"server/pkg/utils"
 	"server/services"
 )
 
 type UserHandler struct {
-	userService services.UserService
+	userService *services.UserService
 }
 
-func NewUserHandler(userService services.UserService) *UserHandler {
+func NewUserHandler(userService *services.UserService) *UserHandler {
 	return &UserHandler{userService}
 }
 
 func (h *UserHandler) UpdateFirstName(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID    uint   `json:"user_id"`
 		FirstName string `json:"first_name"`
 	}
 
@@ -28,7 +28,13 @@ func (h *UserHandler) UpdateFirstName(ctx context.Context, conn net.Conn, req *t
 		return
 	}
 
-	user, err := h.userService.UpdateUserFirstName(ctx, reqData.UserID, reqData.FirstName)
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
+	user, err := h.userService.UpdateUserFirstName(ctx, userID, reqData.FirstName)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
@@ -38,11 +44,8 @@ func (h *UserHandler) UpdateFirstName(ctx context.Context, conn net.Conn, req *t
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
 
-// Similarly, add methods for UpdateLastName, UpdateEmail, UpdatePhone, UpdatePassword, and DeleteAddress
-
 func (h *UserHandler) UpdateLastName(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID   uint   `json:"user_id"`
 		LastName string `json:"last_name"`
 	}
 
@@ -51,7 +54,13 @@ func (h *UserHandler) UpdateLastName(ctx context.Context, conn net.Conn, req *tc
 		return
 	}
 
-	user, err := h.userService.UpdateUserLastName(ctx, reqData.UserID, reqData.LastName)
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
+	user, err := h.userService.UpdateUserLastName(ctx, userID, reqData.LastName)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
@@ -63,8 +72,7 @@ func (h *UserHandler) UpdateLastName(ctx context.Context, conn net.Conn, req *tc
 
 func (h *UserHandler) UpdateEmail(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID uint   `json:"user_id"`
-		Email  string `json:"email"`
+		Email string `json:"email"`
 	}
 
 	if err := json.Unmarshal(req.Data, &reqData); err != nil {
@@ -72,7 +80,13 @@ func (h *UserHandler) UpdateEmail(ctx context.Context, conn net.Conn, req *tcp.R
 		return
 	}
 
-	user, err := h.userService.UpdateUserEmail(ctx, reqData.UserID, reqData.Email)
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
+	user, err := h.userService.UpdateUserEmail(ctx, userID, reqData.Email)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
@@ -84,8 +98,7 @@ func (h *UserHandler) UpdateEmail(ctx context.Context, conn net.Conn, req *tcp.R
 
 func (h *UserHandler) UpdatePhone(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID uint   `json:"user_id"`
-		Phone  string `json:"phone"`
+		Phone string `json:"phone"`
 	}
 
 	if err := json.Unmarshal(req.Data, &reqData); err != nil {
@@ -93,7 +106,13 @@ func (h *UserHandler) UpdatePhone(ctx context.Context, conn net.Conn, req *tcp.R
 		return
 	}
 
-	user, err := h.userService.UpdateUserPhone(ctx, reqData.UserID, reqData.Phone)
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
+	user, err := h.userService.UpdateUserPhone(ctx, userID, reqData.Phone)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
@@ -105,7 +124,6 @@ func (h *UserHandler) UpdatePhone(ctx context.Context, conn net.Conn, req *tcp.R
 
 func (h *UserHandler) UpdatePassword(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID   uint   `json:"user_id"`
 		Password string `json:"password"`
 	}
 
@@ -114,7 +132,13 @@ func (h *UserHandler) UpdatePassword(ctx context.Context, conn net.Conn, req *tc
 		return
 	}
 
-	user, err := h.userService.UpdateUserPassword(ctx, reqData.UserID, reqData.Password)
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
+	user, err := h.userService.UpdateUserPassword(ctx, userID, reqData.Password)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
@@ -126,7 +150,6 @@ func (h *UserHandler) UpdatePassword(ctx context.Context, conn net.Conn, req *tc
 
 func (h *UserHandler) DeleteAddress(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID    uint `json:"user_id"`
 		AddressID uint `json:"address_id"`
 	}
 
@@ -135,7 +158,13 @@ func (h *UserHandler) DeleteAddress(ctx context.Context, conn net.Conn, req *tcp
 		return
 	}
 
-	err := h.userService.DeleteUserAddress(ctx, reqData.UserID, reqData.AddressID)
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
+	err = h.userService.DeleteUserAddress(ctx, userID, reqData.AddressID)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
@@ -146,7 +175,6 @@ func (h *UserHandler) DeleteAddress(ctx context.Context, conn net.Conn, req *tcp
 
 func (h *UserHandler) AddAddress(ctx context.Context, conn net.Conn, req *tcp.Request) {
 	var reqData struct {
-		UserID      uint                `json:"user_id"`
 		AddressLine string              `json:"address_line"`
 		Coordinates address.Coordinates `json:"coordinates"`
 		Types       string              `json:"types"`
@@ -158,8 +186,14 @@ func (h *UserHandler) AddAddress(ctx context.Context, conn net.Conn, req *tcp.Re
 		return
 	}
 
+	userID, err := utils.GetUserIDFromContext(ctx)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusUnauthorized, nil, err.Error())
+		return
+	}
+
 	addr := address.NewAddress(reqData.AddressLine, reqData.Coordinates, reqData.Types, reqData.City)
-	_, err := h.userService.AddUserAddress(ctx, reqData.UserID, addr)
+	_, err = h.userService.AddUserAddress(ctx, userID, addr)
 	if err != nil {
 		tcp.Error(conn, tcp.StatusInternalServerError, nil, err.Error())
 		return
