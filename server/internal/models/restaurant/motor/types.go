@@ -9,10 +9,10 @@ type Repo interface {
 }
 
 type Motor struct {
-	ID           uint
-	Name         string
-	RestaurantID uint
-	Speed        int
+	ID           uint      `json:"id"`
+	Name         string  `json:"name"`
+	RestaurantID uint   `json:"restaurant_id"`
+	Speed        int  `json:"speed"`
 }
 
 func NewMotor(restaurantID uint, speed int) *Motor {

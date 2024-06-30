@@ -44,8 +44,8 @@ type DepositBody struct {
 	Amount uint   `json:"amount"`
 }
 
-type RestaurantCategoryBody struct{
-	RestaurantID uint `json:"restaurant_id"`
+type RestaurantCategoryBody struct {
+	RestaurantID uint   `json:"restaurant_id"`
 	Category_ids []uint `json:"category_ids"`
 }
 
@@ -57,7 +57,6 @@ type WithdrawBody struct {
 type AddCardBody struct {
 	CardNumber string `json:"card_number"`
 }
-
 
 type CreateRestaurantBody struct {
 	Name    string          `json:"name"`
@@ -89,6 +88,57 @@ type CreateRestaurantResponse struct {
 type GetRestaurantsBodyResponse struct {
 	Message     string               `json:"message"`
 	Restaurants []*models.Restaurant `json:"restaurants"`
+}
+
+type GetRestaurantsCategoriesBody struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type GetCategoriesRestaurantBodyResponse struct {
+	Message    string                       `json:"message"`
+	Categories []*models.RestaurantCategory `json:"restaurant_categories"`
+}
+
+type RestaurantMenuBody struct {
+	RestaurantID uint   `json:"restaurant_id"`
+	Name         string `json:"name"`
+}
+
+type GetRestaurantMenusBody struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type GetRestaurantMenusBodyResponse struct {
+	Message string                   `json:"message"`
+	Menus   []*models.RestaurantMenu `json:"menus"`
+}
+
+type AddItemToMenuReqBody struct {
+	Name                          string `json:"name"`
+	Price                         uint   `json:"price"`
+	PreparationMinutes            uint   `json:"preparation_minutes"` // in minutes
+	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
+	MenuID                        uint   `json:"menu_id"`
+}
+
+type GetMenuItemsBody struct {
+	MenuID uint `json:"menu_id"`
+}
+
+type GetItemsOfMenuBodyResponse struct {
+	Message string             `json:"message"`
+	Items   []*models.MenuItem `json:"menu_items"`
+}
+
+type RestaurantMotorReqBody struct {
+	Name         string `json:"name"`
+	RestaurantID uint   `json:"restaurant_id"`
+	Speed        int    `json:"speed"`
+}
+
+type RestaurantAddOperatorReqBody struct {
+	PhoneOrEmail string `json:"phone_or_email"`
+	RestaurantID uint   `json:"restaurant_id"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {

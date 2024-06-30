@@ -444,12 +444,18 @@ func (r *restaurantRepo) GetRestaurantsOfAnOwner(ctx context.Context) ([]*restau
 		return nil, err
 	}
 
-	domainOperatingRestaurants := []*restaurant.Restaurant{}
+	domainRestaurants := []*restaurant.Restaurant{}
 	for _, rest := range owningRestaurants {
-		dRest := mappers.RestaurantEntityToDomain(rest)
-		domainOperatingRestaurants = append(domainOperatingRestaurants, dRest)
+		//var address entities.FunctionalAddress
+		sqlStr := "SELECT city, address_line FROM addresses WHERE restaurant_id = ?"
+		err = r.db.WithContext(ctx).Raw(sqlStr, rest.ID).Scan(&rest.Address).Error
+		if err != nil {
+			fmt.Println("Error retrieving restaurant:", err)
+		}
+		dRest := mappers.RestaurantEntityAddressNameLineToDomain(rest)
+		domainRestaurants = append(domainRestaurants, dRest)
 	}
-	return domainOperatingRestaurants, nil
+	return domainRestaurants, nil
 
 }
 
