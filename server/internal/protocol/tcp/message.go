@@ -5,6 +5,7 @@ import (
 	"server/internal/models/auth"
 	"server/internal/models/restaurant/menu"
 	"server/internal/models/restaurant/restaurant"
+	"server/internal/models/user"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
 )
@@ -40,8 +41,8 @@ type AddOperatorToRestaurantRequest struct {
 }
 
 type CreateRestaurantRequest struct {
-	Name        string `json:"name"`
-	Phone       string `json:"phone"`
+	Name    string           `json:"name"`
+	Phone   string           `json:"phone"`
 	Address *address.Address `json:"address"`
 }
 
@@ -79,15 +80,18 @@ type DepositRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
+
 type WithdrawRequest struct {
 	CardNumber string `json:"card_number"`
 	Amount     uint   `json:"amount"`
 }
+
 type AddressRequest struct {
 	AddressLine string              `json:"address_line"`
-	Coordinates address.Coordinates `json:"coordinates"` 
+	Coordinates address.Coordinates `json:"coordinates"`
 	City        string              `json:"city"`
 }
+
 type AddCardToWalletResponse struct {
 	Message string                 `json:"message"`
 	Card    *creditCard.CreditCard `json:"card"`
@@ -100,7 +104,7 @@ type AssignOperatorToRestaurantResponse struct {
 
 type AssignOperatorResponse struct {
 	OperatorPhoneOrEmail string `json:"operator"`
-	RestaurantName        string `json:"restaurant_name"`
+	RestaurantName       string `json:"restaurant_name"`
 }
 
 type CreateRestaurantResponse struct {
@@ -152,6 +156,7 @@ type DepositResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
 }
+
 type WithdrawResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
@@ -161,17 +166,92 @@ type GetWalletResponse struct {
 	Message string         `json:"message"`
 	Wallet  *wallet.Wallet `json:"wallet"`
 }
+
 type AddressResponse struct {
 	Message string           `json:"message"`
 	Address *address.Address `json:"address"`
 }
 
 type EditRestaurantNameRequest struct {
-	RestaurantID uint
-	NewName      string
+	RestaurantID uint   `json:"restaurant_id"`
+	NewName      string `json:"new_name"`
 }
 
 type RestaurantToAddCategoryMenuFoodResponse struct {
-	Message		string
+	Message     string
 	Restaurants []*restaurant.Restaurant
+}
+
+// User Profile Update Requests and Responses
+
+type UpdateFirstNameRequest struct {
+	UserID    uint   `json:"user_id"`
+	FirstName string `json:"first_name"`
+}
+
+type UpdateFirstNameResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdateLastNameRequest struct {
+	UserID   uint   `json:"user_id"`
+	LastName string `json:"last_name"`
+}
+
+type UpdateLastNameResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdateEmailRequest struct {
+	UserID uint   `json:"user_id"`
+	Email  string `json:"email"`
+}
+
+type UpdateEmailResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdatePhoneRequest struct {
+	UserID uint   `json:"user_id"`
+	Phone  string `json:"phone"`
+}
+
+type UpdatePhoneResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type UpdatePasswordRequest struct {
+	UserID   uint   `json:"user_id"`
+	Password string `json:"password"`
+}
+
+type UpdatePasswordResponse struct {
+	Message string     `json:"message"`
+	User    *user.User `json:"user"`
+}
+
+type DeleteAddressRequest struct {
+	UserID    uint `json:"user_id"`
+	AddressID uint `json:"address_id"`
+}
+
+type DeleteAddressResponse struct {
+	Message string `json:"message"`
+}
+
+type AddAddressRequest struct {
+	UserID      uint                `json:"user_id"`
+	AddressLine string              `json:"address_line"`
+	Coordinates address.Coordinates `json:"coordinates"`
+	Types       string              `json:"types"`
+	City        string              `json:"city"`
+}
+
+type AddAddressResponse struct {
+	Message string           `json:"message"`
+	Address *address.Address `json:"address"`
 }
