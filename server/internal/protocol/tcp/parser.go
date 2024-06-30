@@ -171,3 +171,11 @@ func EncodeAddCategoriesToRestaurantResponse(res AddCategoriesToRestaurantRespon
 func EncodeGetRestaurantCategoriesResponse(res GetRestaurantCategoriesResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
+func DecodeAddMotorToRestaurantRequest(data []byte)(AddMotorToRestaurantRequest,error){
+	var req AddMotorToRestaurantRequest
+	err := json.Unmarshal(data,&req)
+	return req,err
+}
+func EncodeAddMotorToRestaurantResponse(res AddMotorToRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}

@@ -505,19 +505,85 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 	case "withdraw":
 		//withdraw_ownership
 		fmt.Println("not implemented")
-
 	case "operator":
 		// (post, get, delete)
 		if TCPReq.Header["method"] == tcp.MethodPost {
 			addOperatorHandler := middleware.ApplyMiddlewares(h.HandleAddOperatorToRestaurant, middleware.AuthMiddleware)
 			addOperatorHandler(ctx, conn, TCPReq)
 		}
-	case "delivery":
-		// add/remove delivery (post, get, delete)
-		fmt.Println("not implemented")
-
+	case "motor":
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			addMotorHandler := middleware.ApplyMiddlewares(h.HandleAddMotorToRestaurant,middleware.AuthMiddleware)
+			addMotorHandler(ctx,conn,TCPReq)
+		}
 	default:
 		fmt.Println("bad request")
 	}
 	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+func (h *RestaurantHandler)HandleAddMotorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request){
+reqData , err := tcp.DecodeAddMotorToRestaurantRequest(req.Data)
+if err != nil {
+	//logger
+	fmt.Println("Error decoding add categories request:", err)
+	tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+	return
+}
+addedMotor , err := h.restaurantService.AddMotor(ctx,reqData.Motor,reqData.RestaurantID)
+if err != nil {
+	tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+	return
+}
+response := tcp.AddMotorToRestaurantResponse{
+	Message: "Motor Susscefully Added.",
+	Motor: addedMotor,
+}
+resData,err := tcp.EncodeAddMotorToRestaurantResponse(response)
+if err != nil {
+	//logger.Error("Error encoding register response:", err)
+	fmt.Println("Error encoding menu item response:", err)
+	tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+	return
+}
+tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }
