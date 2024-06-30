@@ -2,6 +2,7 @@ package tcp
 
 import (
 	"encoding/json"
+	"fmt"
 	"net"
 )
 
@@ -54,6 +55,8 @@ func NewTCPResponse(statusCode uint, header map[string]string, data json.RawMess
 func DecodeTCPRequest(data []byte) (*Request, error) {
 	var req Request
 	err := json.Unmarshal(data, &req)
+	fmt.Println(req)
+	fmt.Println("Here")
 	return &req, err
 }
 

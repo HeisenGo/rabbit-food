@@ -100,3 +100,49 @@ func DecodeGetRestaurantsBodyResponse(data []byte) (GetRestaurantsBodyResponse, 
 func EncodeAddCategoryReqBody(req *RestaurantCategoryBody) ([]byte, error) {
 	return json.Marshal(req)
 }
+
+func EncodeGetCategoriesOfRestaurantReqBody(req *GetRestaurantsCategoriesBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func DecodeGetCategoriesRestaurantsBodyResponse(data []byte) (GetCategoriesRestaurantBodyResponse, error) {
+	var resBody GetCategoriesRestaurantBodyResponse
+	err := json.Unmarshal(data, &resBody)
+	return resBody, err
+}
+
+func EncodeAddMenuReqBody(req *RestaurantMenuBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func EncodeGetMenusOfRestaurantReqBody(req *GetRestaurantMenusBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func DecodeGetRestaurantMenusBodyResponse(data []byte) (GetRestaurantMenusBodyResponse, error) {
+	var resBody GetRestaurantMenusBodyResponse
+	err := json.Unmarshal(data, &resBody)
+	return resBody, err
+}
+
+func EncodeAddItemToMenuReqBody(req *AddItemToMenuReqBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func EncodeGetItemsOfMenuReqBody(req *GetMenuItemsBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func DecodeGetItemsOfMenuBodyResponse(data []byte) (GetItemsOfMenuBodyResponse, error) {
+	var resBody GetItemsOfMenuBodyResponse
+	err := json.Unmarshal(data, &resBody)
+	return resBody, err
+}
+
+func EncodeAddMotorReqBody(req *RestaurantMotorReqBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func EncodeAddOperatorReqBody(req *RestaurantAddOperatorReqBody) ([]byte, error) {
+	return json.Marshal(req)
+}

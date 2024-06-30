@@ -382,7 +382,7 @@ func (h *RestaurantHandler) GetRestaurantsToAddCategoryMenuFood(ctx context.Cont
 		return
 	}
 	response := tcp.RestaurantToAddCategoryMenuFoodResponse{
-		Message:     "restaurants items successfully fetched",
+		Message:     "restaurants successfully fetched",
 		Restaurants: fetchedRestaurants,
 	}
 

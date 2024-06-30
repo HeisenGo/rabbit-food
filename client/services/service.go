@@ -16,5 +16,13 @@ type Service interface {
 	Withdraw(data *tcp.WithdrawBody) error
 	CreateRestaurant(newRestaurant *models.Restaurant) (*models.Restaurant, error)
 	GetRestaurantsIHaveRoleIn() ([]*models.Restaurant, error)
-	AddCategoryToRestaurant(*tcp.RestaurantCategoryBody)error
+	AddCategoryToRestaurant(*tcp.RestaurantCategoryBody) error
+	GetCategoriesOfRestaurant(restaurantID uint) ([]*models.RestaurantCategory, error)
+	AddMenuToRestaurant(menuBody *tcp.RestaurantMenuBody) error
+	GetMenusOfRestaurant(restaurantID uint) ([]*models.RestaurantMenu, error)
+	AddItemToMenu(reqData *tcp.AddItemToMenuReqBody) error
+	GetItemsOfMenu(menuID uint) ([]*models.MenuItem, error)
+	AddMotorToRestaurant(addMotorData *tcp.RestaurantMotorReqBody) error
+	AddOperatorToRestaurant(addOperatorData *tcp.RestaurantAddOperatorReqBody) error
+	GetRestaurantsIOwn() ([]*models.Restaurant, error)
 }

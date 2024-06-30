@@ -6,18 +6,18 @@ import (
 )
 
 type Menu struct {
-	ID           uint
-	Name         string
-	RestaurantID uint
+	ID           uint   `json:"menu_id"`
+	Name         string `json:"name"`
+	RestaurantID uint   `json:"restaurant_id"`
 }
 
 type MenuItem struct {
-	ID                            uint
-	Name                          string
-	Price                         uint
-	PreparationMinutes            uint // in minutes
-	CancellationPenaltyPercentage uint
-	MenuID                        uint
+	ID                            uint   `json:"id"`
+	Name                          string `json:"name"`
+	Price                         uint   `json:"price"`
+	PreparationMinutes            uint   `json:"preparation_minutes"` // in minutes
+	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
+	MenuID                        uint   `json:"menu_id"`
 }
 
 func NewMenuItem(name string, price uint, preparationMinutes uint, cancellationPenaltyPercentage uint, menuID uint) *MenuItem {
