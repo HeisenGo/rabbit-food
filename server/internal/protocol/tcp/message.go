@@ -4,6 +4,7 @@ import (
 	"server/internal/models/address"
 	"server/internal/models/auth"
 	"server/internal/models/restaurant/menu"
+	"server/internal/models/restaurant/motor"
 	"server/internal/models/restaurant/restaurant"
 	creditCard "server/internal/models/wallet/credit_card"
 	"server/internal/models/wallet/wallet"
@@ -40,8 +41,8 @@ type AddOperatorToRestaurantRequest struct {
 }
 
 type CreateRestaurantRequest struct {
-	Name        string `json:"name"`
-	Phone       string `json:"phone"`
+	Name    string           `json:"name"`
+	Phone   string           `json:"phone"`
 	Address *address.Address `json:"address"`
 }
 
@@ -85,7 +86,7 @@ type WithdrawRequest struct {
 }
 type AddressRequest struct {
 	AddressLine string              `json:"address_line"`
-	Coordinates address.Coordinates `json:"coordinates"` 
+	Coordinates address.Coordinates `json:"coordinates"`
 	City        string              `json:"city"`
 }
 type AddCardToWalletResponse struct {
@@ -100,7 +101,7 @@ type AssignOperatorToRestaurantResponse struct {
 
 type AssignOperatorResponse struct {
 	OperatorPhoneOrEmail string `json:"operator"`
-	RestaurantName        string `json:"restaurant_name"`
+	RestaurantName       string `json:"restaurant_name"`
 }
 
 type CreateRestaurantResponse struct {
@@ -172,6 +173,16 @@ type EditRestaurantNameRequest struct {
 }
 
 type RestaurantToAddCategoryMenuFoodResponse struct {
-	Message		string
+	Message     string
 	Restaurants []*restaurant.Restaurant
+}
+
+type AddMotorToRestaurantRequest struct {
+	Message      string       `json:"message"`
+	RestaurantID uint         `json:"restaurant_id"`
+	Motor        *motor.Motor `json:"motor"`
+}
+type AddMotorToRestaurantResponse struct {
+	Message      string       `json:"message"`
+	Motor        *motor.Motor `json:"motor"`
 }
