@@ -45,8 +45,8 @@ func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 		return
 	}
 	if len(restaurants) == 0 {
-		utils.ColoredPrint(constants.Red, "\n\t", "You have role in any restaurants")
-		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
+		utils.ColoredPrint(constants.Red, "\n\t", "You don't have role in any restaurants")
+		utils.ReadInput(scanner, "\n\n\tPress any key to continue... ")
 		return
 	}
 
@@ -93,8 +93,8 @@ func (mi *AddCategoryToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 
 	fmt.Println("\n\tCategories:")
 
-	for _, c := range categories{
-		fmt.Println("\t",c.Name)
+	for _, c := range categories {
+		fmt.Println("\t", c.Name)
 	}
 	entered_category_ids := []uint{}
 	for {

@@ -36,7 +36,7 @@ type AddCardToWalletRequest struct {
 }
 
 type AddOperatorToRestaurantRequest struct {
-	OperatorPhoneOrEmail string `json:"phone"` //operator phone
+	OperatorPhoneOrEmail string `json:"phone_or_email"` //operator phone
 	RestaurantID         uint   `json:"restaurant_id"`
 }
 
@@ -183,6 +183,6 @@ type AddMotorToRestaurantRequest struct {
 	Motor        *motor.Motor `json:"motor"`
 }
 type AddMotorToRestaurantResponse struct {
-	Message      string       `json:"message"`
-	Motor        *motor.Motor `json:"motor"`
+	Message string       `json:"message"`
+	Motor   *motor.Motor `json:"motor"`
 }
