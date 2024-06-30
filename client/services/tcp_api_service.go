@@ -752,7 +752,7 @@ func (s *APIService) AddOperatorToRestaurant(addOperatorData *tcp.RestaurantAddO
 }
 
 func (s *APIService) GetRestaurantsIOwn() ([]*models.Restaurant, error) {
-	location := "owner/restaurants"
+	location := "restaurants/own"
 	header := make(map[string]string)
 	methodHeader := tcp.MethodGet
 	tcp_service.SetMethodHeader(header, methodHeader)
