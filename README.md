@@ -96,8 +96,11 @@ To get started with **Rabbit Food**, follow the instructions in the following. T
 
 ## How TO Run The Project
 1- Run Docker
+
 2- Create Postgis Database rabbit_food
+
 3- to run server: Fill .env file using sample.env then go run cmd/api/main.go --envpath .env
+
 4- to run client:  Fill .env file using sample.env then go run cmd/main.go --envpath .env
 
 
