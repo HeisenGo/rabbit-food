@@ -23,7 +23,7 @@ func DecodeAddOperatorToRestaurantRequest(data []byte) (AddOperatorToRestaurantR
 }
 
 func DecodeGetAllOperatorsOFRestaurant(data []byte) {
-
+	// Implementation missing, possibly needs to be defined
 }
 
 func DecodeDepositRequest(data []byte) (DepositRequest, error) {
@@ -243,5 +243,15 @@ func DecodeAddAddressRequest(data []byte) (AddAddressRequest, error) {
 }
 
 func EncodeAddAddressResponse(res AddAddressResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
+
+func DecodeAddMotorToRestaurantRequest(data []byte) (AddMotorToRestaurantRequest, error) {
+	var req AddMotorToRestaurantRequest
+	err := json.Unmarshal(data, &req)
+	return req, err
+}
+
+func EncodeAddMotorToRestaurantResponse(res AddMotorToRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
