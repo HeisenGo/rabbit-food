@@ -50,13 +50,13 @@ func (mi *AddItemToMenuMenuItem) Execute(scanner *bufio.Scanner) {
 		return
 	}
 
-	utils.ColoredPrint(constants.Green, "\n\tRestaurants You can add Category: \n")
+	utils.ColoredPrint(constants.Green, "\n\tRestaurants You can add Items: \n")
 	functions.DisplayRestaurantsWithAddress(restaurants)
 	fmt.Println("\n\n\t")
 
 	var restaurantRow int
 	for {
-		input := utils.ReadInput(scanner, "Choose Restaurant Row to Add Category(Enter q to return): ")
+		input := utils.ReadInput(scanner, "Choose Restaurant Row to Add Item(Enter q to return): ")
 
 		if input == "q" {
 			return

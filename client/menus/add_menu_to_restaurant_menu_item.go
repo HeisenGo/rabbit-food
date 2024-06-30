@@ -50,7 +50,7 @@ func (mi *AddMenuToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 		return
 	}
 
-	utils.ColoredPrint(constants.Green, "\n\tRestaurants You can add Category: \n")
+	utils.ColoredPrint(constants.Green, "\n\tRestaurants You can add menu: \n")
 	functions.DisplayRestaurantsWithAddress(restaurants)
 	fmt.Println("\n\n\t")
 
@@ -119,7 +119,7 @@ func (mi *AddMenuToRestaurantMenuItem) Execute(scanner *bufio.Scanner) {
 		utils.ReadInput(scanner, "\n\tPress any key to go back... ")
 		return
 	} else {
-		utils.ColoredPrint(constants.Green, "\n\tCategories Successfully added :)\n")
+		utils.ColoredPrint(constants.Green, "\n\tMenu Successfully added :)\n")
 		utils.ReadInput(scanner, "\n\tPress any key to continue... ")
 	}
 	if mi.PostMenu != nil {

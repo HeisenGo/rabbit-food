@@ -672,3 +672,117 @@ func (s *APIService) GetItemsOfMenu(menuID uint) ([]*models.MenuItem, error) {
 	}
 	return getItemsMenuResBody.Items, nil
 }
+
+func (s *APIService) AddMotorToRestaurant(addMotorData *tcp.RestaurantMotorReqBody) error {
+	location := "restaurants/motors"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+	tcp_service.SetAuthorizationHeader(header)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+
+	encodedAddMotorBody, err := tcp.EncodeAddMotorReqBody(addMotorData)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedAddMotorBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusCreated {
+		return tcp_service.ResponseErrorProduction(response.Data)
+	}
+
+	return nil
+}
+
+func (s *APIService) AddOperatorToRestaurant(addOperatorData *tcp.RestaurantAddOperatorReqBody) error {
+	location := "restaurants/operators"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodPost
+	tcp_service.SetMethodHeader(header, methodHeader)
+	tcp_service.SetAuthorizationHeader(header)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+
+	encodedAddMotorBody, err := tcp.EncodeAddOperatorReqBody(addOperatorData)
+	if err != nil {
+		return errors.ErrEncodingRequest
+	}
+	err = tcp.SendRequest(conn, location, header, encodedAddMotorBody)
+	if err != nil {
+		return errors.ErrWritingToServer
+	}
+
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return errors.ErrReadingResponse
+	}
+
+	response, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return errors.ErrDecodingResponse
+	}
+	if response.StatusCode != tcp.StatusCreated {
+		return tcp_service.ResponseErrorProduction(response.Data)
+	}
+
+	return nil
+}
+
+func (s *APIService) GetRestaurantsIOwn() ([]*models.Restaurant, error) {
+	location := "owner/restaurants"
+	header := make(map[string]string)
+	methodHeader := tcp.MethodGet
+	tcp_service.SetMethodHeader(header, methodHeader)
+	tcp_service.SetAuthorizationHeader(header)
+
+	conn, err := s.MakeNewTCPConnection()
+	if err != nil {
+		return nil, errors.ErrConnectionFailed
+	}
+	defer conn.Close()
+
+	err = tcp.SendRequest(conn, location, header, nil)
+	if err != nil {
+		return nil, errors.ErrWritingToServer
+	}
+
+	// Read the response from the server
+	buffer, err := tcp_service.ReadResponseFromServer(conn)
+	if err != nil {
+		return nil, errors.ErrReadingResponse
+	}
+
+	tcpResponse, err := tcp.DecodeTCPResponse(buffer)
+	if err != nil {
+		return nil, errors.ErrDecodingResponse
+	}
+	if tcpResponse.StatusCode != tcp.StatusOK {
+		return nil, tcp_service.ResponseErrorProduction(tcpResponse.Data)
+	}
+	getRestaurantsResBody, err := tcp.DecodeGetRestaurantsBodyResponse(tcpResponse.Data)
+	if err != nil {
+		return nil, errors.ErrDecodingSuccessfulResponse
+	}
+	return getRestaurantsResBody.Restaurants, nil
+}

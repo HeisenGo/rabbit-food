@@ -126,8 +126,19 @@ type GetMenuItemsBody struct {
 }
 
 type GetItemsOfMenuBodyResponse struct {
-	Message string                   `json:"message"`
+	Message string             `json:"message"`
 	Items   []*models.MenuItem `json:"menu_items"`
+}
+
+type RestaurantMotorReqBody struct {
+	Name         string `json:"name"`
+	RestaurantID uint   `json:"restaurant_id"`
+	Speed        int    `json:"speed"`
+}
+
+type RestaurantAddOperatorReqBody struct {
+	PhoneOrEmail string `json:"phone_or_email"`
+	RestaurantID uint   `json:"restaurant_id"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {

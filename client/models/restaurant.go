@@ -15,3 +15,10 @@ type MenuItem struct {
 	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
 	MenuID                        uint   `json:"menu_id"`
 }
+
+type Motor struct {
+	ID           uint   `json:"id"`
+	Name         string `json:"name"`
+	RestaurantID uint   `json:"restaurant_id"`
+	Speed        int    `json:"speed"`
+}

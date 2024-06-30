@@ -138,3 +138,11 @@ func DecodeGetItemsOfMenuBodyResponse(data []byte) (GetItemsOfMenuBodyResponse, 
 	err := json.Unmarshal(data, &resBody)
 	return resBody, err
 }
+
+func EncodeAddMotorReqBody(req *RestaurantMotorReqBody) ([]byte, error) {
+	return json.Marshal(req)
+}
+
+func EncodeAddOperatorReqBody(req *RestaurantAddOperatorReqBody) ([]byte, error) {
+	return json.Marshal(req)
+}
