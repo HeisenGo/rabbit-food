@@ -178,11 +178,18 @@ type RestaurantToAddCategoryMenuFoodResponse struct {
 }
 
 type AddMotorToRestaurantRequest struct {
-	Message      string       `json:"message"`
 	RestaurantID uint         `json:"restaurant_id"`
 	Motor        *motor.Motor `json:"motor"`
 }
 type AddMotorToRestaurantResponse struct {
-	Message      string       `json:"message"`
-	Motor        *motor.Motor `json:"motor"`
+	Message string       `json:"message"`
+	Motor   *motor.Motor `json:"motor"`
+}
+type WithdrawOwnershipOfRestaurantRequest struct {
+	NewOwnerID   uint `json:"new_owner_id"`
+	RestaurantID uint `json:"restaurant_id"`
+}
+type WithdrawOwnershipOfRestaurantResponse struct {
+	Message         string                 `json:"message"`
+	TakenRestaurant *restaurant.Restaurant `json:"restaurant"`
 }

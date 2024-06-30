@@ -476,6 +476,60 @@ func (h *RestaurantHandler) HandleGetRestaurantsToAddMotorOperator(ctx context.C
 	tcp.SendResponse(conn, tcp.StatusOK, nil, resData)
 }
 
+func (h *RestaurantHandler)HandleAddMotorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request){
+	reqData , err := tcp.DecodeAddMotorToRestaurantRequest(req.Data)
+	if err != nil {
+		//logger
+		fmt.Println("Error decoding add motors request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	addedMotor , err := h.restaurantService.AddMotor(ctx,reqData.Motor,reqData.RestaurantID)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	response := tcp.AddMotorToRestaurantResponse{
+		Message: "Motor Susscefully Added.",
+		Motor: addedMotor,
+	}
+	resData,err := tcp.EncodeAddMotorToRestaurantResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding menu item response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
+	}
+
+func (h *RestaurantHandler) HandleWithdrawOwnershipOfRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request){
+	reqData , err := tcp.DecodeWithdrawOwnershipOfRestaurantRequest(req.Data)
+	if err != nil {
+		//logger
+		fmt.Println("Error decoding change of ownership request:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	err = h.restaurantService.WithdrawRestaurant(ctx,reqData.NewOwnerID,reqData.RestaurantID)
+	if err != nil {
+		tcp.Error(conn, tcp.StatusNotModified, nil, err.Error())
+		return
+	}
+	response := tcp.WithdrawOwnershipOfRestaurantResponse{
+		Message: "Changing Ownership Succsesfully Occured",
+		TakenRestaurant: restaurant.NewRestaurantByID(reqData.NewOwnerID),
+	}
+	resData,err := tcp.EncodeWithdrawOwnershipOfRestaurantResponse(response)
+	if err != nil {
+		//logger.Error("Error encoding register response:", err)
+		fmt.Println("Error encoding the OwnerShip Response:", err)
+		tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
+		return
+	}
+	tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
+}
+
 func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq *tcp.Request) {
 	firstRoute, _ := utils.RouteSplitter(TCPReq.Location)
 	switch firstRoute {
@@ -528,9 +582,11 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 			getMenuItemsOfMenuHandler(ctx, conn, TCPReq)
 			return
 		}
-	case "withdraw":
-		//withdraw_ownership
-		fmt.Println("not implemented")
+	case "ownership":
+		if TCPReq.Header["method"] == tcp.MethodPost {
+			withdrawOwnershipOfRestaurantHandler := middleware.ApplyMiddlewares(h.HandleWithdrawOwnershipOfRestaurant , middleware.AuthMiddleware)
+			withdrawOwnershipOfRestaurantHandler(ctx,conn,TCPReq)
+		}
 	case "operators":
 		// (post, get, delete)
 		if TCPReq.Header["method"] == tcp.MethodPost {
@@ -547,32 +603,4 @@ func (h *RestaurantHandler) ServeTCP(ctx context.Context, conn net.Conn, TCPReq 
 		fmt.Println("bad request")
 	}
 	tcp.Error(conn, tcp.StatusMethodNotAllowed, nil, "method not allowed.")
-}
-
-
-func (h *RestaurantHandler)HandleAddMotorToRestaurant(ctx context.Context, conn net.Conn, req *tcp.Request){
-reqData , err := tcp.DecodeAddMotorToRestaurantRequest(req.Data)
-if err != nil {
-	//logger
-	fmt.Println("Error decoding add categories request:", err)
-	tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-	return
-}
-addedMotor , err := h.restaurantService.AddMotor(ctx,reqData.Motor,reqData.RestaurantID)
-if err != nil {
-	tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-	return
-}
-response := tcp.AddMotorToRestaurantResponse{
-	Message: "Motor Susscefully Added.",
-	Motor: addedMotor,
-}
-resData,err := tcp.EncodeAddMotorToRestaurantResponse(response)
-if err != nil {
-	//logger.Error("Error encoding register response:", err)
-	fmt.Println("Error encoding menu item response:", err)
-	tcp.Error(conn, tcp.StatusBadRequest, nil, err.Error())
-	return
-}
-tcp.SendResponse(conn, tcp.StatusCreated, nil, resData)
 }

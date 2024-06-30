@@ -179,3 +179,11 @@ func DecodeAddMotorToRestaurantRequest(data []byte)(AddMotorToRestaurantRequest,
 func EncodeAddMotorToRestaurantResponse(res AddMotorToRestaurantResponse) ([]byte, error) {
 	return json.Marshal(res)
 }
+func DecodeWithdrawOwnershipOfRestaurantRequest(data []byte)(WithdrawOwnershipOfRestaurantRequest,error){
+	var req WithdrawOwnershipOfRestaurantRequest
+	err := json.Unmarshal(data,&req)
+	return req,err
+}
+func EncodeWithdrawOwnershipOfRestaurantResponse(res WithdrawOwnershipOfRestaurantResponse) ([]byte, error) {
+	return json.Marshal(res)
+}
