@@ -96,12 +96,38 @@ type GetRestaurantsCategoriesBody struct {
 
 type GetCategoriesRestaurantBodyResponse struct {
 	Message    string                       `json:"message"`
-	Categories []*models.RestaurantCategory `json:"restaurants"`
+	Categories []*models.RestaurantCategory `json:"restaurant_categories"`
 }
 
 type RestaurantMenuBody struct {
 	RestaurantID uint   `json:"restaurant_id"`
 	Name         string `json:"name"`
+}
+
+type GetRestaurantMenusBody struct {
+	RestaurantID uint `json:"restaurant_id"`
+}
+
+type GetRestaurantMenusBodyResponse struct {
+	Message string                   `json:"message"`
+	Menus   []*models.RestaurantMenu `json:"restaurant_menus"`
+}
+
+type AddItemToMenuReqBody struct {
+	Name                          string `json:"name"`
+	Price                         uint   `json:"price"`
+	PreparationMinutes            uint   `json:"preparation_minutes"` // in minutes
+	CancellationPenaltyPercentage uint   `json:"cancellation_penalty_percentage"`
+	MenuID                        uint   `json:"menu_id"`
+}
+
+type GetMenuItemsBody struct {
+	MenuID uint `json:"menu_id"`
+}
+
+type GetItemsOfMenuBodyResponse struct {
+	Message string                   `json:"message"`
+	Items   []*models.MenuItem `json:"menu_items"`
 }
 
 func NewAddCardBody(cardNumber string) *AddCardBody {

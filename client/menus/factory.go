@@ -34,9 +34,17 @@ var (
 	createRestaurantMenuItem         MenuComponent
 	showMyFunctionalRestaurants      MenuComponent
 	addCategoryToRestaurantsMenuItem MenuComponent
-	addMenuToRestaurantMenuItem      MenuComponent
-	addFoodToRestaurantMenuItem      MenuComponent
+	addMenuToRestaurantMenuItem  MenuComponent
+	addItemToMenuMenuItem      MenuComponent
 )
+
+func getAddItemToMenuMenuItem(service services.Service) MenuComponent {
+	if addItemToMenuMenuItem == nil {
+		addItemToMenuMenuItem = NewAddItemToMenuMenuItem("Add Item To Menu",
+		 commands.NewAddItemToMenuCommand(service), commands.NewGetRestaurantsIHaveARoleCommand(service), commands.NewGetMenusOfRestaurantCommand(service), getRestaurantManagementMenu(service))
+	}
+	return addItemToMenuMenuItem
+}
 
 func getAddMenuToRestaurantMenuItem(service services.Service) MenuComponent {
 	if addMenuToRestaurantMenuItem == nil {

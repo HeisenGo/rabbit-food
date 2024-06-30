@@ -14,3 +14,10 @@ func DisplayRestaurantsWithAddress(restaurants []*models.Restaurant) {
 		fmt.Println("\n\t--------------------------------------------------------------")
 	}
 }
+
+func DisplayMenus(menus []*models.RestaurantMenu) {
+	for i, m := range menus {
+		fmt.Printf("\n\t%d. %s", i+1, m.Name)
+		fmt.Println("\n\t--------------------------------------------------------------")
+	}
+}
